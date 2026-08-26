@@ -1,93 +1,118 @@
-export type RequestStatus =
+/* ------------------------------------------------------------------
+   Statutory constants — RTI Act, 2005.
+   These are real provisions of Indian law, not portal settings.
+------------------------------------------------------------------- */
+export const REPLY_DEADLINE_DAYS = 30; // s.7(1)
+export const APPEAL_DECISION_DAYS = 45; // s.19(6), outer limit
+export const PENALTY_PER_DAY_INR = 250; // s.20(1)
+export const PENALTY_CAP_INR = 25000; // s.20(1)
+
+export type CaseStatus =
   | "filed"
   | "awaiting_reply"
-  | "no_response_overdue"
+  | "overdue"
   | "replied"
-  | "appeal_eligible"
-  | "appeal_filed";
+  | "appeal_pending"
+  | "appeal_overdue";
 
 export const STATUS_COPY: Record<
-  RequestStatus,
-  { plain: string; official: string }
+  CaseStatus,
+  { plain: string; official: string; tone: "neutral" | "info" | "danger" | "good" | "warn" }
 > = {
-  filed: { plain: "Just filed", official: "REGISTERED" },
+  filed: { plain: "Just filed", official: "REGISTERED", tone: "neutral" },
   awaiting_reply: {
-    plain: "Waiting for a reply",
+    plain: "Waiting for their reply",
     official: "PENDING WITH CPIO",
+    tone: "info",
   },
-  no_response_overdue: {
-    plain: "They're late",
-    official: "NO REPLY RECEIVED — DEEMED REFUSAL",
+  overdue: {
+    plain: "They are late",
+    official: "DEEMED REFUSAL — S.7(2)",
+    tone: "danger",
   },
-  replied: { plain: "They replied", official: "DISPOSED OF" },
-  appeal_eligible: {
-    plain: "You can escalate this now",
-    official: "ELIGIBLE FOR FIRST APPEAL",
-  },
-  appeal_filed: {
-    plain: "Appeal sent",
+  replied: { plain: "They replied", official: "DISPOSED OF", tone: "good" },
+  appeal_pending: {
+    plain: "Appeal in progress",
     official: "FIRST APPEAL — PENDING",
+    tone: "warn",
+  },
+  appeal_overdue: {
+    plain: "Appeal ignored too",
+    official: "FIRST APPEAL — NO DECISION",
+    tone: "danger",
   },
 };
 
-export interface HistoryEvent {
-  day: string;
-  plainLabel: string;
-  officialLabel?: string;
+export type EventKind =
+  | "filed"
+  | "routed"
+  | "cpio"
+  | "split"
+  | "deadline"
+  | "penalty"
+  | "reply"
+  | "appeal"
+  | "escalation";
+
+export interface CaseEvent {
+  day: number;
+  kind: EventKind;
+  plain: string;
+  official?: string;
 }
 
-export interface PenaltyState {
-  active: boolean;
-  ratePerDayInr: number;
-  capInr: number;
-  daysOverdue: number;
-  accruedInr: number;
-}
-
-export interface RtiRequestPart {
+/** One office's share of a request that was split across several CPIOs. */
+export interface CasePart {
   id: string;
   registrationNumber: string;
-  plainLabel: string;
-  status: RequestStatus;
+  office: string;
+  /** Day this office replied. Undefined means it never does. */
+  replyDay?: number;
   reply?: string;
 }
 
-export interface RtiRequest {
+export interface RtiCase {
   id: string;
   registrationNumber: string;
   plainTitle: string;
-  officialSummary: string;
-  authority: { ministry: string; department: string; nodalOfficer?: string };
-  filedDayLabel: string;
-  daysElapsed: number;
-  deadlineDays: number;
-  status: RequestStatus;
-  history: HistoryEvent[];
-  penalty?: PenaltyState;
-  parts?: RtiRequestPart[];
+  question: string;
+  authority: { ministry: string; office: string; cpio: string };
+  feeLabel: string;
+  /** Authored events that are part of this case's story. */
+  events: CaseEvent[];
+  /** Day the CPIO replied. Undefined means they never do. */
+  replyDay?: number;
+  reply?: string;
+  parts?: CasePart[];
+  /** Where the time machine starts, and how far it can run. */
+  startDay: number;
+  maxDay: number;
+  /** Short label explaining what this case demonstrates. */
+  demoNote: string;
 }
 
-export interface GroundForAppealOption {
+export interface GroundForAppeal {
   official: string;
   plain: string;
 }
 
-export const GROUNDS_FOR_APPEAL: GroundForAppealOption[] = [
+/** The five real options from the portal's Ground For Appeal dropdown. */
+export const GROUNDS_FOR_APPEAL: GroundForAppeal[] = [
+  {
+    official: "No Response Within the Time Limit",
+    plain: "They never replied in time",
+  },
   {
     official: "Refused access to Information Requested",
     plain: "They refused to give me the information",
   },
   {
-    official: "No Response Within the Time Limit",
-    plain: "They didn't respond in time",
+    official: "Provided Incomplete,Misleading or False Information",
+    plain: "What they sent was incomplete or misleading",
   },
   {
     official: "Unreasonable amount of Fee required to Pay",
-    plain: "They're charging me an unreasonable fee",
-  },
-  {
-    official: "Provided Incomplete,Misleading or False Information",
-    plain: "What they gave me was incomplete or misleading",
+    plain: "They are demanding an unreasonable fee",
   },
   { official: "Any Other ground", plain: "Something else" },
 ];

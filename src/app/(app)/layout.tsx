@@ -1,13 +1,17 @@
 import { AuthGuard } from "@/components/AuthGuard";
-import { Header } from "@/components/Header";
+import { GovHeader } from "@/components/GovHeader";
+import { GovFooter } from "@/components/GovFooter";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthGuard>
-      <Header />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
-        {children}
-      </main>
-    </AuthGuard>
+    <>
+      <GovHeader />
+      <AuthGuard>
+        <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+          {children}
+        </main>
+      </AuthGuard>
+      <GovFooter />
+    </>
   );
 }

@@ -1,50 +1,69 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { PenaltyState } from "@/lib/types";
+import { PenaltyView, formatInr } from "@/lib/derive";
+import { PENALTY_CAP_INR, PENALTY_PER_DAY_INR } from "@/lib/types";
 
-export function PenaltyMeter({ penalty }: { penalty: PenaltyState }) {
-  const [display, setDisplay] = useState(0);
-
-  useEffect(() => {
-    setDisplay(0);
-    const target = penalty.accruedInr;
-    const steps = 24;
-    const stepAmount = target / steps;
-    let current = 0;
-    let step = 0;
-    const interval = setInterval(() => {
-      step += 1;
-      current = Math.min(target, Math.round(stepAmount * step));
-      setDisplay(current);
-      if (step >= steps) clearInterval(interval);
-    }, 30);
-    return () => clearInterval(interval);
-  }, [penalty.accruedInr]);
+export function PenaltyMeter({
+  penalty,
+  officer,
+}: {
+  penalty: PenaltyView;
+  officer: string;
+}) {
+  const pct = Math.min(100, (penalty.accruedInr / PENALTY_CAP_INR) * 100);
 
   return (
-    <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-red-800">
-            Penalty accruing against the department
-          </p>
-          <p className="mt-1 text-3xl font-bold tabular-nums text-red-700">
-            ₹{display.toLocaleString("en-IN")}
-          </p>
-          <p className="mt-1 text-xs text-red-600">
-            ₹{penalty.ratePerDayInr}/day · {penalty.daysOverdue} day
-            {penalty.daysOverdue === 1 ? "" : "s"} overdue · capped at ₹
-            {penalty.capInr.toLocaleString("en-IN")}
+    <section className="overflow-hidden rounded-xl border border-govred-700/25 bg-white">
+      <div className="border-b border-govred-700/15 bg-govred-50 px-5 py-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-govred-700/80">
+              Penalty accruing against the officer
+            </p>
+            <p
+              key={penalty.accruedInr}
+              className="penalty-tick mt-1 text-4xl font-bold tabular-nums text-govred-700"
+            >
+              {formatInr(penalty.accruedInr)}
+            </p>
+          </div>
+          <p className="text-sm text-govred-700">
+            {penalty.daysLate} day{penalty.daysLate === 1 ? "" : "s"} late ·{" "}
+            {formatInr(PENALTY_PER_DAY_INR)}/day
+            {penalty.atCap ? " · at the legal cap" : ""}
           </p>
         </div>
+
+        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/70">
+          <div
+            className="h-full rounded-full bg-govred-600 transition-all duration-500"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="mt-1 text-[11px] text-govred-700/70">
+          {formatInr(penalty.accruedInr)} of the {formatInr(PENALTY_CAP_INR)}{" "}
+          statutory maximum
+        </p>
       </div>
-      <p className="mt-3 border-t border-red-200 pt-2 text-xs text-red-700">
-        Per the RTI Act, 2005, Section 20 — a Public Information Officer who
-        fails to respond within the time limit without reasonable cause is
-        liable to a penalty of up to ₹250 per day, capped at ₹25,000. This is
-        a real, existing right — most citizens are never shown it.
-      </p>
-    </div>
+
+      <div className="px-5 py-4">
+        <p className="text-sm leading-relaxed text-ink-2">
+          Under <strong>Section 20 of the RTI Act, 2005</strong>, a Public
+          Information Officer who fails to answer within the time limit without
+          reasonable cause is liable to a penalty of {formatInr(
+            PENALTY_PER_DAY_INR,
+          )}{" "}
+          per day, up to {formatInr(PENALTY_CAP_INR)} — recoverable from their
+          salary, and imposed by the Information Commission.
+        </p>
+        <p className="mt-2 text-sm text-muted">
+          Answerable here: <span className="font-medium text-ink">{officer}</span>
+        </p>
+        <p className="mt-3 rounded-md bg-canvas px-3 py-2 text-[13px] text-ink-2">
+          This right already exists. The current portal never shows it to you —
+          so almost nobody claims it.
+        </p>
+      </div>
+    </section>
   );
 }

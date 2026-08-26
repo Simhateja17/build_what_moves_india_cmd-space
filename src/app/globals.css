@@ -1,19 +1,139 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   RTI Saral — design system
+   A restrained, accessible government palette: deep navy for authority,
+   saffron for attention, India green for resolution. Neutrals do the
+   heavy lifting so the accents mean something when they appear.
+------------------------------------------------------------------- */
+
 :root {
-  --background: #f6f7fb;
-  --foreground: #0f172a;
+  --navy-900: #06254a;
+  --navy-800: #0b2f5e;
+  --navy-700: #113d75;
+  --navy-600: #1a4f8f;
+  --navy-50: #eef4fb;
+
+  --saffron-600: #b45309;
+  --saffron-500: #ea8a1e;
+  --saffron-400: #ff9933;
+  --saffron-50: #fff7ed;
+
+  --green-700: #0f6b0f;
+  --green-600: #138808;
+  --green-50: #f0fdf4;
+
+  --red-700: #b42318;
+  --red-600: #d92d20;
+  --red-50: #fef3f2;
+
+  --ink: #101828;
+  --ink-2: #344054;
+  --muted: #667085;
+  --line: #dfe3ea;
+  --line-2: #eaecf0;
+  --surface: #ffffff;
+  --canvas: #f4f6f9;
+
+  --background: var(--canvas);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-50: var(--navy-50);
+  --color-saffron-600: var(--saffron-600);
+  --color-saffron-500: var(--saffron-500);
+  --color-saffron-400: var(--saffron-400);
+  --color-saffron-50: var(--saffron-50);
+  --color-govgreen-700: var(--green-700);
+  --color-govgreen-600: var(--green-600);
+  --color-govgreen-50: var(--green-50);
+  --color-govred-700: var(--red-700);
+  --color-govred-600: var(--red-600);
+  --color-govred-50: var(--red-50);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Government sites are read by people in a hurry on bad screens.
+   Keep focus states unmistakable. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--saffron-400);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.tricolour-rule {
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--saffron-400) 0 33.33%,
+    #dfe3ea 33.33% 66.66%,
+    var(--green-600) 66.66% 100%
+  );
+}
+
+.gov-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.field-input {
+  margin-top: 0.375rem;
+  width: 100%;
+  border: 1px solid #c3cbd8;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+
+.field-input::placeholder {
+  color: #98a2b3;
+}
+
+.field-input:focus {
+  border-color: var(--navy-600);
+}
+
+@keyframes ticker {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.penalty-tick {
+  animation: ticker 0.5s ease-out;
 }

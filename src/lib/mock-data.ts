@@ -1,133 +1,203 @@
-import { RtiRequest } from "./types";
+import { RtiCase } from "./types";
 
 /**
- * Fixed, pre-seeded demo data — deliberately not derived from real timestamps,
- * so the three edge-case states are reliable to demo regardless of when the
- * judges open the link.
+ * Three seeded cases, each authored as a *story over time* rather than a
+ * frozen state — the time machine on the detail page plays them forward.
+ * Registration numbers follow the portal's real
+ * AAAAA/B/C/DD/EEEEE format (authority / R-or-A / receipt type / year / serial).
  */
-export const SEED_REQUESTS: RtiRequest[] = [
+export const SEED_CASES: RtiCase[] = [
   {
-    id: "req-fresh",
-    registrationNumber: "DLRD1/R/E/26/00842",
-    plainTitle: "Status of my father's pension file",
-    officialSummary:
-      "Request for information regarding the processing status of pension case file.",
+    id: "pension",
+    registrationNumber: "DOPPW/R/E/26/00842",
+    plainTitle: "Why my father's pension has been stuck for 7 months",
+    question:
+      "Please provide the current status of pension case file no. PPO-2019/44871, the reason for the delay in disbursal since January, and the name and designation of the officer currently holding the file.",
     authority: {
-      ministry: "Ministry of Rural Development",
-      department: "Department of Land Resources",
+      ministry: "Ministry of Personnel, Public Grievances & Pensions",
+      office: "Department of Pension & Pensioners' Welfare",
+      cpio: "Shri A. Ramesh, CPIO",
     },
-    filedDayLabel: "Filed 5 days ago",
-    daysElapsed: 5,
-    deadlineDays: 30,
-    status: "awaiting_reply",
-    history: [
-      { day: "Day 0", plainLabel: "You filed this request", officialLabel: "REGISTERED" },
+    feeLabel: "₹10 paid by UPI",
+    startDay: 6,
+    maxDay: 40,
+    demoNote: "A normal request, still inside the legal 30-day window.",
+    replyDay: 22,
+    reply:
+      "The pension case file PPO-2019/44871 was returned to the Pay & Accounts Office on 14/02/2026 for revision of the qualifying-service certificate. Revised sanction is expected within 30 days. The file is currently with Shri M. Iyer, Assistant Accounts Officer.",
+    events: [
       {
-        day: "Day 0",
-        plainLabel: "Sent to the department's Nodal Officer",
-        officialLabel: "FORWARDED TO NODAL OFFICER",
+        day: 0,
+        kind: "filed",
+        plain: "You filed this request and paid ₹10",
+        official: "REGISTERED",
       },
       {
-        day: "Day 1",
-        plainLabel: "Forwarded to the officer who handles this (the CPIO)",
-        officialLabel: "TRANSMITTED TO CPIO",
+        day: 0,
+        kind: "routed",
+        plain: "It reached the department's Nodal Officer",
+        official: "FORWARDED TO NODAL OFFICER",
       },
       {
-        day: "Day 5",
-        plainLabel: "Still waiting — 25 days left before they must reply",
+        day: 2,
+        kind: "cpio",
+        plain: "The Nodal Officer passed it to the CPIO who must answer you",
+        official: "TRANSMITTED TO CPIO",
       },
     ],
   },
   {
-    id: "req-overdue",
-    registrationNumber: "MORT2/R/E/26/01193",
-    plainTitle: "Records of road repair funds spent in my ward",
-    officialSummary:
-      "Request for expenditure records relating to road repair works sanctioned in the applicant's municipal ward.",
+    id: "roads",
+    registrationNumber: "MORTH/R/E/26/01193",
+    plainTitle: "How ₹4.2 crore of road repair money was spent in my ward",
+    question:
+      "Please provide the tender documents, contractor names, sanctioned amounts and completion certificates for all road repair works carried out in Ward 14 between April 2025 and March 2026.",
     authority: {
-      ministry: "Ministry of Road Transport and Highways",
-      department: "Public Works Division",
-      nodalOfficer: "R. Subramaniam",
+      ministry: "Ministry of Road Transport & Highways",
+      office: "Public Works Division, Ward 14",
+      cpio: "Shri R. Subramaniam, CPIO",
     },
-    filedDayLabel: "Filed 34 days ago",
-    daysElapsed: 34,
-    deadlineDays: 30,
-    status: "no_response_overdue",
-    history: [
-      { day: "Day 0", plainLabel: "You filed this request", officialLabel: "REGISTERED" },
+    feeLabel: "₹10 paid by UPI",
+    startDay: 34,
+    maxDay: 120,
+    demoNote:
+      "They went silent. The deadline has passed, so a penalty is running against the officer.",
+    // No replyDay — this office never answers. That is the point.
+    events: [
       {
-        day: "Day 0",
-        plainLabel: "Sent to the department's Nodal Officer",
-        officialLabel: "FORWARDED TO NODAL OFFICER",
+        day: 0,
+        kind: "filed",
+        plain: "You filed this request and paid ₹10",
+        official: "REGISTERED",
       },
       {
-        day: "Day 2",
-        plainLabel: "Forwarded to the officer who handles this (the CPIO)",
-        officialLabel: "TRANSMITTED TO CPIO",
+        day: 0,
+        kind: "routed",
+        plain: "It reached the department's Nodal Officer",
+        official: "FORWARDED TO NODAL OFFICER",
       },
       {
-        day: "Day 30",
-        plainLabel: "Legal deadline passed with no reply",
-        officialLabel: "NO REPLY RECEIVED — DEEMED REFUSAL",
-      },
-      {
-        day: "Day 34",
-        plainLabel: "Still no reply — you're now entitled to escalate",
-        officialLabel: "ELIGIBLE FOR FIRST APPEAL",
+        day: 3,
+        kind: "cpio",
+        plain: "The Nodal Officer passed it to the CPIO who must answer you",
+        official: "TRANSMITTED TO CPIO",
       },
     ],
-    penalty: {
-      active: true,
-      ratePerDayInr: 250,
-      capInr: 25000,
-      daysOverdue: 4,
-      accruedInr: 1000,
-    },
   },
   {
-    id: "req-split",
-    registrationNumber: "MOED3/R/E/26/00267",
-    plainTitle: "Scholarship disbursal records for my district",
-    officialSummary:
-      "Request for disbursal records of scheduled-caste scholarship funds for the applicant's district, forwarded across multiple public authorities.",
+    id: "scholarship",
+    registrationNumber: "MOEDU/R/E/26/00267",
+    plainTitle: "Scholarship money that never reached students in my district",
+    question:
+      "Please provide district-wise disbursal records of post-matric scholarship funds for SC/ST students for FY 2025-26, including the number of applications rejected and the reasons for rejection.",
     authority: {
       ministry: "Ministry of Education",
-      department: "Department of School Education & Literacy",
+      office: "Department of School Education & Literacy",
+      cpio: "Smt. K. Nair, CPIO",
     },
-    filedDayLabel: "Filed 18 days ago",
-    daysElapsed: 18,
-    deadlineDays: 30,
-    status: "awaiting_reply",
-    history: [
-      { day: "Day 0", plainLabel: "You filed this request", officialLabel: "REGISTERED" },
+    feeLabel: "Fee waived — BPL certificate attached",
+    startDay: 20,
+    maxDay: 90,
+    demoNote:
+      "One request, silently split across three offices — each with its own number and its own clock.",
+    events: [
       {
-        day: "Day 2",
-        plainLabel:
-          "Your request covered 3 different offices, so it was split into 3 parts — each is now tracked separately",
-        officialLabel: "REQUEST FORWARDED TO MULTIPLE CPIOs",
+        day: 0,
+        kind: "filed",
+        plain: "You filed this request — no fee, as you hold a BPL card",
+        official: "REGISTERED",
+      },
+      {
+        day: 0,
+        kind: "routed",
+        plain: "It reached the department's Nodal Officer",
+        official: "FORWARDED TO NODAL OFFICER",
+      },
+      {
+        day: 2,
+        kind: "split",
+        plain:
+          "Your question spanned three offices, so it was split into three separate requests — each got its own registration number",
+        official: "FORWARDED TO MULTIPLE CPIOs",
       },
     ],
     parts: [
       {
-        id: "req-split-1",
-        registrationNumber: "MOED3/R/E/26/00267/1",
-        plainLabel: "Part 1 — State Directorate of Education",
-        status: "replied",
+        id: "scholarship-1",
+        registrationNumber: "MOEDU/R/E/26/00267/1",
+        office: "State Directorate of Education",
+        replyDay: 16,
         reply:
-          "District-wise disbursal figures for FY 2025-26 attached, covering January to June.",
+          "District-wise disbursal figures for FY 2025-26 are enclosed for the period April to September 2025. Figures for the remaining months are awaited from the treasury.",
       },
       {
-        id: "req-split-2",
-        registrationNumber: "MOED3/R/E/26/00267/2",
-        plainLabel: "Part 2 — District Education Office",
-        status: "awaiting_reply",
+        id: "scholarship-2",
+        registrationNumber: "MOEDU/R/E/26/00267/2",
+        office: "District Education Office",
+        replyDay: 44,
+        reply:
+          "A total of 1,284 applications were received, of which 212 were rejected. The reason recorded in 189 of those cases is 'incomplete bank details'.",
       },
       {
-        id: "req-split-3",
-        registrationNumber: "MOED3/R/E/26/00267/3",
-        plainLabel: "Part 3 — University Grants Cell",
-        status: "no_response_overdue",
+        id: "scholarship-3",
+        registrationNumber: "MOEDU/R/E/26/00267/3",
+        office: "University Grants Cell",
+        // Never replies — the part that quietly rots while the others close.
       },
     ],
   },
 ];
+
+export const MINISTRIES = [
+  "Ministry of Personnel, Public Grievances & Pensions",
+  "Ministry of Road Transport & Highways",
+  "Ministry of Education",
+  "Ministry of Health & Family Welfare",
+  "Ministry of Railways",
+  "Ministry of Rural Development",
+  "Department of Posts",
+  "Ministry of Housing & Urban Affairs",
+];
+
+export const OFFICES: Record<string, string[]> = {
+  "Ministry of Personnel, Public Grievances & Pensions": [
+    "Department of Pension & Pensioners' Welfare",
+    "Department of Personnel & Training",
+  ],
+  "Ministry of Road Transport & Highways": [
+    "National Highways Authority of India",
+    "Public Works Division",
+    "Regional Transport Office",
+  ],
+  "Ministry of Education": [
+    "Department of School Education & Literacy",
+    "Department of Higher Education",
+    "University Grants Commission",
+  ],
+  "Ministry of Health & Family Welfare": [
+    "National Health Mission",
+    "Central Government Health Scheme",
+  ],
+  "Ministry of Railways": ["Zonal Railway Office", "Railway Recruitment Board"],
+  "Ministry of Rural Development": [
+    "Department of Land Resources",
+    "MGNREGA Cell",
+  ],
+  "Department of Posts": ["Circle Office", "Head Post Office"],
+  "Ministry of Housing & Urban Affairs": [
+    "Municipal Corporation",
+    "Urban Development Authority",
+  ],
+};
+
+/** Short authority code used in the AAAAA slot of a registration number. */
+export const MINISTRY_CODES: Record<string, string> = {
+  "Ministry of Personnel, Public Grievances & Pensions": "DOPPW",
+  "Ministry of Road Transport & Highways": "MORTH",
+  "Ministry of Education": "MOEDU",
+  "Ministry of Health & Family Welfare": "MOHFW",
+  "Ministry of Railways": "MORLY",
+  "Ministry of Rural Development": "MORDV",
+  "Department of Posts": "DOPST",
+  "Ministry of Housing & Urban Affairs": "MOHUA",
+};

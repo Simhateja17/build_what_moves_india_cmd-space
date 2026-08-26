@@ -3,291 +3,502 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
-import { RtiRequest } from "@/lib/types";
+import { MINISTRIES, MINISTRY_CODES, OFFICES } from "@/lib/mock-data";
+import { RtiCase } from "@/lib/types";
 import { GroundRealityNote } from "@/components/GroundRealityNote";
 
-const MINISTRIES = [
-  "Ministry of Rural Development",
-  "Ministry of Road Transport and Highways",
-  "Ministry of Education",
-  "Ministry of Health and Family Welfare",
-  "Ministry of Railways",
-  "Department of Posts",
+const STEPS = [
+  { title: "Who has the answer", hint: "The office that holds the information" },
+  { title: "What you want to know", hint: "Your question, in your own words" },
+  { title: "About you", hint: "Only what the law actually requires" },
+  { title: "Check and send", hint: "Review, pay ₹10, done" },
 ];
 
-const STEPS = ["Who are you asking?", "Your details", "What do you want to know?", "Review & submit"];
+const CHAR_LIMIT = 3000;
 
-function generateRegistrationNumber(ministry: string) {
-  const code = ministry
-    .split(" ")
-    .filter((w) => w.length > 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 5)
-    .padEnd(5, "X");
-  const serial = String(Math.floor(1000 + (Date.now() % 8999))).padStart(5, "0");
-  return `${code}/R/E/26/${serial}`;
-}
+/** Prompts that turn a vague grievance into an answerable RTI question. */
+const QUESTION_STARTERS = [
+  "Please provide the current status of …",
+  "Please provide copies of the file notings relating to …",
+  "Please provide the name and designation of the officer responsible for …",
+  "Please state the reasons for the delay in …",
+];
 
 export default function FileRequestPage() {
-  const { addRequest } = useStore();
+  const { addCase } = useStore();
   const router = useRouter();
+
   const [step, setStep] = useState(0);
+  const [ministry, setMinistry] = useState("");
+  const [office, setOffice] = useState("");
+  const [question, setQuestion] = useState("");
+  const [name, setName] = useState("Ananya Sharma");
+  const [email, setEmail] = useState("ananya.sharma@example.in");
+  const [mobile, setMobile] = useState("");
+  const [isBpl, setIsBpl] = useState(false);
 
-  const [ministry, setMinistry] = useState(MINISTRIES[0]);
-  const [authorityName, setAuthorityName] = useState("");
-  const [isBpl, setIsBpl] = useState<"no" | "yes">("no");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [requestText, setRequestText] = useState("");
+  const offices = ministry ? (OFFICES[ministry] ?? []) : [];
 
-  const charCount = requestText.length;
-  const charLimit = 3000;
+  const errors = useMemo(() => {
+    const e: Record<string, string> = {};
+    if (step === 0) {
+      if (!ministry) e.ministry = "Choose the ministry or department.";
+      if (!office) e.office = "Choose the office that holds this information.";
+    }
+    if (step === 1) {
+      if (question.trim().length < 15)
+        e.question = "Write at least a sentence so the officer knows what to look for.";
+      if (question.length > CHAR_LIMIT)
+        e.question = `Trim to ${CHAR_LIMIT} characters, or attach the rest as a PDF.`;
+    }
+    if (step === 2) {
+      if (!name.trim()) e.name = "The law requires your name on the request.";
+      if (!email.trim()) e.email = "We need an email to send your registration number.";
+    }
+    return e;
+  }, [step, ministry, office, question, name, email]);
 
-  const canContinue = useMemo(() => {
-    if (step === 0) return ministry && authorityName.trim().length > 0;
-    if (step === 1) return name.trim().length > 0 && email.trim().length > 0;
-    if (step === 2) return requestText.trim().length > 0 && charCount <= charLimit;
-    return true;
-  }, [step, ministry, authorityName, name, email, requestText, charCount]);
+  const canContinue = Object.keys(errors).length === 0;
 
-  function handleSubmit() {
-    const id = `req-${Date.now()}`;
-    const registrationNumber = generateRegistrationNumber(ministry);
-    const newRequest: RtiRequest = {
+  function submit() {
+    const code = MINISTRY_CODES[ministry] ?? "GOVIN";
+    const serial = String(Math.floor(Math.random() * 90000) + 10000);
+    const id = `new-${Date.now()}`;
+    const newCase: RtiCase = {
       id,
-      registrationNumber,
-      plainTitle: requestText.slice(0, 60) || "Your new RTI request",
-      officialSummary: requestText,
-      authority: { ministry, department: authorityName },
-      filedDayLabel: "Filed just now",
-      daysElapsed: 0,
-      deadlineDays: 30,
-      status: "filed",
-      history: [
-        { day: "Day 0", plainLabel: "You filed this request", officialLabel: "REGISTERED" },
+      registrationNumber: `${code}/R/E/26/${serial}`,
+      plainTitle:
+        question.trim().split(/[.\n]/)[0].slice(0, 80) || "Your new RTI request",
+      question: question.trim(),
+      authority: {
+        ministry,
+        office,
+        cpio: "CPIO (to be assigned by the Nodal Officer)",
+      },
+      feeLabel: isBpl ? "Fee waived — BPL certificate attached" : "₹10 paid by UPI",
+      startDay: 0,
+      maxDay: 120,
+      demoNote:
+        "Your new request. Drag the time machine forward to see what the law does if they stay silent.",
+      events: [
         {
-          day: "Day 0",
-          plainLabel: "Sent to the department's Nodal Officer",
-          officialLabel: "FORWARDED TO NODAL OFFICER",
+          day: 0,
+          kind: "filed",
+          plain: isBpl
+            ? "You filed this request — no fee, as you hold a BPL card"
+            : "You filed this request and paid ₹10",
+          official: "REGISTERED",
+        },
+        {
+          day: 0,
+          kind: "routed",
+          plain: "It reached the department's Nodal Officer",
+          official: "FORWARDED TO NODAL OFFICER",
+        },
+        {
+          day: 2,
+          kind: "cpio",
+          plain: "The Nodal Officer passed it to the CPIO who must answer you",
+          official: "TRANSMITTED TO CPIO",
         },
       ],
     };
-    addRequest(newRequest);
+    addCase(newCase);
     router.push(`/requests/${id}`);
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-slate-900">File an RTI request</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        One question at a time — no giant form, no legal wall to read first.
-      </p>
+    <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
+      {/* Vertical stepper */}
+      <aside>
+        <h1 className="text-2xl font-bold tracking-tight text-navy-900">
+          File an RTI request
+        </h1>
+        <p className="mt-1.5 text-sm text-ink-2">
+          Four short steps. Nothing to read before you start.
+        </p>
+        <ol className="mt-6 space-y-1">
+          {STEPS.map((s, i) => {
+            const done = i < step;
+            const active = i === step;
+            return (
+              <li key={s.title}>
+                <button
+                  type="button"
+                  disabled={i > step}
+                  onClick={() => setStep(i)}
+                  className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition ${
+                    active
+                      ? "bg-navy-50"
+                      : i > step
+                        ? "opacity-45"
+                        : "hover:bg-canvas"
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      done
+                        ? "bg-govgreen-600 text-white"
+                        : active
+                          ? "bg-navy-800 text-white"
+                          : "bg-line text-ink-2"
+                    }`}
+                  >
+                    {done ? "✓" : i + 1}
+                  </span>
+                  <span>
+                    <span
+                      className={`block text-sm font-semibold ${active ? "text-navy-800" : "text-ink"}`}
+                    >
+                      {s.title}
+                    </span>
+                    <span className="block text-xs text-muted">{s.hint}</span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </aside>
 
-      <div className="mt-6 flex items-center gap-2">
-        {STEPS.map((label, i) => (
-          <div key={label} className="flex flex-1 flex-col items-center gap-1">
-            <div
-              className={`h-1.5 w-full rounded-full ${
-                i <= step ? "bg-indigo-500" : "bg-slate-200"
-              }`}
-            />
-            <span
-              className={`text-[11px] ${
-                i === step ? "font-medium text-indigo-700" : "text-slate-400"
-              }`}
-            >
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
-        {step === 0 && (
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Which ministry or department are you asking?
-              </label>
-              <select
-                value={ministry}
-                onChange={(e) => setMinistry(e.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              >
-                {MINISTRIES.map((m) => (
-                  <option key={m}>{m}</option>
-                ))}
-              </select>
-              <GroundRealityNote>
-                This goes to that department&apos;s Nodal Officer, who has a
-                few days to forward it to the right office if you picked the
-                wrong one — you won&apos;t be silently rejected for this.
-              </GroundRealityNote>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Which specific office within it?
-              </label>
-              <input
-                value={authorityName}
-                onChange={(e) => setAuthorityName(e.target.value)}
-                placeholder="e.g. District Education Office"
-                className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {step === 1 && (
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Your name
-              </label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-              <GroundRealityNote>
-                This is the only place your registration number and every
-                status update will be sent — nothing else here is mandatory.
-              </GroundRealityNote>
-            </div>
-            <div>
-              <span className="block text-sm font-medium text-slate-700">
-                Are you below the poverty line?
-              </span>
-              <div className="mt-1.5 flex gap-4 text-sm">
-                <label className="flex items-center gap-1.5">
-                  <input
-                    type="radio"
-                    checked={isBpl === "no"}
-                    onChange={() => setIsBpl("no")}
-                  />
-                  No — ₹10 fee applies
-                </label>
-                <label className="flex items-center gap-1.5">
-                  <input
-                    type="radio"
-                    checked={isBpl === "yes"}
-                    onChange={() => setIsBpl("yes")}
-                  />
-                  Yes — fee waived
-                </label>
+      {/* Step body */}
+      <div>
+        <div className="gov-card p-6 sm:p-7">
+          {step === 0 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-ink">
+                  Who has the answer?
+                </h2>
+                <p className="mt-1 text-sm text-ink-2">
+                  Not sure? Pick your best guess — it cannot be held against
+                  you.
+                </p>
               </div>
-              <GroundRealityNote>
-                {isBpl === "yes"
-                  ? "No payment step at all — you'll just need to attach your BPL card as proof."
-                  : "You'll pay ₹10 by UPI or card on the next step, set by the RTI Rules, 2012 — not a portal fee."}
-              </GroundRealityNote>
-            </div>
-          </div>
-        )}
 
-        {step === 2 && (
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              What do you want to know?
-            </label>
-            <textarea
-              value={requestText}
-              onChange={(e) => setRequestText(e.target.value)}
-              rows={6}
-              placeholder="Write your question in your own words, as plainly as you like."
-              className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            />
-            <div className="mt-1 flex items-center justify-between text-xs">
-              <span className={charCount > charLimit ? "text-red-600" : "text-slate-400"}>
-                {charCount}/{charLimit} characters
-              </span>
-              {charCount > charLimit && (
-                <span className="text-red-600">
-                  Over the limit — the rest will go in an attachment instead.
-                </span>
-              )}
-            </div>
-            <GroundRealityNote>
-              This is sent to the office&apos;s CPIO, who has 30 days to
-              reply — we&apos;ll track that clock for you automatically from
-              here.
-            </GroundRealityNote>
-          </div>
-        )}
+              <div>
+                <label htmlFor="ministry" className="field-label">
+                  Ministry or department
+                </label>
+                <select
+                  id="ministry"
+                  value={ministry}
+                  onChange={(e) => {
+                    setMinistry(e.target.value);
+                    setOffice("");
+                  }}
+                  className="field-input"
+                >
+                  <option value="">Select a ministry or department</option>
+                  {MINISTRIES.map((m) => (
+                    <option key={m}>{m}</option>
+                  ))}
+                </select>
+                {errors.ministry ? (
+                  <p className="mt-1.5 text-sm text-govred-700">{errors.ministry}</p>
+                ) : null}
+                <GroundRealityNote>
+                  This decides which Nodal Officer receives your request. If you
+                  pick the wrong one, Section 6(3) of the RTI Act requires them
+                  to forward it to the correct authority within 5 days — they
+                  cannot simply reject it.
+                </GroundRealityNote>
+              </div>
 
-        {step === 3 && (
-          <div className="space-y-4 text-sm">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">Asking</p>
-              <p className="font-medium text-slate-900">
-                {ministry} — {authorityName || "—"}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">From</p>
-              <p className="font-medium text-slate-900">
-                {name || "—"} ({email || "—"})
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">
-                Your question
-              </p>
-              <p className="whitespace-pre-wrap text-slate-700">
-                {requestText || "—"}
-              </p>
-            </div>
-            <GroundRealityNote>
-              Once you submit, a 30-day legal clock starts immediately — if
-              they go quiet, we&apos;ll tell you the moment you&apos;re
-              entitled to escalate, and show any penalty accruing against
-              them.
-            </GroundRealityNote>
-          </div>
-        )}
+              <div>
+                <label htmlFor="office" className="field-label">
+                  Which office within it
+                </label>
+                <select
+                  id="office"
+                  value={office}
+                  onChange={(e) => setOffice(e.target.value)}
+                  disabled={!ministry}
+                  className="field-input disabled:cursor-not-allowed disabled:bg-canvas"
+                >
+                  <option value="">
+                    {ministry ? "Select an office" : "Choose a ministry first"}
+                  </option>
+                  {offices.map((o) => (
+                    <option key={o}>{o}</option>
+                  ))}
+                </select>
+                {errors.office ? (
+                  <p className="mt-1.5 text-sm text-govred-700">{errors.office}</p>
+                ) : null}
+              </div>
 
-        <div className="mt-8 flex items-center justify-between">
-          <button
-            type="button"
-            disabled={step === 0}
-            onClick={() => setStep((s) => Math.max(0, s - 1))}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-500 disabled:opacity-0"
-          >
-            Back
-          </button>
-          {step < STEPS.length - 1 ? (
-            <button
-              type="button"
-              disabled={!canContinue}
-              onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-              className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300"
-            >
-              Continue
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-500"
-            >
-              Submit request
-            </button>
+              <div className="rounded-lg border border-saffron-400/40 bg-saffron-50 px-4 py-3">
+                <p className="text-sm leading-relaxed text-saffron-600">
+                  <strong>One thing worth knowing:</strong> this portal only
+                  covers central government bodies. A request meant for a state
+                  government is returned without a refund — so if your question
+                  is about a state office, file it on your state&apos;s own RTI
+                  portal instead.
+                </p>
+              </div>
+            </div>
           )}
+
+          {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-ink">
+                  What do you want to know?
+                </h2>
+                <p className="mt-1 text-sm text-ink-2">
+                  Write it plainly. You are asking for facts and documents the
+                  government already holds — you never have to justify why you
+                  want them.
+                </p>
+              </div>
+
+              <div>
+                <div className="mb-2 flex flex-wrap gap-2">
+                  {QUESTION_STARTERS.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() =>
+                        setQuestion((q) => (q ? q : s))
+                      }
+                      className="rounded-full border border-line bg-white px-3 py-1.5 text-xs text-ink-2 transition hover:border-navy-600/40 hover:text-navy-800"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+                <label htmlFor="question" className="field-label sr-only">
+                  Your question
+                </label>
+                <textarea
+                  id="question"
+                  rows={8}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="For example: Please provide the current status of pension case file PPO-2019/44871, the reason for the delay since January, and the name of the officer holding the file."
+                  className="field-input"
+                />
+                <div className="mt-1.5 flex items-center justify-between text-xs">
+                  <span
+                    className={
+                      question.length > CHAR_LIMIT
+                        ? "font-medium text-govred-700"
+                        : "text-muted"
+                    }
+                  >
+                    {question.length.toLocaleString("en-IN")} / {CHAR_LIMIT.toLocaleString("en-IN")} characters
+                  </span>
+                  {question.length > CHAR_LIMIT ? (
+                    <span className="text-govred-700">
+                      Over the limit — attach the rest as a PDF
+                    </span>
+                  ) : null}
+                </div>
+                {errors.question ? (
+                  <p className="mt-1.5 text-sm text-govred-700">{errors.question}</p>
+                ) : null}
+                <GroundRealityNote>
+                  This text is what the CPIO actually reads. From the day it
+                  reaches them, they have 30 days to answer — and if they do
+                  not, the law already treats that silence as a refusal you can
+                  appeal.
+                </GroundRealityNote>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-ink">About you</h2>
+                <p className="mt-1 text-sm text-ink-2">
+                  The current form asks for your gender, whether you live in a
+                  rural or urban area, and whether you are literate. None of
+                  that changes your rights, so we do not ask.
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="name" className="field-label">
+                  Your name
+                </label>
+                <input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="field-input"
+                />
+                {errors.name ? (
+                  <p className="mt-1.5 text-sm text-govred-700">{errors.name}</p>
+                ) : null}
+              </div>
+
+              <div>
+                <label htmlFor="email" className="field-label">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="field-input"
+                />
+                {errors.email ? (
+                  <p className="mt-1.5 text-sm text-govred-700">{errors.email}</p>
+                ) : null}
+                <GroundRealityNote>
+                  Your registration number arrives here, and it is the only way
+                  to track or appeal this request later. We keep it on your case
+                  so you never have to remember it.
+                </GroundRealityNote>
+              </div>
+
+              <div>
+                <label htmlFor="mobile" className="field-label">
+                  Mobile number{" "}
+                  <span className="font-normal text-muted">(optional)</span>
+                </label>
+                <input
+                  id="mobile"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                  placeholder="For SMS updates"
+                  className="field-input"
+                />
+              </div>
+
+              <label className="flex cursor-pointer gap-3 rounded-lg border border-line p-4 transition hover:border-navy-600/40">
+                <input
+                  type="checkbox"
+                  checked={isBpl}
+                  onChange={(e) => setIsBpl(e.target.checked)}
+                  className="mt-1"
+                />
+                <span>
+                  <span className="block font-medium text-ink">
+                    I hold a Below Poverty Line card
+                  </span>
+                  <span className="mt-0.5 block text-sm text-ink-2">
+                    Then you pay nothing at all. Attach your BPL certificate and
+                    the ₹10 fee is waived — this is your right under the RTI
+                    Rules, 2012, not a concession.
+                  </span>
+                </span>
+              </label>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-ink">Check and send</h2>
+                <p className="mt-1 text-sm text-ink-2">
+                  Last look before this becomes a legal request.
+                </p>
+              </div>
+
+              <dl className="divide-y divide-line-2 rounded-lg border border-line">
+                <Row label="Going to" onEdit={() => setStep(0)}>
+                  {office}
+                  <span className="block text-sm text-muted">{ministry}</span>
+                </Row>
+                <Row label="Your question" onEdit={() => setStep(1)}>
+                  <span className="block whitespace-pre-wrap text-[15px] leading-relaxed">
+                    {question}
+                  </span>
+                </Row>
+                <Row label="From" onEdit={() => setStep(2)}>
+                  {name}
+                  <span className="block text-sm text-muted">
+                    {email}
+                    {mobile ? ` · ${mobile}` : ""}
+                  </span>
+                </Row>
+                <Row label="Fee" onEdit={() => setStep(2)}>
+                  {isBpl ? (
+                    <span className="text-govgreen-700">
+                      ₹0 — waived, BPL certificate attached
+                    </span>
+                  ) : (
+                    "₹10 by UPI"
+                  )}
+                </Row>
+              </dl>
+
+              <div className="rounded-lg border border-navy-600/20 bg-navy-50 px-4 py-3.5">
+                <p className="text-sm leading-relaxed text-navy-800">
+                  <strong>The moment you send this,</strong> a 30-day legal
+                  clock starts. We will track it for you — and if they go
+                  silent, we will tell you the day you become entitled to
+                  appeal, and show you the penalty running against the officer.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="mt-8 flex items-center justify-between border-t border-line-2 pt-6">
+            <button
+              type="button"
+              onClick={() => setStep((s) => Math.max(0, s - 1))}
+              className={`rounded-lg px-4 py-2.5 text-sm font-semibold text-ink-2 hover:bg-canvas ${
+                step === 0 ? "invisible" : ""
+              }`}
+            >
+              ← Back
+            </button>
+
+            {step < STEPS.length - 1 ? (
+              <button
+                type="button"
+                disabled={!canContinue}
+                onClick={() => setStep((s) => s + 1)}
+                className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700 disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
+              >
+                Continue
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={submit}
+                className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700"
+              >
+                {isBpl ? "Send my request" : "Pay ₹10 and send"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Row({
+  label,
+  children,
+  onEdit,
+}: {
+  label: string;
+  children: React.ReactNode;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 px-4 py-3.5">
+      <div className="min-w-0">
+        <dt className="text-[11px] font-bold uppercase tracking-wider text-muted">
+          {label}
+        </dt>
+        <dd className="mt-1 font-medium text-ink">{children}</dd>
+      </div>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="shrink-0 text-sm font-medium text-navy-700 hover:underline"
+      >
+        Edit
+      </button>
     </div>
   );
 }

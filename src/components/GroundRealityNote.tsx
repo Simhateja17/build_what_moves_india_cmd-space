@@ -1,10 +1,21 @@
-export function GroundRealityNote({ children }: { children: React.ReactNode }) {
+export function GroundRealityNote({
+  children,
+  tone = "info",
+}: {
+  children: React.ReactNode;
+  tone?: "info" | "warn";
+}) {
+  const styles =
+    tone === "warn"
+      ? "border-saffron-400/40 bg-saffron-50 text-saffron-600"
+      : "border-navy-600/15 bg-navy-50 text-navy-800";
+
   return (
-    <p className="mt-1.5 flex items-start gap-1.5 text-sm text-slate-500">
-      <span aria-hidden className="mt-0.5 text-indigo-400">
-        ↳
-      </span>
-      <span>{children}</span>
-    </p>
+    <div className={`mt-2.5 rounded-lg border px-3 py-2.5 ${styles}`}>
+      <p className="text-[10px] font-bold uppercase tracking-wider opacity-70">
+        What actually happens
+      </p>
+      <p className="mt-1 text-[13px] leading-relaxed">{children}</p>
+    </div>
   );
 }
