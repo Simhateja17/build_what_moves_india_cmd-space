@@ -2,121 +2,160 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
-import { deriveCase, formatInr } from "@/lib/derive";
-import { StatusPill } from "@/components/StatusPill";
+import { useDashboard } from "@/lib/use-dashboard";
+import { OverviewStats } from "@/components/dashboard/OverviewStats";
+import { ActionRequired } from "@/components/dashboard/ActionRequired";
+import { RtiCard } from "@/components/dashboard/RtiCard";
+import { ResponsesList } from "@/components/dashboard/ResponsesList";
 
-export default function DashboardPage() {
-  const { cases, dayOf, appealOf, citizenName } = useStore();
+export default function HomePage() {
+  const { citizenName } = useStore();
+  const { views, actions, overview, notifications } = useDashboard();
 
-  const derived = cases.map((c) => ({
-    c,
-    d: deriveCase(c, dayOf(c.id), appealOf(c.id)),
-  }));
-
-  const needAction = derived.filter(
-    ({ d }) => d.canFileFirstAppeal || d.canFileSecondAppeal,
-  ).length;
-  const totalPenalty = derived.reduce((sum, { d }) => sum + d.penalty.accruedInr, 0);
+  // Surface the ones actually moving: appeals first, then unread answers,
+  // then whatever is closest to running out of time.
+  const attention = [...views]
+    .sort((a, b) => {
+      const rank = (v: typeof a) =>
+        v.d.canFileFirstAppeal || v.d.canFileSecondAppeal
+          ? 0
+          : v.d.hasReply && !v.responseRead
+            ? 1
+            : v.d.hasReply
+              ? 3
+              : 2;
+      return rank(a) - rank(b) || a.d.daysLeft - b.d.daysLeft;
+    })
+    .slice(0, 3);
 
   return (
-    <div>
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="grid items-start gap-5 sm:gap-6 lg:grid-cols-12">
+      <section className="dashboard-hero overflow-hidden rounded-[28px] px-5 py-7 text-white shadow-[var(--shadow-panel-lg)] sm:px-8 sm:py-9 lg:col-span-8">
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          Namaste, {citizenName.split(" ")[0]}
+        </h1>
+        <p className="mt-1.5 text-[15px] text-white/75">
+          {overview.actions > 0 ? (
+            <>
+              <span className="font-semibold text-saffron-400">
+                {overview.actions} thing{overview.actions === 1 ? "" : "s"} need
+                {overview.actions === 1 ? "s" : ""} you
+              </span>{" "}
+              · {overview.active} in progress
+            </>
+          ) : (
+            <>Nothing needs you · {overview.active} in progress</>
+          )}
+        </p>
+
+        <Link
+          href="/start-rti"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-[15px] font-bold text-navy-800 transition hover:bg-navy-50 sm:w-auto sm:px-7"
+        >
+          <span aria-hidden className="text-lg leading-none">
+            +
+          </span>
+          File a new RTI
+        </Link>
+      </section>
+
+      {/* The way in for someone who has a problem but no idea whose
+            problem it is — which is most first-time filers. The form
+            itself opens with a ministry dropdown, and that is exactly
+            the question they cannot answer. */}
+      <div className="h-full rounded-[28px] border border-navy-600/20 bg-navy-50 px-5 py-5 sm:flex sm:items-center sm:justify-between sm:gap-6 lg:col-span-4 lg:block lg:p-7">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-navy-900">
-            Namaste, {citizenName.split(" ")[0]}
-          </h1>
-          <p className="mt-1 text-ink-2">
-            {cases.length} request{cases.length === 1 ? "" : "s"} filed ·{" "}
-            {needAction > 0 ? (
-              <span className="font-semibold text-govred-700">
-                {needAction} need{needAction === 1 ? "s" : ""} your attention
-              </span>
-            ) : (
-              <span>nothing needs your attention</span>
-            )}
+          <p className="font-semibold text-navy-900">
+            Don&apos;t know where to start?
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-navy-800/85">
+            Describe your problem in your own words. We will find the
+            department, tell you whether it belongs to this portal, and write
+            the request for you.
           </p>
         </div>
-        <Link
-          href="/file-request"
-          className="rounded-lg bg-navy-800 px-5 py-3 font-semibold text-white transition hover:bg-navy-700"
-        >
-          File a new request
-        </Link>
+        <div className="mt-4 flex shrink-0 flex-wrap gap-x-5 gap-y-2 sm:mt-0 sm:flex-col sm:items-end lg:mt-6 lg:items-start">
+            <Link
+              href="/assistant"
+              className="text-sm font-semibold text-navy-800 underline underline-offset-2"
+            >
+              Start with my problem →
+            </Link>
+            <Link
+              href="/find-department"
+              className="text-sm font-medium text-navy-700 underline underline-offset-2"
+            >
+              Just find the department
+            </Link>
+        </div>
       </div>
 
-      {/* Summary strip — the accountability number a citizen never normally sees */}
-      {totalPenalty > 0 ? (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-govred-700/20 bg-govred-50 px-5 py-4">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-govred-700/80">
-              Owed by officers for keeping you waiting
-            </p>
-            <p className="mt-0.5 text-2xl font-bold tabular-nums text-govred-700">
-              {formatInr(totalPenalty)}
-            </p>
-          </div>
-          <p className="max-w-md text-sm text-govred-700">
-            Accrued under Section 20 of the RTI Act, 2005 across your overdue
-            requests.
-          </p>
+      <div className="lg:col-span-12">
+        <ActionRequired items={actions} />
+      </div>
+
+      <section className="lg:col-span-7 lg:row-span-2">
+        <SectionHead title="Your RTIs" href="/my-rtis" cta="See all" />
+        <div className="space-y-3">
+          {attention.map((v) => (
+            <RtiCard key={v.c.id} v={v} />
+          ))}
         </div>
-      ) : null}
+      </section>
 
-      <ul className="mt-6 space-y-3">
-        {derived.map(({ c, d }) => (
-          <li key={c.id}>
-            <Link
-              href={`/requests/${c.id}`}
-              className="block gov-card p-5 transition hover:border-navy-600/40 hover:shadow-sm"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <p className="text-[15px] font-semibold leading-snug text-ink">
-                    {c.plainTitle}
-                  </p>
-                  <p className="mt-1 text-sm text-ink-2">
-                    {c.authority.office} · {c.authority.ministry}
-                  </p>
-                  <p className="mt-1.5 text-[11px] uppercase tracking-wider text-muted">
-                    {c.registrationNumber} · day {d.day} · {c.feeLabel}
-                  </p>
-                </div>
-                <StatusPill status={d.status} />
-              </div>
+      <div className="lg:col-span-5">
+        <OverviewStats o={overview} />
+      </div>
 
-              {/* The one line that tells them what to do about it */}
-              {d.canFileSecondAppeal ? (
-                <p className="mt-3 border-t border-line-2 pt-3 text-sm font-medium text-saffron-600">
-                  Your appeal was ignored too — you can now go to the Central
-                  Information Commission →
+      <section className="lg:col-span-5">
+        <SectionHead
+          title="Recent responses"
+          href="/my-rtis?filter=response"
+          cta="See all"
+        />
+        <ResponsesList views={views} limit={2} />
+      </section>
+
+      <section className="lg:col-span-5">
+        <SectionHead title="Latest updates" href="/notifications" cta="See all" />
+        <ul className="gov-card divide-y divide-line-2">
+          {notifications.slice(0, 3).map((n) => (
+            <li key={n.id}>
+              <Link
+                href={n.href}
+                className="block px-4 py-3.5 transition hover:bg-canvas/50"
+              >
+                <p className="text-[14px] font-semibold text-ink">{n.title}</p>
+                <p className="mt-0.5 line-clamp-2 text-[13px] leading-relaxed text-ink-2">
+                  {n.body}
                 </p>
-              ) : d.canFileFirstAppeal ? (
-                <p className="mt-3 border-t border-line-2 pt-3 text-sm font-medium text-govred-700">
-                  They are {d.daysLate} days late ·{" "}
-                  {formatInr(d.penalty.accruedInr)} penalty accruing · you can
-                  appeal free of cost →
-                </p>
-              ) : d.parts ? (
-                <p className="mt-3 border-t border-line-2 pt-3 text-sm text-ink-2">
-                  Split across {d.parts.length} offices ·{" "}
-                  {d.parts.filter((p) => p.status === "replied").length}{" "}
-                  answered,{" "}
-                  {d.parts.filter((p) => p.isOverdue).length} overdue →
-                </p>
-              ) : d.hasReply ? (
-                <p className="mt-3 border-t border-line-2 pt-3 text-sm text-govgreen-700">
-                  Answered on day {c.replyDay} — read their reply →
-                </p>
-              ) : (
-                <p className="mt-3 border-t border-line-2 pt-3 text-sm text-ink-2">
-                  {d.daysLeft} days left before they are legally required to
-                  reply →
-                </p>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+}
+
+function SectionHead({
+  title,
+  href,
+  cta,
+}: {
+  title: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <div className="mb-3 flex items-baseline justify-between gap-3">
+      <h2 className="text-lg font-bold tracking-tight text-navy-900">{title}</h2>
+      <Link
+        href={href}
+        className="shrink-0 text-[13px] font-semibold text-navy-700 hover:underline"
+      >
+        {cta} →
+      </Link>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GovHeader } from "@/components/GovHeader";
 import { GovFooter } from "@/components/GovFooter";
+import { RecordsIllustration } from "@/components/illustrations/RecordsIllustration";
 
 const COMPARISONS = [
   {
@@ -38,17 +39,26 @@ export default function AboutPage() {
       <GovHeader />
 
       <main id="main" className="flex-1">
-        <div className="mx-auto max-w-4xl px-4 py-14">
-          <h1 className="text-4xl font-bold tracking-tight text-navy-900">
-            How this works
-          </h1>
-          <p className="mt-4 text-lg leading-relaxed text-ink-2">
-            RTI Saral is a redesign concept for India&apos;s RTI Online portal.
-            The law does not change here, and neither does the process. What
-            changes is who the interface is written for.
-          </p>
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-8 lg:px-10 xl:px-12">
+          <div className="gov-panel overflow-hidden sm:p-8">
+            <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight text-navy-900">
+                  How this works
+                </h1>
+                <p className="mt-4 text-lg leading-relaxed text-ink-2">
+                  RTI Saral is a redesign concept for India&apos;s RTI Online
+                  portal. The law does not change here, and neither does the
+                  process. What changes is who the interface is written for.
+                </p>
+              </div>
+              <div className="hidden md:block">
+                <RecordsIllustration className="mx-auto w-full max-w-xs" />
+              </div>
+            </div>
+          </div>
 
-          <section className="mt-12">
+          <section className="gov-panel mt-6 sm:p-8">
             <h2 className="text-2xl font-bold tracking-tight text-navy-900">
               The rule we followed
             </h2>
@@ -63,7 +73,7 @@ export default function AboutPage() {
             </p>
           </section>
 
-          <section className="mt-12">
+          <section className="gov-panel mt-6 sm:p-8">
             <h2 className="text-2xl font-bold tracking-tight text-navy-900">
               What changed, point by point
             </h2>
@@ -94,7 +104,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section className="mt-12">
+          <section className="gov-panel mt-6 sm:p-8">
             <h2 className="text-2xl font-bold tracking-tight text-navy-900">
               About the penalty
             </h2>
@@ -115,7 +125,7 @@ export default function AboutPage() {
             </p>
           </section>
 
-          <section className="mt-12">
+          <section className="gov-panel mt-6 sm:p-8">
             <h2 className="text-2xl font-bold tracking-tight text-navy-900">
               About this demo
             </h2>
@@ -132,10 +142,7 @@ export default function AboutPage() {
               unlocking, the appeal itself being ignored — without waiting
               ninety days to see it.
             </p>
-            <Link
-              href="/login"
-              className="mt-7 inline-block rounded-lg bg-navy-800 px-6 py-3.5 font-semibold text-white transition hover:bg-navy-700"
-            >
+            <Link href="/login" className="btn-primary mt-7">
               Open the demo
             </Link>
           </section>

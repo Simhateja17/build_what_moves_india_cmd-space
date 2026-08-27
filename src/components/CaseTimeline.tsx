@@ -40,7 +40,7 @@ export function CaseTimeline({
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-line-2">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${
+            className={`meter-fill h-full rounded-full ${
               hasReply
                 ? "bg-govgreen-600"
                 : overdue
@@ -56,10 +56,19 @@ export function CaseTimeline({
 
       <ol className="space-y-0">
         {events.map((event, i) => (
-          <li key={`${event.day}-${event.kind}-${i}`} className="flex gap-3">
+          <li
+            key={`${event.day}-${event.kind}-${i}`}
+            className="animate-slide flex gap-3"
+            // Each entry lands a beat after the one above, so the case reads
+            // as a sequence of things that happened rather than a block.
+            style={{ ["--reveal-delay" as string]: `${Math.min(i, 8) * 55}ms` }}
+          >
             <div className="flex flex-col items-center">
               <span
-                className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${DOT[event.kind]}`}
+                className={`animate-pop mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${DOT[event.kind]}`}
+                style={{
+                  animationDelay: `${Math.min(i, 8) * 55 + 60}ms`,
+                }}
               />
               {i < events.length - 1 && (
                 <span className="w-px flex-1 bg-line" />

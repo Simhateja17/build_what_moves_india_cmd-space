@@ -3,6 +3,7 @@
    These are real provisions of Indian law, not portal settings.
 ------------------------------------------------------------------- */
 export const REPLY_DEADLINE_DAYS = 30; // s.7(1)
+export const FIRST_APPEAL_FILING_DAYS = 30; // s.19(1)
 export const APPEAL_DECISION_DAYS = 45; // s.19(6), outer limit
 export const PENALTY_PER_DAY_INR = 250; // s.20(1)
 export const PENALTY_CAP_INR = 25000; // s.20(1)
@@ -71,13 +72,37 @@ export interface CasePart {
   reply?: string;
 }
 
+/**
+ * Something the department did that needs the citizen's attention but is
+ * not a reply — the events that make people miss deadlines because the
+ * old portal buries them in a status code.
+ */
+export type NoticeKind =
+  | "transferred"
+  | "document_requested"
+  | "hearing_scheduled";
+
+export interface CaseNotice {
+  day: number;
+  kind: NoticeKind;
+  plain: string;
+  official?: string;
+  /** Day the hearing sits on, for hearing_scheduled. */
+  hearingDay?: number;
+}
+
 export interface RtiCase {
   id: string;
   registrationNumber: string;
   plainTitle: string;
+  /** One-line subject, the way a citizen would name it in conversation. */
+  subject: string;
   question: string;
   authority: { ministry: string; office: string; cpio: string };
   feeLabel: string;
+  /** ISO date the request was submitted. Day offsets render against this. */
+  submittedOn: string;
+  notices?: CaseNotice[];
   /** Authored events that are part of this case's story. */
   events: CaseEvent[];
   /** Day the CPIO replied. Undefined means they never do. */

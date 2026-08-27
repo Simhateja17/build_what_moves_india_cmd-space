@@ -23,9 +23,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // The inline script below stamps data-js before React hydrates, so this
+      // element legitimately differs from the server HTML.
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+        {/* Marks that scripting is available. Reveal animations hide their
+            content only under this flag, so with JS off everything renders
+            plainly instead of staying invisible. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.dataset.js="1"`,
+          }}
+        />
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>

@@ -41,7 +41,7 @@ export default function FirstAppealPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto w-full max-w-5xl">
       <Link
         href={`/requests/${c.id}`}
         className="text-sm font-medium text-navy-700 hover:underline"

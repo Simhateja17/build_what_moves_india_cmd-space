@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GovHeader } from "@/components/GovHeader";
 import { GovFooter } from "@/components/GovFooter";
+import { PrivacyIllustration } from "@/components/illustrations/PrivacyIllustration";
 import { useStore } from "@/lib/store";
 
 const DEMO_EMAIL = "ananya.sharma@example.in";
@@ -32,7 +33,7 @@ export default function LoginPage() {
       <GovHeader />
 
       <main id="main" className="flex-1">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 lg:grid-cols-[1fr_1fr] lg:py-20">
+        <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-10 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-14 xl:px-12">
           {/* Why this exists — a login page should still tell you where you are */}
           <div className="lg:pr-6">
             <h1 className="text-3xl font-bold tracking-tight text-navy-900">
@@ -72,6 +73,11 @@ export default function LoginPage() {
                   </span>
                 </li>
               </ul>
+            </div>
+
+            {/* What "runs entirely in your browser" looks like, made visible */}
+            <div className="mt-6 hidden sm:block">
+              <PrivacyIllustration className="mx-auto w-full max-w-sm" />
             </div>
           </div>
 

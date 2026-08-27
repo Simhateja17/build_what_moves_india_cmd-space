@@ -17,8 +17,11 @@ export function StatusPill({
 }) {
   const copy = STATUS_COPY[status];
   return (
+    // Keyed on the status so the pill re-enters whenever the case changes
+    // state — the clearest signal that moving the clock did something.
     <span
-      className={`inline-flex flex-col items-start rounded-lg px-2.5 py-1.5 ring-1 ${TONE[copy.tone]}`}
+      key={status}
+      className={`animate-pop inline-flex flex-col items-start rounded-xl px-3 py-2 ring-1 transition-colors duration-300 ${TONE[copy.tone]}`}
     >
       <span
         className={`font-semibold leading-none ${size === "sm" ? "text-xs" : "text-sm"}`}

@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
-import { MINISTRIES, MINISTRY_CODES, OFFICES } from "@/lib/mock-data";
-import { RtiCase } from "@/lib/types";
+import { MINISTRIES, OFFICES } from "@/lib/mock-data";
+import { AssistantHandoff, HANDOFF_KEY } from "@/lib/assistant/types";
+import { caseFromDraft, makeRegistrationNumber } from "@/lib/payment";
 import { GroundRealityNote } from "@/components/GroundRealityNote";
 
 const STEPS = [
@@ -25,7 +27,7 @@ const QUESTION_STARTERS = [
 ];
 
 export default function FileRequestPage() {
-  const { addCase } = useStore();
+  const { addCase, startPayment } = useStore();
   const router = useRouter();
 
   const [step, setStep] = useState(0);
@@ -36,6 +38,29 @@ export default function FileRequestPage() {
   const [email, setEmail] = useState("ananya.sharma@example.in");
   const [mobile, setMobile] = useState("");
   const [isBpl, setIsBpl] = useState(false);
+  const [handoff, setHandoff] = useState<AssistantHandoff | null>(null);
+
+  // Someone arriving from the assistant has already settled the three
+  // things a first-time filer cannot settle alone — which office, which
+  // department, and what to actually ask. Carrying those over and
+  // opening on "About you" is the whole point of the handoff; asking
+  // them again would undo the work.
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(HANDOFF_KEY);
+      if (!raw) return;
+      window.sessionStorage.removeItem(HANDOFF_KEY);
+      const h: AssistantHandoff = JSON.parse(raw);
+      if (!h.ministry || !h.office || !h.question) return;
+      setHandoff(h);
+      setMinistry(h.ministry);
+      setOffice(h.office);
+      setQuestion(h.question);
+      setStep(2);
+    } catch {
+      /* private mode — the form simply opens empty */
+    }
+  }, []);
 
   const offices = ministry ? (OFFICES[ministry] ?? []) : [];
 
@@ -61,50 +86,19 @@ export default function FileRequestPage() {
   const canContinue = Object.keys(errors).length === 0;
 
   function submit() {
-    const code = MINISTRY_CODES[ministry] ?? "GOVIN";
-    const serial = String(Math.floor(Math.random() * 90000) + 10000);
-    const id = `new-${Date.now()}`;
-    const newCase: RtiCase = {
-      id,
-      registrationNumber: `${code}/R/E/26/${serial}`,
-      plainTitle:
-        question.trim().split(/[.\n]/)[0].slice(0, 80) || "Your new RTI request",
-      question: question.trim(),
-      authority: {
-        ministry,
-        office,
-        cpio: "CPIO (to be assigned by the Nodal Officer)",
-      },
-      feeLabel: isBpl ? "Fee waived — BPL certificate attached" : "₹10 paid by UPI",
-      startDay: 0,
-      maxDay: 120,
-      demoNote:
-        "Your new request. Drag the time machine forward to see what the law does if they stay silent.",
-      events: [
-        {
-          day: 0,
-          kind: "filed",
-          plain: isBpl
-            ? "You filed this request — no fee, as you hold a BPL card"
-            : "You filed this request and paid ₹10",
-          official: "REGISTERED",
-        },
-        {
-          day: 0,
-          kind: "routed",
-          plain: "It reached the department's Nodal Officer",
-          official: "FORWARDED TO NODAL OFFICER",
-        },
-        {
-          day: 2,
-          kind: "cpio",
-          plain: "The Nodal Officer passed it to the CPIO who must answer you",
-          official: "TRANSMITTED TO CPIO",
-        },
-      ],
-    };
-    addCase(newCase);
-    router.push(`/requests/${id}`);
+    const draft = { ministry, office, question, name, email, mobile, isBpl };
+
+    // A BPL applicant owes nothing, so there is no payment to go wrong —
+    // they are registered on the spot rather than sent through a fee screen.
+    if (isBpl) {
+      const id = `new-${Date.now()}`;
+      addCase(caseFromDraft(draft, id, makeRegistrationNumber(ministry)));
+      router.push(`/requests/${id}`);
+      return;
+    }
+
+    const ref = startPayment(draft, "UPI · ananya@okhdfc");
+    router.push(`/pay/${ref}`);
   }
 
   return (
@@ -117,7 +111,22 @@ export default function FileRequestPage() {
         <p className="mt-1.5 text-sm text-ink-2">
           Four short steps. Nothing to read before you start.
         </p>
-        <ol className="mt-6 space-y-1">
+
+        {/* How much of the form is behind you — the reassurance the current
+            23-field single page never offers. */}
+        <div className="mt-4">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-line-2">
+            <div
+              className="meter-fill h-full rounded-full bg-navy-700"
+              style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-muted">
+            Step {step + 1} of {STEPS.length}
+          </p>
+        </div>
+
+        <ol className="mt-5 space-y-1">
           {STEPS.map((s, i) => {
             const done = i < step;
             const active = i === step;
@@ -136,7 +145,7 @@ export default function FileRequestPage() {
                   }`}
                 >
                   <span
-                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors duration-300 ${
                       done
                         ? "bg-govgreen-600 text-white"
                         : active
@@ -144,7 +153,10 @@ export default function FileRequestPage() {
                           : "bg-line text-ink-2"
                     }`}
                   >
-                    {done ? "✓" : i + 1}
+                    {/* Keyed so the tick pops the moment the step is cleared. */}
+                    <span key={done ? "done" : "todo"} className="animate-pop">
+                      {done ? "✓" : i + 1}
+                    </span>
                   </span>
                   <span>
                     <span
@@ -163,7 +175,9 @@ export default function FileRequestPage() {
 
       {/* Step body */}
       <div>
-        <div className="gov-card p-6 sm:p-7">
+        {/* Keyed on the step so each panel enters on its own, giving the
+            flow a sense of forward movement instead of a redraw. */}
+        <div key={step} className="animate-slide gov-card p-6 sm:p-7">
           {step === 0 && (
             <div className="space-y-6">
               <div>
@@ -175,6 +189,23 @@ export default function FileRequestPage() {
                   you.
                 </p>
               </div>
+
+              {handoff ? (
+                <div className="rounded-lg border border-govgreen-600/30 bg-govgreen-50 px-4 py-3">
+                  <p className="text-sm leading-relaxed text-govgreen-700">
+                    <strong>✓ Chosen for you by the assistant</strong> —{" "}
+                    {handoff.authorityName}. Change anything below if it looks
+                    wrong.
+                  </p>
+                </div>
+              ) : (
+                <Link
+                  href="/find-department"
+                  className="block rounded-lg border border-navy-600/20 bg-navy-50 px-4 py-3 text-sm font-medium text-navy-800 transition hover:border-navy-600/40"
+                >
+                  Don&apos;t know which department? Find it from your problem →
+                </Link>
+              )}
 
               <div>
                 <label htmlFor="ministry" className="field-label">
@@ -465,7 +496,7 @@ export default function FileRequestPage() {
                 onClick={submit}
                 className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700"
               >
-                {isBpl ? "Send my request" : "Pay ₹10 and send"}
+                {isBpl ? "Send my request" : "Continue to payment →"}
               </button>
             )}
           </div>

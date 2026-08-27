@@ -2,6 +2,7 @@
 
 import { PenaltyView, formatInr } from "@/lib/derive";
 import { PENALTY_CAP_INR, PENALTY_PER_DAY_INR } from "@/lib/types";
+import { CountUp } from "./CountUp";
 
 export function PenaltyMeter({
   penalty,
@@ -20,11 +21,8 @@ export function PenaltyMeter({
             <p className="text-[10px] font-bold uppercase tracking-wider text-govred-700/80">
               Penalty accruing against the officer
             </p>
-            <p
-              key={penalty.accruedInr}
-              className="penalty-tick mt-1 text-4xl font-bold tabular-nums text-govred-700"
-            >
-              {formatInr(penalty.accruedInr)}
+            <p className="mt-1 text-4xl font-bold tabular-nums text-govred-700">
+              <CountUp value={penalty.accruedInr} format={formatInr} />
             </p>
           </div>
           <p className="text-sm text-govred-700">
@@ -36,7 +34,7 @@ export function PenaltyMeter({
 
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/70">
           <div
-            className="h-full rounded-full bg-govred-600 transition-all duration-500"
+            className="meter-fill h-full rounded-full bg-govred-600"
             style={{ width: `${pct}%` }}
           />
         </div>

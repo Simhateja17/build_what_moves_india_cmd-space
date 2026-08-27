@@ -13,6 +13,8 @@ export interface AppealState {
   /** Day the citizen filed the first appeal, if they have. */
   filedOnDay?: number;
   ground?: string;
+  /** Appeal reference, e.g. FA2291. Issued when the appeal is registered. */
+  number?: string;
 }
 
 export interface PenaltyView {

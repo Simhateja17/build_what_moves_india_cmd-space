@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GovHeader } from "@/components/GovHeader";
 import { GovFooter } from "@/components/GovFooter";
+import { Reveal } from "@/components/Reveal";
 
 const PROBLEMS = [
   {
@@ -45,47 +46,58 @@ export default function HomePage() {
       <GovHeader />
 
       <main id="main" className="flex-1">
-        {/* Hero */}
-        <section className="border-b border-line bg-white">
-          <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+        {/* Hero — a panel floating on the canvas, not a full-bleed band. */}
+        <section className="mx-auto max-w-[1440px] px-4 pt-8 sm:px-8 lg:px-10 xl:px-12">
+          <div className="grid items-center gap-10 rounded-[var(--radius-panel)] border border-line bg-surface p-8 shadow-[var(--shadow-panel-lg)] lg:grid-cols-[1.1fr_0.9fr] lg:p-12">
+            {/* Above the fold, so this settles in on load rather than
+                waiting for a scroll that may never come. */}
             <div>
-              <p className="inline-flex items-center gap-2 rounded-full bg-navy-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-navy-800">
+              <p className="animate-rise inline-flex items-center gap-2 rounded-full bg-navy-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-navy-800">
                 Right to Information Act, 2005
               </p>
-              <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-navy-900 sm:text-5xl">
+              <h1
+                className="animate-rise mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-navy-900 sm:text-5xl"
+                style={{ ["--reveal-delay" as string]: "70ms" }}
+              >
                 Ask the government a question.
                 <br />
                 <span className="text-navy-600">Know exactly what happens next.</span>
               </h1>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-2">
+              <p
+                className="animate-rise mt-5 max-w-xl text-lg leading-relaxed text-ink-2"
+                style={{ ["--reveal-delay" as string]: "140ms" }}
+              >
                 Every Indian has the right to demand information from the
                 government — and a legal answer within 30 days. Today that right
                 is buried under forms, jargon and silence. RTI Saral is what it
                 could look like instead.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/login"
-                  className="rounded-lg bg-navy-800 px-6 py-3.5 font-semibold text-white transition hover:bg-navy-700"
-                >
+              <div
+                className="animate-rise mt-8 flex flex-wrap gap-3"
+                style={{ ["--reveal-delay" as string]: "210ms" }}
+              >
+                <Link href="/login" className="btn-primary">
                   Try the demo
                 </Link>
-                <Link
-                  href="/about"
-                  className="rounded-lg border border-line bg-white px-6 py-3.5 font-semibold text-navy-800 transition hover:bg-navy-50"
-                >
+                <Link href="/about" className="btn-secondary">
                   How it works
                 </Link>
               </div>
-              <p className="mt-4 text-sm text-muted">
+              <p
+                className="animate-rise mt-4 text-sm text-muted"
+                style={{ ["--reveal-delay" as string]: "280ms" }}
+              >
                 No signup. Test account is pre-filled and ready.
               </p>
             </div>
 
             {/* Illustrative preview of the accountability idea */}
-            <div className="lg:pt-6">
-              <div className="gov-card overflow-hidden shadow-sm">
-                <div className="border-b border-line px-5 py-3">
+            <div
+              className="animate-rise"
+              style={{ ["--reveal-delay" as string]: "340ms" }}
+            >
+              <div className="overflow-hidden rounded-[10px] border border-line bg-surface">
+                <div className="border-b border-line bg-navy-50/50 px-5 py-3">
                   <p className="text-[11px] uppercase tracking-wider text-muted">
                     MORTH/R/E/26/01193
                   </p>
@@ -119,43 +131,53 @@ export default function HomePage() {
         </section>
 
         {/* The problem */}
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-3xl font-bold tracking-tight text-navy-900">
-            What filing an RTI looks like today
-          </h2>
-          <p className="mt-2 max-w-2xl text-ink-2">
-            The current portal is not broken because it lacks features. It is
-            broken because it was built for the department, not the citizen.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {PROBLEMS.map((p) => (
-              <div key={p.label} className="gov-card p-5">
-                <p className="text-4xl font-bold text-govred-600">{p.stat}</p>
-                <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-ink">
-                  {p.label}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-2">
-                  {p.body}
-                </p>
-              </div>
-            ))}
-          </div>
+        <section className="mx-auto max-w-[1440px] px-4 pt-10 sm:px-8 lg:px-10 xl:px-12">
+          <Reveal className="gov-panel sm:p-8">
+            <h2 className="text-2xl font-bold tracking-tight text-navy-900">
+              What filing an RTI looks like today
+            </h2>
+            <p className="mt-2 max-w-2xl text-ink-2">
+              The current portal is not broken because it lacks features. It is
+              broken because it was built for the department, not the citizen.
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {PROBLEMS.map((p, i) => (
+                <Reveal
+                  key={p.label}
+                  delay={i * 90}
+                  className="rounded-[10px] border border-line bg-canvas/60 p-5"
+                >
+                  <p className="stat-value text-govred-600">{p.stat}</p>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-ink">
+                    {p.label}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-2">
+                    {p.body}
+                  </p>
+                </Reveal>
+              ))}
+            </div>
+          </Reveal>
         </section>
 
         {/* What's different */}
-        <section className="border-y border-line bg-white">
-          <div className="mx-auto max-w-6xl px-4 py-16">
-            <h2 className="text-3xl font-bold tracking-tight text-navy-900">
+        <section className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-8 lg:px-10 xl:px-12">
+          <Reveal className="gov-panel sm:p-8">
+            <h2 className="text-2xl font-bold tracking-tight text-navy-900">
               What we changed
             </h2>
             <p className="mt-2 max-w-2xl text-ink-2">
               Same law, same process, same official terms — reordered around the
               person who actually needs the answer.
             </p>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {FEATURES.map((f, i) => (
-                <div key={f.title} className="flex gap-4">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-50 font-bold text-navy-800">
+                <Reveal
+                  key={f.title}
+                  delay={i * 80}
+                  className="flex gap-4 rounded-[10px] border border-line bg-canvas/60 p-5"
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-800 font-bold text-white">
                     {i + 1}
                   </span>
                   <div>
@@ -164,15 +186,15 @@ export default function HomePage() {
                       {f.body}
                     </p>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
-          </div>
+          </Reveal>
         </section>
 
         {/* Principle */}
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <div className="gov-card overflow-hidden">
+        <section className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-8 lg:px-10 xl:px-12">
+          <Reveal className="gov-card overflow-hidden">
             <div className="grid gap-0 md:grid-cols-2">
               <div className="border-b border-line p-8 md:border-b-0 md:border-r">
                 <p className="text-xs font-bold uppercase tracking-wider text-muted">
@@ -212,12 +234,12 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Reveal>
         </section>
 
         {/* CTA */}
-        <section className="bg-navy-800">
-          <div className="mx-auto max-w-6xl px-4 py-14 text-center">
+        <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-8 lg:px-10 xl:px-12">
+          <Reveal className="rounded-[var(--radius-panel)] bg-navy-800 px-4 py-14 text-center shadow-[var(--shadow-panel-lg)]">
             <h2 className="text-3xl font-bold tracking-tight text-white">
               See it for yourself
             </h2>
@@ -232,7 +254,7 @@ export default function HomePage() {
             >
               Open the demo
             </Link>
-          </div>
+          </Reveal>
         </section>
       </main>
 
