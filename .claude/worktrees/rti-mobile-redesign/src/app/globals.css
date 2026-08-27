@@ -1,0 +1,515 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   RTI Saral — design system
+   A restrained, accessible government palette: deep navy for authority,
+   saffron for attention, India green for resolution. Neutrals do the
+   heavy lifting so the accents mean something when they appear.
+------------------------------------------------------------------- */
+
+:root {
+  --navy-900: #06254a;
+  --navy-800: #0b2f5e;
+  --navy-700: #113d75;
+  --navy-600: #1a4f8f;
+  --navy-50: #eef4fb;
+
+  --saffron-600: #b45309;
+  --saffron-500: #ea8a1e;
+  --saffron-400: #ff9933;
+  --saffron-50: #fff7ed;
+
+  --green-700: #0f6b0f;
+  --green-600: #138808;
+  --green-50: #f0fdf4;
+
+  --red-700: #b42318;
+  --red-600: #d92d20;
+  --red-50: #fef3f2;
+
+  --ink: #101828;
+  --ink-2: #344054;
+  --muted: #667085;
+  --line: #dfe3ea;
+  --line-2: #eaecf0;
+  --surface: #ffffff;
+  --canvas: #f4f6f9;
+
+  --background: var(--canvas);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-50: var(--navy-50);
+  --color-saffron-600: var(--saffron-600);
+  --color-saffron-500: var(--saffron-500);
+  --color-saffron-400: var(--saffron-400);
+  --color-saffron-50: var(--saffron-50);
+  --color-govgreen-700: var(--green-700);
+  --color-govgreen-600: var(--green-600);
+  --color-govgreen-50: var(--green-50);
+  --color-govred-700: var(--red-700);
+  --color-govred-600: var(--red-600);
+  --color-govred-50: var(--red-50);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Government sites are read by people in a hurry on bad screens.
+   Keep focus states unmistakable. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--saffron-400);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.tricolour-rule {
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--saffron-400) 0 33.33%,
+    #dfe3ea 33.33% 66.66%,
+    var(--green-600) 66.66% 100%
+  );
+}
+
+.gov-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.field-input {
+  margin-top: 0.375rem;
+  width: 100%;
+  border: 1px solid #c3cbd8;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+
+.field-input::placeholder {
+  color: #98a2b3;
+}
+
+.field-input:focus {
+  border-color: var(--navy-600);
+}
+
+@keyframes ticker {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.penalty-tick {
+  animation: ticker 0.5s ease-out;
+}
+
+/* ==================================================================
+   MOBILE
+   Everything below is the phone-first layer. The palette above is
+   unchanged; what changes here is size, spacing and reach — controls
+   large enough for a thumb, text large enough to read on a bad screen
+   in daylight, and a primary action that never scrolls out of view.
+   ================================================================== */
+
+:root {
+  /* Nothing tappable is smaller than this, ever. */
+  --tap-min: 48px;
+  /* Buttons and inputs share one height so a form reads as one rhythm. */
+  --control-h: 56px;
+  --gutter: 20px;
+  --stack: 16px;
+  /* Home-indicator clearance on iOS; 0 everywhere else. */
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  /* Height of the fixed bottom tab bar, including its safe area. */
+  --tabbar-h: calc(56px + var(--safe-b));
+}
+
+/* Body copy is 17px on a phone. Below that, people with presbyopia —
+   who are a large share of RTI filers — simply cannot read it. */
+.m-shell {
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+/* ---- Type scale ---------------------------------------------------
+   Six sizes, and nothing between them. */
+.m-h1 { font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: var(--navy-900); text-wrap: balance; }
+.m-h2 { font-size: 1.3125rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em; color: var(--navy-900); }
+.m-h3 { font-size: 1.0625rem; line-height: 1.3; font-weight: 700; color: var(--navy-900); }
+.m-body { font-size: 1.0625rem; line-height: 1.55; color: var(--ink-2); }
+.m-small { font-size: 0.9375rem; line-height: 1.5; color: var(--ink-2); }
+/* 13px is reserved for two things: legal footnotes, and the official
+   government term printed under its plain-language translation. */
+.m-fine { font-size: 0.8125rem; line-height: 1.45; color: var(--muted); }
+
+.m-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Registration numbers, transaction references, amounts in columns. */
+.m-mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* ---- Controls -----------------------------------------------------
+   One height, full width, real labels. */
+.m-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0 1.25rem;
+  border-radius: 10px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+  background: var(--navy-800);
+  color: #fff;
+  transition: background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.m-btn:active { transform: scale(0.985); }
+.m-btn--ghost { background: var(--surface); border: 1.5px solid #c3cbd8; color: var(--navy-800); }
+.m-btn--danger { background: var(--red-700); }
+.m-btn--go { background: var(--green-700); }
+
+/* A disabled primary still looks like a button, because it still
+   answers a tap — with the reason it is disabled. */
+.m-btn[disabled],
+.m-btn[aria-disabled="true"] {
+  background: #c3cbd8;
+  color: #fff;
+  cursor: default;
+}
+.m-btn--ghost[disabled] { background: var(--surface); border-color: var(--line); color: var(--muted); }
+
+/* Busy: the label becomes the verb that is running. */
+.m-btn__spin {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: m-spin 0.8s linear infinite;
+}
+.m-btn--ghost .m-btn__spin { border-color: rgba(27,47,78,.2); border-top-color: var(--navy-800); }
+
+@keyframes m-spin { to { transform: rotate(360deg); } }
+
+/* Any small control — a copy icon, a chevron, a checkbox — still gets a
+   48px hit area even when it only looks 20px. */
+.m-tap {
+  position: relative;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Fields -------------------------------------------------------
+   16px minimum font size, or iOS zooms the whole page on focus and the
+   citizen loses their place in the form. */
+.m-field {
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0.75rem 0.875rem;
+  border: 1.5px solid #c3cbd8;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.m-field::placeholder { color: #98a2b3; }
+.m-field:focus { border-color: var(--navy-600); }
+.m-field[aria-invalid="true"] { border-color: var(--red-600); background: #fffafa; }
+
+.m-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.m-error {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--red-700);
+}
+
+/* ---- Layout -------------------------------------------------------
+   One column at every width. The desktop view is the phone view,
+   centred — not a second design. */
+.m-col {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* Clears the fixed tab bar and the pinned action bar. */
+.m-page { padding-bottom: calc(var(--tabbar-h) + 1rem); }
+.m-page--action { padding-bottom: calc(var(--control-h) + 3.5rem + var(--safe-b)); }
+
+/* The pinned primary. This is the single most important rule in the
+   file: on a long form the button must be under the thumb, always. */
+.m-actionbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding: 0.75rem var(--gutter) calc(0.75rem + var(--safe-b));
+  box-shadow: 0 -2px 12px rgba(27, 47, 78, 0.06);
+}
+
+.m-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  height: var(--tabbar-h);
+  padding-bottom: var(--safe-b);
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.m-tab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.m-tab[aria-current="page"] { color: var(--navy-800); }
+.m-tab[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22%;
+  right: 22%;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--saffron-400);
+}
+
+/* ---- Progress -----------------------------------------------------
+   Step 1 of 5, shown as a rule rather than a widget. */
+.m-progress { height: 4px; background: #d8dde6; }
+.m-progress > i {
+  display: block;
+  height: 100%;
+  background: var(--saffron-400);
+  transition: width var(--dur) var(--ease-out);
+}
+
+/* ---- Cards and status --------------------------------------------
+   Colour is never the only signal — every stripe is paired with a word. */
+.m-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: var(--shadow-panel);
+}
+
+.m-card--stripe { border-left: 4px solid var(--navy-600); }
+.m-card--needs { border-left: 4px solid var(--red-600); }
+.m-card--late { border-left: 4px solid var(--saffron-400); }
+.m-card--done { border-left: 4px solid var(--green-600); }
+
+.m-note {
+  border-radius: 10px;
+  padding: 0.75rem 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.m-note--info { background: var(--navy-50); color: var(--navy-900); }
+.m-note--warn { background: var(--saffron-50); color: #7c3a06; border: 1px solid #f5d9b8; }
+.m-note--good { background: var(--green-50); color: var(--green-700); border: 1px solid #c9ecc5; }
+.m-note--bad  { background: var(--red-50); color: #912018; border: 1px solid #f3c7c3; }
+
+/* Whole-card radio and checkbox rows. The card is the hit area, not the
+   19px circle inside it. */
+.m-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 72px;
+  padding: 1rem;
+  text-align: left;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+.m-choice[aria-checked="true"] { border-color: var(--navy-700); border-width: 2px; padding: calc(1rem - 0.5px); }
+
+.m-dot {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 2px solid #a9b3c2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-choice[aria-checked="true"] .m-dot { border-color: var(--navy-700); }
+.m-choice[aria-checked="true"] .m-dot::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--navy-700);
+}
+
+.m-box {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #a9b3c2;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+}
+.m-choice[aria-checked="true"] .m-box { background: var(--navy-700); border-color: var(--navy-700); }
+
+.m-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 0.875rem;
+  border-radius: 20px;
+  border: 1.5px solid #c3cbd8;
+  background: var(--surface);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.m-chip[aria-pressed="true"],
+.m-chip[aria-current="true"] {
+  background: var(--navy-800);
+  border-color: var(--navy-800);
+  color: #fff;
+  font-weight: 600;
+}
+
+.m-meter { height: 8px; border-radius: 4px; background: #dfe3ea; overflow: hidden; }
+.m-meter > i { display: block; height: 100%; border-radius: 4px; background: var(--navy-700); }
+.m-meter > i.is-late { background: var(--saffron-400); }
+.m-meter > i.is-done { background: var(--green-600); }
+
+/* ---- Sheet --------------------------------------------------------
+   Help arrives without losing the draft or the scroll position. */
+.m-sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(26, 36, 56, 0.45);
+  animation: fade-in var(--dur-fast) var(--ease-out) both;
+}
+.m-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 61;
+  max-height: 76vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 18px 18px 0 0;
+  padding: 0.75rem var(--gutter) calc(1.25rem + var(--safe-b));
+  box-shadow: 0 -10px 34px rgba(20, 30, 50, 0.2);
+  animation: m-sheet-up var(--dur) var(--ease-out) both;
+}
+.m-sheet__grab { width: 36px; height: 4px; border-radius: 3px; background: #d2d7e0; margin: 0 auto 0.75rem; }
+
+@keyframes m-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+
+/* ---- Skeletons ----------------------------------------------------
+   In the shape of the content that is coming, never a lone spinner. */
+.m-skel {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e4e8ee 25%, #eef1f5 50%, #e4e8ee 75%);
+  background-size: 200% 100%;
+  animation: m-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes m-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-skel, .m-btn__spin { animation: none; }
+  .m-sheet, .m-sheet-scrim { animation: none; }
+  .m-btn:active { transform: none; }
+}
