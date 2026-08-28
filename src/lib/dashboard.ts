@@ -400,7 +400,25 @@ export function actionsFor(
     }
   }
 
-  return out;
+  /**
+   * Ordered by what happens if it is ignored, not by the order the cases
+   * happen to sit in.
+   *
+   * This did not matter while every action was on screen. It matters now
+   * that the home page leads with the first two: an informational
+   * "Response received" outranking a lapsing appeal deadline would be an
+   * actively harmful default. Sort is stable, so items of equal urgency
+   * keep the order they were derived in.
+   */
+  const URGENCY: Record<Tone, number> = {
+    danger: 0,
+    warn: 1,
+    info: 2,
+    good: 3,
+    neutral: 4,
+    muted: 5,
+  };
+  return out.sort((a, b) => URGENCY[a.tone] - URGENCY[b.tone]);
 }
 
 /* ---------------- Notifications ---------------- */

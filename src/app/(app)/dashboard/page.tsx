@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { useDashboard } from "@/lib/use-dashboard";
 import {
-  ActionItem,
   Notification,
   Overview,
   Tone,
@@ -12,7 +11,14 @@ import {
   relativeAge,
 } from "@/lib/dashboard";
 import { CaseList } from "@/components/CaseList";
+import { ActionGrid } from "@/components/ActionCard";
 import { formatDate } from "@/lib/dates";
+
+/**
+ * How many actions the home page leads with. Two, because the point of
+ * this section is "here is your next thing", not "here is everything".
+ */
+const DASHBOARD_ACTIONS = 2;
 
 export default function DashboardPage() {
   const { citizenName } = useStore();
@@ -27,18 +33,26 @@ export default function DashboardPage() {
     <div className="dashboard-canvas space-y-8 sm:space-y-10">
       <WelcomeBar name={citizenName} overview={overview} />
 
-      {/* Needs your attention — the thing this redesign exists for. Every
-          open action, not a sample of two, so nothing is one click further
-          away than it has to be. */}
+      {/* Needs your attention — the thing this redesign exists for.
+          The two most urgent, then a door to the rest. Six cards filled
+          the fold and pushed the requests list off the screen entirely,
+          which made a long list of tasks read as a wall rather than as a
+          queue with a next item. The rest are one click away, not gone —
+          and they are sorted by urgency, so the two on top are the two
+          that matter. */}
       {actions.length > 0 ? (
         <section aria-labelledby="attention-title">
-          <SectionHead
-            id="attention-title"
-            title="Requires your attention"
-            href={actions.length > 6 ? "/my-rtis?filter=needs_you" : undefined}
-            cta={`View all ${actions.length}`}
-          />
-          <AttentionGrid items={actions} />
+          <SectionHead id="attention-title" title="Requires your attention" />
+          <ActionGrid items={actions} limit={DASHBOARD_ACTIONS} />
+          {actions.length > DASHBOARD_ACTIONS ? (
+            <Link
+              href="/actions"
+              className="mt-4 inline-flex items-center gap-2 rounded-lg border border-navy-600/40 bg-white px-5 py-2.5 text-sm font-bold text-navy-700 transition hover:bg-navy-50"
+            >
+              View {actions.length - DASHBOARD_ACTIONS} more
+              <span aria-hidden>→</span>
+            </Link>
+          ) : null}
         </section>
       ) : (
         <section
@@ -171,63 +185,6 @@ function WelcomeBar({ name, overview }: { name: string; overview: Overview }) {
         File a request
       </Link>
     </section>
-  );
-}
-
-/* ---------------- Attention ---------------- */
-
-/** One surface, one accent. The rail and the icon carry the urgency so
- *  the card itself stays white — five pastel fills side by side read as
- *  noise, not as priority. */
-const ACCENT: Record<Tone, { rail: string; icon: string }> = {
-  danger: { rail: "bg-govred-600", icon: "bg-govred-50 text-govred-700" },
-  warn: { rail: "bg-saffron-500", icon: "bg-saffron-50 text-saffron-600" },
-  good: { rail: "bg-govgreen-600", icon: "bg-govgreen-50 text-govgreen-700" },
-  info: { rail: "bg-navy-600", icon: "bg-navy-50 text-navy-700" },
-  neutral: { rail: "bg-line", icon: "bg-canvas text-ink-2" },
-  muted: { rail: "bg-line", icon: "bg-canvas text-muted" },
-};
-
-function AttentionGrid({ items }: { items: ActionItem[] }) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      {items.slice(0, 6).map((item) => {
-        const accent = ACCENT[item.tone];
-        return (
-          <div
-            key={item.id}
-            className="gov-card relative flex h-full flex-col gap-3 p-5 pl-6"
-          >
-            <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${accent.rail}`} />
-            <div className="flex items-start gap-3">
-              <span
-                aria-hidden
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${accent.icon}`}
-              >
-                {item.tone === "good" ? "✓" : "!"}
-              </span>
-              <div className="min-w-0">
-                <p className="text-[14px] font-bold leading-snug text-ink">
-                  {item.title}
-                </p>
-                {item.ref ? (
-                  <p className="mt-0.5 truncate font-mono text-[10px] text-muted">
-                    {item.ref}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-            <p className="text-[12.5px] leading-relaxed text-ink-2">{item.detail}</p>
-            <Link
-              href={item.href}
-              className="mt-auto inline-flex w-fit rounded-lg border border-navy-600/25 bg-white px-3 py-2 text-[12px] font-bold text-navy-700 transition hover:bg-navy-50"
-            >
-              {item.cta} →
-            </Link>
-          </div>
-        );
-      })}
-    </div>
   );
 }
 
