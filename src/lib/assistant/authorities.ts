@@ -429,6 +429,48 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
         "Not the local police station. It writes the verification report, but the decision and the file sit with the RPO.",
     },
   },
+  "generic-local": {
+    id: "generic-local",
+    shortName: "Relevant local public authority",
+    name: "The local public authority that holds this record",
+    wing: "Office of the Public Information Officer in {city}",
+    pioTitle: "Public Information Officer of the relevant local body",
+    level: "local",
+    why: {
+      work: "Municipalities, panchayats and other local bodies keep records for services and decisions within their jurisdiction.",
+      records: "The relevant wing should hold the application, register, file noting, order, contract or inspection record requested.",
+      notThem: "The exact wing still needs to be confirmed before filing. If it is wrong, ask for transfer under Section 6(3).",
+    },
+    condition: "For a municipality, panchayat or other local body.",
+  },
+  "generic-state": {
+    id: "generic-state",
+    shortName: "Relevant State public authority",
+    name: "The {state} public authority that holds this record",
+    wing: "Office of the State Public Information Officer in {city}",
+    pioTitle: "State Public Information Officer of the relevant department",
+    level: "state",
+    why: {
+      work: "State departments, district offices, police and state institutions administer matters within the state.",
+      records: "The relevant office should hold the application, file noting, order, register, policy or action-taken record requested.",
+      notThem: "Not necessarily a Central ministry. A centrally funded programme may still be administered and recorded by the state.",
+    },
+    condition: "For a state department, district office, police or state institution.",
+  },
+  "generic-central": {
+    id: "generic-central",
+    shortName: "Relevant Central public authority",
+    name: "The Central public authority that holds this record",
+    wing: "Office of the Central Public Information Officer",
+    pioTitle: "Central Public Information Officer of the relevant authority",
+    level: "central",
+    why: {
+      work: "Central ministries, regulators, public sector bodies and central institutions keep records for matters they administer.",
+      records: "The responsible authority should hold the application, file noting, order, register, policy or action-taken record requested.",
+      notThem: "The exact public authority still needs to be selected on the Central RTI portal before filing.",
+    },
+    condition: "For a Central ministry, regulator, PSU or central institution.",
+  },
 };
 
 /** Fills {city} / {state} in an authority's display strings. */

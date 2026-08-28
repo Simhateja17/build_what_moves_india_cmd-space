@@ -81,6 +81,8 @@ export function suggestedTopics(text: string, count = 4): ProblemTopic[] {
     "sewage",
     "water-supply",
     "govt-school",
+    "govt-hospital",
+    "other-records",
   ].map((id) => TOPIC_BY_ID[id]);
 
   const out: ProblemTopic[] = [];

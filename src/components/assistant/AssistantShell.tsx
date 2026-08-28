@@ -2,11 +2,7 @@
 
 import { AssistantStep, STEP_LABEL, STEP_ORDER } from "@/lib/assistant/types";
 
-/**
- * The frame every step renders inside. Mobile-first by construction:
- * one clear column on phones and a step rail beside the working area on
- * larger screens, with a sticky bar holding the single primary action.
- */
+/** A quiet, centred frame for every step of the guided filing flow. */
 export function AssistantShell({
   step,
   title,
@@ -37,79 +33,89 @@ export function AssistantShell({
   totalSteps?: number;
 }) {
   const index = STEP_ORDER.indexOf(step);
-  const pct = ((index + 1) / totalSteps) * 100;
 
   return (
-    <div className="w-full pb-32">
+    <div className="mx-auto w-full max-w-[980px] pb-8">
       {banner}
 
-      <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
-        <div className="mt-4 rounded-2xl border border-line bg-surface px-4 py-4 shadow-[var(--shadow-panel)] lg:sticky lg:top-32 lg:p-5">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-line-2">
-            <div
-              className="meter-fill h-full rounded-full bg-navy-700"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">
-            Step {index + 1} of {totalSteps} · {STEP_LABEL[step]}
+      <div className="mb-7 rounded-2xl border border-line bg-surface px-4 py-4 shadow-[var(--shadow-panel)] sm:px-5">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-xs font-bold uppercase tracking-[0.11em] text-navy-800">
+            Step {index + 1} of {totalSteps}
           </p>
+          <p className="text-xs font-medium text-muted">{STEP_LABEL[step]}</p>
         </div>
+        <div className="mt-3 grid grid-cols-6 gap-1.5" aria-label={`Step ${index + 1} of ${totalSteps}`}>
+          {STEP_ORDER.slice(0, totalSteps).map((item, itemIndex) => (
+            <span
+              key={item}
+              className={`h-1.5 rounded-full transition-colors ${
+                itemIndex <= index ? "bg-navy-700" : "bg-line-2"
+              }`}
+            />
+          ))}
+        </div>
+        <ol className="mt-2.5 hidden grid-cols-6 gap-1.5 sm:grid">
+          {STEP_ORDER.slice(0, totalSteps).map((item, itemIndex) => (
+            <li
+              key={item}
+              className={`truncate text-[10px] font-medium ${
+                itemIndex === index ? "text-navy-800" : "text-muted"
+              }`}
+            >
+              {STEP_LABEL[item]}
+            </li>
+          ))}
+        </ol>
+      </div>
 
-        {/* Keyed on the step so each panel enters on its own — the flow
-            should feel like moving forward, not like a redraw. */}
-        <div key={step} className="animate-slide mt-1 lg:mt-4">
-          <h1 className="text-3xl font-bold leading-[1.08] tracking-[-0.035em] text-navy-900 sm:text-4xl">
+      <section key={step} className="animate-slide mx-auto max-w-[860px]">
+        <header>
+          <h1 className="text-[2rem] font-bold leading-[1.08] tracking-[-0.035em] text-navy-900 sm:text-[2.65rem]">
             {title}
           </h1>
           {subtitle ? (
-            <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-ink-2">{subtitle}</p>
+            <p className="mt-2.5 max-w-3xl text-[15px] leading-7 text-ink-2 sm:text-base">
+              {subtitle}
+            </p>
           ) : null}
+        </header>
 
-          <div className="mt-6 space-y-4">{children}</div>
-        </div>
-      </div>
+        <div className="mt-7 space-y-5">{children}</div>
 
-      {/* The one primary action, always within thumb reach. */}
-      <div className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-line bg-surface/95 shadow-[var(--shadow-panel-lg)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)] sm:inset-x-0 sm:bottom-0 sm:rounded-none sm:border-0 sm:shadow-none">
-        <div className="mx-auto grid w-full max-w-[1600px] items-center gap-3 px-3 py-3 sm:px-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 lg:px-10 xl:px-12">
-          <span className="hidden lg:block" aria-hidden />
-          <div className="flex min-w-0 items-center gap-3">
-          {onBack ? (
-            <button
-              type="button"
-              onClick={onBack}
-              aria-label="Go back a step"
-              className="rounded-xl border border-line px-4 py-3 text-sm font-semibold text-ink-2 transition hover:bg-canvas"
-            >
-              ←
-            </button>
-          ) : null}
-          <div className="min-w-0 flex-1">
-            <button
-              type="button"
-              onClick={onPrimary}
-              disabled={primaryDisabled}
-              className={`w-full rounded-xl px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:bg-line disabled:text-muted ${
-                primaryTone === "amber"
-                  ? "bg-saffron-600 hover:bg-saffron-600/90"
-                  : "bg-navy-800 hover:bg-navy-700"
-              }`}
-            >
-              {primaryLabel}
-            </button>
-            {primaryHint ? (
-              <p className="mt-1 text-center text-[11px] text-muted">{primaryHint}</p>
+        <div className="mt-8 border-t border-line pt-5">
+          <div className="flex items-start gap-3">
+            {onBack ? (
+              <button
+                type="button"
+                onClick={onBack}
+                aria-label="Go back a step"
+                className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl border border-line bg-white text-lg font-semibold text-ink-2 transition hover:border-navy-600/40 hover:bg-navy-50"
+              >
+                ←
+              </button>
             ) : null}
+            <div className="min-w-0 flex-1">
+              <button
+                type="button"
+                onClick={onPrimary}
+                disabled={primaryDisabled}
+                className={`min-h-[50px] w-full rounded-xl px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:bg-line disabled:text-muted disabled:shadow-none ${
+                  primaryTone === "amber"
+                    ? "bg-saffron-600 hover:bg-saffron-600/90"
+                    : "bg-navy-800 hover:bg-navy-700"
+                }`}
+              >
+                {primaryLabel}
+              </button>
+              {primaryHint ? (
+                <p className="mt-1.5 text-center text-xs text-muted">{primaryHint}</p>
+              ) : null}
+            </div>
           </div>
-          </div>
+          {secondary ? <div className="mt-3 text-center">{secondary}</div> : null}
         </div>
-        {secondary ? (
-          <div className="mx-auto w-full max-w-[1600px] px-4 pb-3 text-center lg:pl-[370px] lg:pr-12">
-            {secondary}
-          </div>
-        ) : null}
-      </div>
+      </section>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { PaymentState } from "@/lib/payment";
+ import { PaymentState } from "@/lib/payment";
 
 type StepState = "pending" | "active" | "done" | "failed" | "stuck";
 

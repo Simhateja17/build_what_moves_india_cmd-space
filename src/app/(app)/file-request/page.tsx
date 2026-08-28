@@ -79,20 +79,26 @@ export default function FileRequestPage() {
   // opening on "About you" is the whole point of the handoff; asking
   // them again would undo the work.
   useEffect(() => {
+    let timer: number | undefined;
     try {
       const raw = window.sessionStorage.getItem(HANDOFF_KEY);
       if (!raw) return;
       window.sessionStorage.removeItem(HANDOFF_KEY);
       const h: AssistantHandoff = JSON.parse(raw);
-      if (!h.ministry || !h.office || !h.question) return;
-      setHandoff(h);
-      setMinistry(h.ministry);
-      setOffice(h.office);
-      setQuestion(h.question);
-      setStep(2);
+      if (!h.question) return;
+      timer = window.setTimeout(() => {
+        setHandoff(h);
+        setMinistry(h.ministry);
+        setOffice(h.office);
+        setQuestion(h.question);
+        setStep(h.ministry && h.office ? 2 : 0);
+      }, 0);
     } catch {
       /* private mode — the form simply opens empty */
     }
+    return () => {
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
   }, []);
 
   // Serialised in render, so the effect has a single primitive dependency

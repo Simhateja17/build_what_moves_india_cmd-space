@@ -819,11 +819,13 @@ export const TOPICS: ProblemTopic[] = [
 
   {
     id: "passport",
-    label: "Passport delay",
+    label: "Passport or police verification delay",
     icon: "🛂",
     subject: "passport application {place}",
     aliases: [
-      "passport", "rpo", "police verification", "psk", "seva kendra",
+      "passport", "passport application", "passport police verification",
+      "passport verification", "police verification", "verification pending",
+      "verification report", "police report", "rpo", "psk", "seva kendra",
       "renewal", "tatkal", "visa",
     ],
     draftClarifiers: [
@@ -852,8 +854,8 @@ export const TOPICS: ProblemTopic[] = [
       },
       {
         id: "officer",
-        text: "The name and designation of the officer currently dealing with this application.",
-        why: "Gives you a person to follow up with.",
+        text: "The name and designation of the officer who examined the police verification report, and of the officer currently dealing with this application.",
+        why: "Shows where the file was examined and who is responsible for its current status.",
         defaultOn: false,
       },
       {
@@ -861,6 +863,65 @@ export const TOPICS: ProblemTopic[] = [
         text: "The prescribed time limit for issuing a passport in such cases, and the number of applications pending beyond that limit in this office.",
         why: "Puts your case next to everyone else's.",
         defaultOn: false,
+      },
+    ],
+  },
+  {
+    id: "other-records",
+    label: "Another government record",
+    icon: "📄",
+    subject: "{problem}",
+    aliases: [
+      "police", "fir", "crime", "land", "property", "mutation", "registry",
+      "housing", "allotment", "exam", "result", "recruitment", "job",
+      "permit", "licence", "license", "tax", "environment", "pollution",
+      "tender", "contract", "court", "university", "college", "scholarship",
+      "election", "certificate", "application", "file", "status", "delay",
+    ],
+    authorityClarifier: {
+      id: "government-level",
+      question: "What kind of public authority is this about?",
+      help: "This decides whether the request belongs on the Central RTI portal or with a state or local authority.",
+      kind: "choice",
+      options: [
+        { value: "local", label: "Municipality, panchayat or other local body" },
+        { value: "state", label: "State department, district office, police or state institution" },
+        { value: "central", label: "Central ministry, regulator, PSU or central institution" },
+      ],
+      skipLabel: "Not sure",
+      blankLabel: "kind of public authority",
+    },
+    draftClarifiers: [PERIOD, REFERENCE],
+    asks: [
+      {
+        id: "status",
+        text: "The current status of the matter described above, with the date and action recorded at every stage.",
+        why: "Turns a vague pending matter into a traceable timeline.",
+        defaultOn: true,
+      },
+      {
+        id: "file",
+        text: "Certified copies of the application or complaint, correspondence, file notings, recommendations and orders held in relation to this matter.",
+        why: "Requests the underlying record instead of asking the officer to create an explanation.",
+        defaultOn: true,
+      },
+      {
+        id: "rules",
+        text: "A copy of the rule, circular, policy or citizen charter governing this matter, including the prescribed time limit.",
+        why: "Shows the standard the authority was required to follow.",
+        defaultOn: true,
+      },
+      {
+        id: "officer",
+        text: "The name and designation of the officer currently responsible for this matter, and the period for which the file has remained with that officer.",
+        why: "Makes the present point of responsibility visible.",
+        defaultOn: false,
+      },
+      {
+        id: "delay",
+        text: "The reasons for delay or non-action recorded on file, with copies of the relevant records. If no reasons were recorded, kindly state that no such record is available.",
+        why: "RTI can disclose recorded reasons, but cannot compel a fresh justification.",
+        defaultOn: true,
       },
     ],
   },
@@ -923,4 +984,11 @@ export const ROUTES: Record<string, RouteRule[]> = {
     { authorityId: "railway" },
   ],
   passport: [{ authorityId: "rpo" }],
+  "other-records": [
+    { answer: "central", authorityId: "generic-central" },
+    { answer: "local", authorityId: "generic-local" },
+    { answer: "state", authorityId: "generic-state" },
+    { bodyType: "rural", authorityId: "generic-local" },
+    { authorityId: "generic-state" },
+  ],
 };

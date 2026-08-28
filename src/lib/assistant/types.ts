@@ -47,7 +47,7 @@ export interface Clarifier {
 
 export interface AskTemplate {
   id: string;
-  /** May carry {place}, {period} and {ref} tokens. */
+  /** May carry {place}, {period}, {ref} and {problem} tokens. */
   text: string;
   /** Why a citizen would want this. Visible text, never a tooltip. */
   why: string;

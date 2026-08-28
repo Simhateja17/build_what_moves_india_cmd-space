@@ -64,6 +64,7 @@ export interface DraftContext {
   place: string;
   period: string;
   ref: string;
+  problem: string;
 }
 
 export function buildContext(state: AssistantState): DraftContext {
@@ -73,6 +74,7 @@ export function buildContext(state: AssistantState): DraftContext {
     place: state.answers.place?.trim() || blank(placeClarifier?.blankLabel ?? "name of the place"),
     period: resolvePeriod(state.answers.period),
     ref: state.answers.ref?.trim() ?? "",
+    problem: state.rawProblem.trim() || blank("description of the matter"),
   };
 }
 
@@ -80,7 +82,8 @@ export function fillTokens(text: string, ctx: DraftContext): string {
   return text
     .replace(/\{place\}/g, ctx.place)
     .replace(/\{period\}/g, ctx.period)
-    .replace(/\{ref\}/g, ctx.ref);
+    .replace(/\{ref\}/g, ctx.ref)
+    .replace(/\{problem\}/g, ctx.problem);
 }
 
 /** The asks the citizen ticked, in list order, with tokens filled. */
