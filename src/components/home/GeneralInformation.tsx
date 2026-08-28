@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/Reveal";
 
-const AUTO_ADVANCE_MS = 7000;
+const AUTO_ADVANCE_MS = 4000;
 
 const TOPICS = [
   {
