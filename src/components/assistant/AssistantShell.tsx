@@ -71,7 +71,7 @@ export function AssistantShell({
       </div>
 
       {/* The one primary action, always within thumb reach. */}
-      <div className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-line bg-surface/95 shadow-[0_16px_50px_rgba(45,87,143,0.2)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)] sm:inset-x-0 sm:bottom-0 sm:rounded-none sm:border-x-0 sm:border-b-0">
+      <div className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-line bg-surface/95 shadow-[var(--shadow-panel-lg)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)] sm:inset-x-0 sm:bottom-0 sm:rounded-none sm:border-0 sm:shadow-none">
         <div className="mx-auto grid w-full max-w-[1600px] items-center gap-3 px-3 py-3 sm:px-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 lg:px-10 xl:px-12">
           <span className="hidden lg:block" aria-hidden />
           <div className="flex min-w-0 items-center gap-3">

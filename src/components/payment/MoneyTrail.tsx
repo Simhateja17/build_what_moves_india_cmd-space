@@ -47,7 +47,7 @@ export function MoneyTrail({ record }: { record: PaymentRecord }) {
             {record.ref}
           </span>
           <span className="mt-0.5 block text-xs text-muted">
-            Quote this if you ever call the department or your bank.
+            Quote this reference when contacting the department or the bank.
           </span>
         </Row>
 
@@ -56,15 +56,15 @@ export function MoneyTrail({ record }: { record: PaymentRecord }) {
           <span className="ml-2 text-sm text-muted">{record.method}</span>
         </Row>
 
-        <Row label="Money left your account">
+        <Row label="Amount debited">
           {gone ? (
             <span className="text-govgreen-700">
-              Yes — {record.settledAt ? formatTime(record.settledAt) : "confirmed"}
+              Yes. {record.settledAt ? formatTime(record.settledAt) : "Confirmed"}
             </span>
           ) : record.state === "failed" ? (
-            <span className="text-govred-700">No — nothing was charged</span>
+            <span className="text-govred-700">No. Nothing was charged.</span>
           ) : (
-            <span className="text-saffron-600">Being confirmed with your bank</span>
+            <span className="text-saffron-600">Confirmation pending with the bank</span>
           )}
         </Row>
 
@@ -72,7 +72,7 @@ export function MoneyTrail({ record }: { record: PaymentRecord }) {
           <Row label="Bank reference">
             <span className="font-mono text-sm">{record.bankRef}</span>
             <span className="mt-0.5 block text-xs text-muted">
-              Your bank will recognise this number.
+              This number will be recognised by the bank.
             </span>
           </Row>
         ) : null}

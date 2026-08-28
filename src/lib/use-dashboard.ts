@@ -18,7 +18,12 @@ export interface DashboardData {
   actions: ActionItem[];
   notifications: Notification[];
   overview: Overview;
-  /** Case ids that have at least one outstanding action. */
+  /**
+   * Case ids that genuinely need the citizen to do something.
+   *
+   * Excludes "you have an unread reply" — that is a read receipt, not a
+   * task, and counting it would push every answered case into "Needs you".
+   */
   actionCaseIds: Set<string>;
   unreadNotifications: number;
 }
@@ -36,6 +41,7 @@ export function useDashboard(): DashboardData {
     readResponses,
     payments,
     readNotifications,
+    uploads,
   } = useStore();
 
   return useMemo(() => {
@@ -43,14 +49,20 @@ export function useDashboard(): DashboardData {
       buildView(c, dayOf(c.id), appealOf(c.id), readResponses.includes(c.id)),
     );
 
-    const actions = actionsFor(views, payments);
+    // A case whose document has been sent no longer needs one asked for.
+    const documentsSent = new Set(
+      Object.keys(uploads).filter((id) => (uploads[id] ?? []).length > 0),
+    );
+    const actions = actionsFor(views, payments, documentsSent);
     const notifications = notificationsFor(views, payments);
 
     // An action id ends in the case id for case-derived items; map them
-    // back so the "Action required" filter can select whole cases.
+    // back so the "Needs you" chip can select whole cases.
     const actionCaseIds = new Set<string>();
     for (const v of views) {
-      if (actions.some((a) => a.id.endsWith(`-${v.c.id}`))) {
+      if (
+        actions.some((a) => a.kind !== "response" && a.id.endsWith(`-${v.c.id}`))
+      ) {
         actionCaseIds.add(v.c.id);
       }
     }
@@ -59,11 +71,11 @@ export function useDashboard(): DashboardData {
       views,
       actions,
       notifications,
-      overview: overview(views, actions.length),
+      overview: overview(views, actions.length, actionCaseIds),
       actionCaseIds,
       unreadNotifications: notifications.filter(
         (n) => !readNotifications.includes(n.id),
       ).length,
     };
-  }, [cases, dayOf, appealOf, readResponses, payments, readNotifications]);
+  }, [cases, dayOf, appealOf, readResponses, payments, readNotifications, uploads]);
 }

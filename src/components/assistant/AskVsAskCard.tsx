@@ -10,9 +10,9 @@ export function AskVsAskCard() {
   return (
     <div className="space-y-4">
       <p className="text-sm leading-relaxed text-ink-2">
-        RTI gets you records an office already holds — copies, figures,
-        names, dates. It does not require an officer to explain
-        themselves. The same complaint, written two ways:
+        RTI provides access to records an office already holds: copies,
+        figures, names, dates. It does not require an officer to provide
+        an explanation. The same complaint, written two ways:
       </p>
 
       <div className="rounded-xl border border-govred-700/25 bg-govred-50 p-4">

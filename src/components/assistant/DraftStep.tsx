@@ -79,7 +79,7 @@ export function DraftStep({
     <AssistantShell
       step="draft"
       title="Your request is ready"
-      subtitle="Change anything you like — these are your words now."
+      subtitle="This text may be edited freely."
       banner={
         <JurisdictionBanner
           level={result.primary.level}
@@ -141,7 +141,7 @@ export function DraftStep({
               onClick={() => setPendingFormat(null)}
               className="rounded-lg border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
             >
-              Keep mine
+              Keep current version
             </button>
           </div>
         </div>
@@ -166,7 +166,7 @@ export function DraftStep({
           </p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-govred-700">
             Its text box allows only letters, numbers and , . - _ ( ) / @ : &amp;
-            % \ — we found {describeIssues(issues)}.
+            % \. The following were found: {describeIssues(issues)}.
           </p>
           <button
             type="button"
@@ -174,12 +174,12 @@ export function DraftStep({
               const fixed = fixForPortal(text);
               dispatch({ type: "editDraft", text: fixed });
               setToast(
-                "Fixed. Rupee signs became Rs., and quote marks came out — the portal accepts none. Read it once before you send.",
+                "Fixed. Rupee signs were replaced with Rs., and quote marks were removed, as the portal does not accept them. Review before submission.",
               );
             }}
             className="mt-2 rounded-lg bg-govred-700 px-3.5 py-2 text-[13px] font-semibold text-white"
           >
-            Fix them for me
+            Fix automatically
           </button>
         </div>
       ) : null}
@@ -187,8 +187,8 @@ export function DraftStep({
       {overLimit ? (
         <div className="rounded-xl border border-saffron-400/50 bg-saffron-50 px-4 py-3 text-[13px] leading-relaxed text-saffron-600">
           Over {PORTAL_CHAR_LIMIT.toLocaleString("en-IN")} characters. The
-          portal will need the rest as a PDF attachment — untick a point, or
-          shorten one.
+          portal requires the remainder as a PDF attachment. Deselect a
+          point, or shorten the text.
         </div>
       ) : null}
 
@@ -219,7 +219,7 @@ export function DraftStep({
           }}
           className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
         >
-          Listen to my draft
+          Listen to the draft
         </button>
         <button
           type="button"
@@ -233,9 +233,9 @@ export function DraftStep({
           onClick={async () => {
             try {
               await navigator.clipboard.writeText(text);
-              setToast("Copied. Paste it wherever you need it.");
+              setToast("Copied to clipboard.");
             } catch {
-              setToast("Could not copy — select the text and copy it by hand.");
+              setToast("Could not copy automatically. Select the text and copy it manually.");
             }
           }}
           className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
@@ -290,7 +290,7 @@ export function DraftStep({
 
       <BottomSheet
         open={sheet === "blank"}
-        title="Fill this in"
+        title="Complete this field"
         onClose={() => setSheet(null)}
       >
         {blankClarifier ? (
@@ -306,8 +306,8 @@ export function DraftStep({
           />
         ) : (
           <p className="text-sm text-ink-2">
-            Use <span className="font-semibold">✎ Edit</span> to write this part
-            in yourself.
+            Use <span className="font-semibold">✎ Edit</span> to complete
+            this part directly.
           </p>
         )}
         <button

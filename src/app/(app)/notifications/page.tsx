@@ -25,6 +25,7 @@ const RING: Record<Tone, string> = {
   danger: "bg-govred-50",
   info: "bg-navy-50",
   neutral: "bg-canvas",
+  muted: "bg-canvas",
 };
 
 export default function NotificationsPage() {
@@ -41,7 +42,7 @@ export default function NotificationsPage() {
           <p className="mt-1 text-[15px] text-ink-2">
             {unreadNotifications > 0
               ? `${unreadNotifications} new`
-              : "You are up to date"}
+              : "No new updates"}
           </p>
         </div>
         {unreadNotifications > 0 ? (
@@ -57,8 +58,8 @@ export default function NotificationsPage() {
 
       {notifications.length === 0 ? (
         <p className="mt-5 gov-card p-8 text-center text-sm text-ink-2">
-          No updates yet. Anything a department does on your requests will
-          appear here.
+          No updates yet. Actions taken by a department on your requests
+          will appear here.
         </p>
       ) : (
         <ul className="mt-5 grid gap-3 xl:grid-cols-2">

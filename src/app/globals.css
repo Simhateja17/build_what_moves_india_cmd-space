@@ -17,8 +17,14 @@
      against the grey rather than dissolving into it. */
   --navy-50: #edf4ff;
 
-  --saffron-600: #b45309;
-  --saffron-500: #ea8a1e;
+  /* One orange, at four lightnesses, all on the flag's hue (30°).
+     --saffron-600 used to be #b45309 — hue 26°, low saturation — which
+     read as a brown next to the true saffron in the tricolour rule and
+     made the app look like it had two unrelated accent colours.
+     600 is text on a 50 tint, 500 is a solid rail or fill, 400 is a
+     border or the flag itself. */
+  --saffron-600: #9e5304;
+  --saffron-500: #e97b06;
   --saffron-400: #ff9933;
   --saffron-50: #fff7ed;
 
@@ -87,6 +93,9 @@ body {
   color: var(--ink);
   font-family: var(--font-geist-sans), "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Last line of defence against sideways scroll on a phone. `clip`, not
+     `hidden`, so the sticky masthead survives. */
+  overflow-x: clip;
 }
 
 /* Government sites are read by people in a hurry on bad screens.
@@ -99,8 +108,12 @@ body {
 
 /* Sits directly under the navy masthead, so the middle band is white
    rather than the off-grey that suited a white header. */
+/* The middle band is white on a white masthead, so without a top edge the
+   rule reads as a broken progress bar rather than the tiranga. The header's
+   own border-b closes it from below. */
 .tricolour-rule {
   height: 3px;
+  border-top: 1px solid rgba(45, 87, 143, 0.12);
   background: linear-gradient(
     to right,
     var(--saffron-400) 0 33.33%,
@@ -252,6 +265,10 @@ body {
 .dashboard-hero {
   position: relative;
   isolation: isolate;
+  /* The decorative circle below is hung past the bottom-right corner. With
+     no clip it spilled outside the card's rounded corner, which read as a
+     rendering fault rather than a deliberate crop. */
+  overflow: hidden;
   background:
     radial-gradient(circle at 8% 18%, rgba(255, 255, 255, 0.14), transparent 25%),
     linear-gradient(125deg, var(--navy-800) 0%, var(--navy-700) 100%);
@@ -321,6 +338,11 @@ body {
   width: 100%;
 }
 
+.dashboard-welcome-bar {
+  background:
+    linear-gradient(90deg, rgba(247, 250, 255, 0.98) 0%, rgba(237, 244, 255, 0.96) 100%);
+}
+
 .dashboard-trust-strip {
   background:
     linear-gradient(90deg, rgba(237, 244, 255, 0.9), rgba(248, 251, 255, 0.96) 48%, rgba(238, 249, 241, 0.88));
@@ -369,6 +391,10 @@ body {
 .dashboard-canvas {
   position: relative;
   isolation: isolate;
+  /* The India watermark below is deliberately hung past the right edge.
+     `clip` trims it without creating a scroll container, so the sticky
+     masthead keeps working — `hidden` would break it. */
+  overflow-x: clip;
 }
 
 .home-hero {
@@ -411,24 +437,11 @@ body {
   z-index: 1;
 }
 
-.dashboard-canvas::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 9rem;
-  right: -1.5rem;
-  width: min(46vw, 760px);
-  height: calc(100% - 7rem);
-  background: url("/india-outline.svg") top right / contain no-repeat;
-  opacity: 0.055;
-  pointer-events: none;
-  animation: india-watermark-drift 18s ease-in-out infinite alternate;
-}
-
-@keyframes india-watermark-drift {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-10px, 14px, 0); }
-}
+/* The India watermark used to sit behind the requests table at 5.5% opacity,
+   drifting. At that contrast it did not read as a deliberate mark — it read
+   as a smudge behind data, which is the one place a background must not
+   compete. The landing hero still carries it, where it has room to be a
+   deliberate flourish. */
 
 @media (max-width: 767px) {
   .dashboard-home-hero::before {

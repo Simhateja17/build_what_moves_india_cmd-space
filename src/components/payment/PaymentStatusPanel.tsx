@@ -14,6 +14,7 @@ const PANEL_TONE: Record<AnswerTone, string> = {
   danger: "border-govred-600/25 bg-govred-50",
   info: "border-navy-600/20 bg-navy-50",
   neutral: "border-line bg-surface",
+  muted: "border-line bg-surface",
 };
 
 const HEADLINE_TONE: Record<AnswerTone, string> = {
@@ -22,6 +23,7 @@ const HEADLINE_TONE: Record<AnswerTone, string> = {
   danger: "text-govred-700",
   info: "text-navy-800",
   neutral: "text-navy-900",
+  muted: "text-ink-2",
 };
 
 const ANSWER_TONE: Record<AnswerTone, string> = {
@@ -30,6 +32,7 @@ const ANSWER_TONE: Record<AnswerTone, string> = {
   danger: "text-govred-700",
   info: "text-navy-800",
   neutral: "text-ink-2",
+  muted: "text-muted",
 };
 
 const ANSWER_DOT: Record<AnswerTone, string> = {
@@ -38,6 +41,7 @@ const ANSWER_DOT: Record<AnswerTone, string> = {
   danger: "bg-govred-600",
   info: "bg-navy-600",
   neutral: "bg-muted",
+  muted: "bg-line",
 };
 
 export function PaymentStatusPanel({
@@ -109,7 +113,7 @@ export function PaymentStatusPanel({
         {copy.guarantee ? (
           <div className="mt-4 rounded-[10px] border border-navy-600/15 bg-navy-50 px-4 py-3">
             <p className="text-[10px] font-bold uppercase tracking-wider text-navy-800/70">
-              Your money is protected
+              Payment protection
             </p>
             <p className="mt-1 text-[13px] leading-relaxed text-navy-800">
               {copy.guarantee}

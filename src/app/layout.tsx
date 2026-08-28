@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "@/lib/store";
+import { LocaleProvider } from "@/lib/i18n";
 import { RouteMotion } from "@/components/RouteMotion";
 
 const geistSans = Geist({
@@ -38,9 +39,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: `document.documentElement.dataset.js="1"`,
           }}
         />
-        <StoreProvider>
-          <RouteMotion>{children}</RouteMotion>
-        </StoreProvider>
+        <LocaleProvider>
+          <StoreProvider>
+            <RouteMotion>{children}</RouteMotion>
+          </StoreProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

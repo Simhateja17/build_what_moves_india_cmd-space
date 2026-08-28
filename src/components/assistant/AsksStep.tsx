@@ -54,8 +54,8 @@ export function AsksStep({
   return (
     <AssistantShell
       step="asks"
-      title="What can you ask them for?"
-      subtitle="Tick what you want. Each line becomes a numbered point in your request."
+      title="Select the information sought"
+      subtitle="Select each item to include. Each selection becomes a numbered point in the request."
       banner={
         <JurisdictionBanner
           level={result.primary.level}
@@ -64,10 +64,10 @@ export function AsksStep({
         />
       }
       onBack={goBack}
-      primaryLabel="Write my request"
+      primaryLabel="Draft the request"
       onPrimary={goNext}
       primaryDisabled={chosen === 0}
-      primaryHint={chosen === 0 ? "Tick at least one thing to ask for." : undefined}
+      primaryHint={chosen === 0 ? "Select at least one item to request." : undefined}
     >
       {clarifiers.map((c) => (
         <ClarifierCard
@@ -130,7 +130,7 @@ export function AsksStep({
         <input
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
-          placeholder="Add my own point"
+          placeholder="Add a custom point"
           className="field-input mt-0"
         />
         <button
@@ -148,19 +148,20 @@ export function AsksStep({
 
       <div className="rounded-xl border border-navy-600/20 bg-navy-50 px-4 py-3.5">
         <p className="text-[11px] font-bold uppercase tracking-wider text-navy-800/75">
-          Keep it to facts and papers
+          Requests must be for facts and records
         </p>
         <p className="mt-1.5 text-sm leading-relaxed text-navy-800">
-          RTI gets you records the office already has. It does not force an
-          officer to explain themselves — so ask for{" "}
-          <em>the file notings on</em> something, not <em>why</em> it happened.
+          RTI provides records already held by the office. It does not
+          require an officer to provide an explanation, so a request should
+          ask for <em>the file notings on</em> a matter, rather than{" "}
+          <em>why</em> it occurred.
         </p>
         <button
           type="button"
           onClick={() => setSheet("difference")}
           className="mt-2 text-[13px] font-semibold text-navy-800 underline underline-offset-2"
         >
-          Show me the difference
+          Show the difference
         </button>
       </div>
 
@@ -174,7 +175,7 @@ export function AsksStep({
 
       <BottomSheet
         open={sheet === "why"}
-        title="Where this one goes"
+        title="Jurisdiction"
         onClose={() => setSheet(null)}
       >
         <JurisdictionNotice

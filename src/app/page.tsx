@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { GovHeader } from "@/components/GovHeader";
 import { GovFooter } from "@/components/GovFooter";
-import { Reveal } from "@/components/Reveal";
 import { HowToFileSteps } from "@/components/HowToFileSteps";
 import { HeroCarousel, HeroSlide } from "@/components/home/HeroCarousel";
 import { AssistantArt, RoutingArt } from "@/components/home/HeroArt";
@@ -19,85 +17,48 @@ const HERO_SLIDES: HeroSlide[] = [
     eyebrow: "Right to Information Act, 2005",
     title: (
       <>
-        Ask the government a question.
+        You have the right to ask.
         <br />
-        <span className="text-navy-600">Know exactly what happens next.</span>
+        <span className="text-navy-600">The law requires an answer.</span>
       </>
     ),
-    body: "Every Indian has the right to demand information from the government — and a legal answer within 30 days. Today that right is buried under forms, jargon and silence. RTI Saral is what it could look like instead.",
+    body: "Any citizen of India may request records held by a public authority, and the law requires a reply within 30 days. RTI Saral is built to make that right straightforward to exercise.",
     primary: { label: "Try the demo", href: "/login" },
     secondary: { label: "How it works", href: "/about" },
-    note: "No signup. Test account is pre-filled and ready.",
+    note: "No signup is required. A demonstration account is provided.",
     art: <PenaltyPreview />,
   },
   {
     id: "assistant",
-    eyebrow: "Don't know how to word it?",
+    eyebrow: "Uncertain how to word your request?",
     title: (
       <>
         Describe the problem.
         <br />
-        <span className="text-navy-600">We write the request.</span>
+        <span className="text-navy-600">This will be phrased as a formal request.</span>
       </>
     ),
-    body: "Say it the way you would tell a neighbour. We turn it into a request an officer has to answer — asking for records, not for opinions — and you can edit every word before it goes.",
-    primary: { label: "Start with my problem", href: "/assistant" },
+    body: "Describe the problem in everyday language, and it will be converted into a formal request for records, not opinions, addressed to the officer required to respond. Every word may be reviewed before submission.",
+    primary: { label: "Get assistance", href: "/assistant" },
     secondary: { label: "See an example", href: "/assistant" },
-    note: "Nothing is filed until you have read it and said so.",
+    note: "Nothing is submitted without explicit confirmation.",
     art: <AssistantArt />,
   },
   {
     id: "department",
-    eyebrow: "Don't know who to ask?",
+    eyebrow: "Uncertain which office to approach?",
     title: (
       <>
-        Central, State or local?
+        Uncertain which office is responsible?
         <br />
-        <span className="text-navy-600">Find out before you file.</span>
+        <span className="text-navy-600">The correct authority will be identified.</span>
       </>
     ),
-    body: "A request sent to the wrong government is returned to you, and the fee is not refunded. Tell us the problem and we will name the office that actually holds the record — and say why it is that one.",
+    body: "A request sent to the wrong office is returned, fee included. Describe the issue, and the responsible office will be identified, along with the reason for that determination.",
     primary: { label: "Find the right department", href: "/find-department" },
     secondary: { label: "How it works", href: "/about" },
     note: "Road, sewage, water, school, hospital and nine more.",
     art: <RoutingArt />,
-  },
-];
-
-const PROBLEMS = [
-  {
-    stat: "21",
-    label: "legal bullet points",
-    body: "You must scroll and tick 'I have read and understood' before the portal even shows you the form.",
-  },
-  {
-    stat: "1",
-    label: "form, 23 fields",
-    body: "Ministry, authority, gender, rural or urban, literate or illiterate, BPL status, a CAPTCHA — all on one page, in one go.",
-  },
-  {
-    stat: "0",
-    label: "words about your rights",
-    body: "If they never reply, nothing tells you that this is a refusal in law, that you can appeal free of cost, or that the officer owes a penalty.",
-  },
-];
-
-const FEATURES = [
-  {
-    title: "One question at a time",
-    body: "The 23-field wall becomes a guided flow in plain Indian English. Nothing is asked before it matters, and every field says what it actually does on the government's side.",
-  },
-  {
-    title: "A clock that works for you",
-    body: "The static flowchart on the current site becomes a live timeline of your request. You always know which day you are on and what happens next.",
-  },
-  {
-    title: "Delay has a price, and you can see it",
-    body: "The moment they cross 30 days, Section 20 starts running: ₹250 a day against the officer, up to ₹25,000. This right already exists — we just make it visible.",
-  },
-  {
-    title: "Split requests stay together",
-    body: "When one question is scattered across four offices with four numbers, we keep them in one case instead of leaving you to chase each one.",
   },
 ];
 
@@ -120,132 +81,6 @@ export default function HomePage() {
           <GeneralInformation />
         </section>
 
-        {/* The problem */}
-        <section className="mx-auto w-full max-w-[1600px] px-4 pt-6 sm:px-8 lg:px-10 xl:px-12">
-          <Reveal className="gov-panel sm:p-8">
-            <h2 className="text-2xl font-bold tracking-tight text-navy-900">
-              What filing an RTI looks like today
-            </h2>
-            <p className="mt-2 max-w-2xl text-ink-2">
-              The current portal is not broken because it lacks features. It is
-              broken because it was built for the department, not the citizen.
-            </p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              {PROBLEMS.map((p, i) => (
-                <Reveal
-                  key={p.label}
-                  delay={i * 90}
-                  className="rounded-[10px] border border-line bg-canvas/60 p-5"
-                >
-                  <p className="stat-value text-govred-600">{p.stat}</p>
-                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-ink">
-                    {p.label}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-2">
-                    {p.body}
-                  </p>
-                </Reveal>
-              ))}
-            </div>
-          </Reveal>
-        </section>
-
-        {/* What's different */}
-        <section className="mx-auto w-full max-w-[1600px] px-4 pt-6 sm:px-8 lg:px-10 xl:px-12">
-          <Reveal className="gov-panel sm:p-8">
-            <h2 className="text-2xl font-bold tracking-tight text-navy-900">
-              What we changed
-            </h2>
-            <p className="mt-2 max-w-2xl text-ink-2">
-              Same law, same process, same official terms — reordered around the
-              person who actually needs the answer.
-            </p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {FEATURES.map((f, i) => (
-                <Reveal
-                  key={f.title}
-                  delay={i * 80}
-                  className="flex gap-4 rounded-[10px] border border-line bg-canvas/60 p-5"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-800 font-bold text-white">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <p className="font-semibold text-ink">{f.title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-ink-2">
-                      {f.body}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </Reveal>
-        </section>
-
-        {/* Principle */}
-        <section className="mx-auto w-full max-w-[1600px] px-4 pt-6 sm:px-8 lg:px-10 xl:px-12">
-          <Reveal className="gov-card overflow-hidden">
-            <div className="grid gap-0 md:grid-cols-2">
-              <div className="border-b border-line p-8 md:border-b-0 md:border-r">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted">
-                  Our one rule
-                </p>
-                <p className="mt-3 text-2xl font-bold leading-snug text-navy-900">
-                  Official language never disappears.
-                  <br />
-                  It just never goes first.
-                </p>
-                <p className="mt-3 text-ink-2">
-                  You need the official terms when you call the department or
-                  quote a section. You should not need them to understand your
-                  own case.
-                </p>
-              </div>
-              <div className="space-y-4 bg-canvas p-8">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-muted">
-                    Instead of
-                  </p>
-                  <p className="mt-1 font-mono text-sm text-govred-700">
-                    Status: DISPOSED OF — REQUEST TRANSFERRED TO OTHER PUBLIC
-                    AUTHORITY
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-muted">
-                    You see
-                  </p>
-                  <p className="mt-1 text-lg font-semibold text-ink">
-                    Your request moved to a different office
-                  </p>
-                  <p className="text-[11px] uppercase tracking-wider text-muted">
-                    REQUEST TRANSFERRED TO OTHER PUBLIC AUTHORITY
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* CTA */}
-        <section className="mx-auto w-full max-w-[1600px] px-4 py-10 sm:px-8 lg:px-10 xl:px-12">
-          <Reveal className="demo-cta-gradient rounded-[var(--radius-panel)] px-4 py-14 text-center shadow-[var(--shadow-panel-lg)]">
-            <h2 className="text-3xl font-bold tracking-tight text-white">
-              See it for yourself
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-white/70">
-              Three real-world situations are loaded and ready — including one
-              where the government simply never replies, and you can move the
-              clock forward to watch what the law does about it.
-            </p>
-            <Link
-              href="/login"
-              className="mt-7 inline-block rounded-lg bg-saffron-400 px-7 py-3.5 font-bold text-navy-900 transition hover:bg-saffron-500 hover:text-white"
-            >
-              Open the demo
-            </Link>
-          </Reveal>
-        </section>
       </main>
 
       <GovFooter />
@@ -278,8 +113,8 @@ function PenaltyPreview() {
       </div>
       <div className="px-5 py-4">
         <p className="text-sm leading-relaxed text-ink-2">
-          They missed the legal deadline. You can file a free appeal to a
-          senior officer right now — and here is the button.
+          The legal deadline was missed on this request. A free appeal to a
+          senior officer may be filed.
         </p>
         <span className="mt-3 inline-block rounded-lg bg-saffron-500 px-4 py-2 text-sm font-semibold text-white">
           File a First Appeal

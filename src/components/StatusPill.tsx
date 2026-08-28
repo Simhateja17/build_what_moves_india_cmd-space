@@ -1,36 +1,54 @@
-import { CaseStatus, STATUS_COPY } from "@/lib/types";
+"use client";
 
-const TONE: Record<string, string> = {
-  neutral: "bg-slate-100 text-ink-2 ring-slate-200",
-  info: "bg-navy-50 text-navy-800 ring-navy-100",
-  danger: "bg-govred-50 text-govred-700 ring-red-200",
-  good: "bg-govgreen-50 text-govgreen-700 ring-green-200",
-  warn: "bg-saffron-50 text-saffron-600 ring-orange-200",
-};
+import { useLocale } from "@/lib/i18n";
+import { toneChip } from "@/lib/tone";
+import { StatusBadge } from "@/lib/types";
 
+/**
+ * The only status badge in the app.
+ *
+ * Plain language leads, the statutory term sits underneath — never the
+ * reverse, and never the statutory term alone. `compact` drops the second
+ * line for dense tables, where the official wording would be noise.
+ *
+ * One pill, one status, and nothing else in the slot. The "In appeal"
+ * flag used to render here too, so a case in appeal showed two tags side
+ * by side and the citizen had to decide which one was the status. It is
+ * `AppealTag` now, and it sits with the application number instead.
+ */
 export function StatusPill({
-  status,
+  badge,
   size = "md",
+  compact = false,
 }: {
-  status: CaseStatus;
+  badge: StatusBadge;
   size?: "sm" | "md";
+  compact?: boolean;
 }) {
-  const copy = STATUS_COPY[status];
+  // The stage is a key, so the one status vocabulary translates in one
+  // place. The statutory term underneath stays in its own language — it is
+  // a citation, and changing it would make it uncheckable.
+  const { t } = useLocale();
+
   return (
-    // Keyed on the status so the pill re-enters whenever the case changes
+    // Keyed on the stage so the pill re-enters whenever the case changes
     // state — the clearest signal that moving the clock did something.
+    // "Closed" renders hollow rather than filled: it was the same grey as
+    // "Filed", so a finished request and a brand-new one looked alike.
     <span
-      key={status}
-      className={`animate-pop inline-flex flex-col items-start rounded-xl px-3 py-2 ring-1 transition-colors duration-300 ${TONE[copy.tone]}`}
+      key={badge.stage}
+      className={`animate-pop inline-flex flex-col items-start rounded-xl px-3 py-2 ring-1 transition-colors duration-300 ${toneChip(badge.tone, badge.stage === "closed" ? "hollow" : "tint")}`}
     >
       <span
         className={`font-semibold leading-none ${size === "sm" ? "text-xs" : "text-sm"}`}
       >
-        {copy.plain}
+        {t(`stage.${badge.stage}`, badge.plain)}
       </span>
-      <span className="mt-1 text-[10px] font-medium uppercase leading-none tracking-wider opacity-65">
-        {copy.official}
-      </span>
+      {!compact ? (
+        <span className="mt-1 text-[10px] font-medium uppercase leading-none tracking-wider opacity-65">
+          {badge.official}
+        </span>
+      ) : null}
     </span>
   );
 }

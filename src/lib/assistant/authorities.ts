@@ -8,7 +8,7 @@ import { AuthorityMatch } from "./types";
    comes from Delhi, but the muster rolls and work orders sit in a
    district office under state RTI rules. `level` is therefore always
    set against the office that holds the paper, never the ministry
-   that wrote the cheque — getting that backwards is the single most
+   that wrote the cheque. Getting that backwards is the single most
    common way a citizen wastes a filing.
 
    `ministry` and `office` are set on central authorities only, and
@@ -30,7 +30,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Sanction orders, tenders and completion certificates for those repairs sit in its Engineering Wing.",
       notThem:
-        "Not the Ministry of Road Transport & Highways — it only keeps records for National Highways, and a colony lane is not one.",
+        "Not the Ministry of Road Transport & Highways. It only keeps records for National Highways, and a colony lane is not one.",
     },
     condition: "If it is a street or road inside the city.",
   },
@@ -46,7 +46,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The division office holds the estimate, tender, work order and measurement books for every stretch it maintains.",
       notThem:
-        "Not the Municipal Corporation — its powers stop at roads inside the municipal boundary.",
+        "Not the Municipal Corporation. Its powers stop at roads inside the municipal boundary.",
     },
     condition: "If it is a highway between towns, or a main state road.",
   },
@@ -64,7 +64,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The PIU covering your stretch holds the concession agreement, the maintenance schedule and every payment made to the contractor.",
       notThem:
-        "Not the Municipal Corporation — a National Highway passing through a city is still NHAI's road.",
+        "Not the Municipal Corporation. A National Highway passing through a city is still NHAI's road.",
     },
     condition: "Only if the road carries an NH number.",
   },
@@ -82,7 +82,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Complaint registers, tanker bills, pipeline work orders and supply schedules are kept at the division office covering your locality.",
       notThem:
-        "Not the Ministry of Jal Shakti — it funds and monitors schemes, but holds none of the day-to-day records for your street.",
+        "Not the Ministry of Jal Shakti. It funds and monitors schemes, but holds none of the day-to-day records for your street.",
     },
     condition: "If you are in a city or town with piped supply.",
   },
@@ -98,7 +98,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Complaint registers, desilting contracts and the cleaning schedule for your ward are held at the ward office.",
       notThem:
-        "Not the state Pollution Control Board — it acts on pollution, not on a blocked drain outside your house.",
+        "Not the state Pollution Control Board. It acts on pollution, not on a blocked drain outside your house.",
     },
     condition: "In cities where drains are with the Corporation, not the board.",
   },
@@ -114,7 +114,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Scheme sanctions, contractor bills and water-testing reports are held by the sub-division; the Panchayat holds the resolutions and complaint entries.",
       notThem:
-        "Not the Jal Jeevan Mission office in Delhi — the money is central, but every record you want was written in your district.",
+        "Not the Jal Jeevan Mission office in Delhi. The money is central, but every record you want was written in your district.",
     },
     condition: "If the problem is in a village or panchayat area.",
   },
@@ -132,7 +132,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The wing holds the maintenance contract, the pole-wise repair log and the electricity bills paid for your area.",
       notThem:
-        "Not the electricity company — it sells the power, but the poles and lamps on your street belong to the Corporation.",
+        "Not the electricity company. It sells the power, but the poles and lamps on your street belong to the Corporation.",
     },
   },
   "mc-sanitation": {
@@ -147,7 +147,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The ward office holds the sanitation worker roster, the vehicle trip sheets and the collection contract for your area.",
       notThem:
-        "Not the Swachh Bharat Mission office — it runs the campaign and the rankings, not your ward's bin.",
+        "Not the Swachh Bharat Mission office. It runs the campaign and the rankings, not your ward's bin.",
     },
   },
 
@@ -164,7 +164,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Teacher sanction and vacancy statements, mid-day meal accounts, building grants and inspection reports are all held at the district office.",
       notThem:
-        "Not the Ministry of Education — school education is run by the states, and Delhi holds no file on your school.",
+        "Not the Ministry of Education. School education is run by the states, and Delhi holds no file on your school.",
     },
     condition: "For a state, zilla parishad or municipal school.",
   },
@@ -182,7 +182,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The regional office holds staff strength, admission records, fund releases and inspection reports for every KV in its region.",
       notThem:
-        "Not the state education department — a KV sits inside your state but is not run by it.",
+        "Not the state education department. A KV sits inside your state but is not run by it.",
     },
     condition: "Only for a Kendriya Vidyalaya.",
   },
@@ -200,7 +200,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The regional office holds selection-test records, hostel and mess accounts, staff strength and inspection reports.",
       notThem:
-        "Not the District Education Officer — a JNV is in the district but not under it.",
+        "Not the District Education Officer. A JNV is in the district but not under it.",
     },
     condition: "Only for a Jawahar Navodaya Vidyalaya.",
   },
@@ -218,7 +218,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Sanctioned and vacant posts, medicine indents and stock registers, equipment purchases and patient statistics are held at the district office.",
       notThem:
-        "Not the Ministry of Health & Family Welfare — public health is a state subject, and Delhi holds no register from your PHC.",
+        "Not the Ministry of Health & Family Welfare. Public health is a state subject, and Delhi holds no register from a local PHC.",
     },
     condition: "For a district hospital, area hospital, CHC or PHC.",
   },
@@ -236,7 +236,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Each institute has its own CPIO holding appointment queues, equipment purchases, faculty strength and expenditure.",
       notThem:
-        "Not the state health department — an AIIMS in your state is not run by your state.",
+        "Not the state health department. An AIIMS in your state is not run by your state.",
     },
     condition: "Only for AIIMS, PGIMER, JIPMER and similar institutes.",
   },
@@ -254,7 +254,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The city's Additional Director holds medicine supply records, empanelled hospital rates and reimbursement claim files.",
       notThem:
-        "Not the state health department — CGHS is a central scheme with its own offices.",
+        "Not the state health department. CGHS is a central scheme with its own offices.",
     },
     condition: "Only for a CGHS wellness centre or CGHS reimbursement.",
   },
@@ -272,7 +272,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The regional office holds contribution records, hospital staffing and the referral and reimbursement files.",
       notThem:
-        "Not the state labour department — some ESI hospitals are state-run, but the Corporation's own records are central.",
+        "Not the state labour department. Some ESI hospitals are state-run, but the Corporation's own records are central.",
     },
     condition: "For an ESIC hospital or dispensary.",
   },
@@ -290,7 +290,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The district office holds shop-wise allotment and lifting registers, the stock received by your shop and every complaint against it.",
       notThem:
-        "Not the Food Corporation of India — FCI moves grain up to the state godown, and what happens after that is the state's record.",
+        "Not the Food Corporation of India. FCI moves grain up to the state godown, and what happens after that is the state's record.",
     },
     condition: "For your card, your shop, or what it did or did not give you.",
   },
@@ -308,7 +308,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The regional office holds depot stock, quality inspection reports and the quantity issued to your state each month.",
       notThem:
-        "Not the district civil supplies office — it receives the grain, it does not decide the central allotment.",
+        "Not the district civil supplies office. It receives the grain, it does not decide the central allotment.",
     },
     condition: "Only for the central allotment or godown stock.",
   },
@@ -324,7 +324,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The district office holds your application, the sanction or rejection order, and the month-wise payment list for your village or ward.",
       notThem:
-        "Not the Ministry of Rural Development — it contributes part of the amount, but the sanction file is in your district.",
+        "Not the Ministry of Rural Development. It contributes part of the amount, but the sanction file is in your district.",
     },
   },
   doppw: {
@@ -341,7 +341,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The PPO file, the qualifying-service certificate and every note recording the delay sit with the pension-sanctioning authority.",
       notThem:
-        "Not your state treasury — a central pension is not paid on state records.",
+        "Not your state treasury. A central pension is not paid on state records.",
     },
   },
   discom: {
@@ -356,7 +356,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The sub-division office holds your meter readings, the outage log for your feeder and the transformer maintenance record.",
       notThem:
-        "Not the Ministry of Power — it sets national policy and holds nothing about your connection.",
+        "Not the Ministry of Power. It sets national policy and holds nothing about your connection.",
     },
   },
   drda: {
@@ -371,7 +371,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "Muster rolls, job card registers, measurement books and wage payment lists are all held in the district and the block.",
       notThem:
-        "Not the Ministry of Rural Development — the scheme is central, but every muster roll you want was signed in your block.",
+        "Not the Ministry of Rural Development. The scheme is central, but every muster roll you want was signed in your block.",
     },
   },
 
@@ -390,7 +390,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The zonal office holds punctuality records, complaint files, contract details for catering and cleaning, and station works.",
       notThem:
-        "Not your state government — railways are a Union subject everywhere in India.",
+        "Not your state government. Railways are a Union subject everywhere in India.",
     },
     condition: "For anything about a station, a train or railway staff.",
   },
@@ -408,7 +408,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The board holds vacancy notifications, cut-off marks, answer keys and the result files for each examination.",
       notThem:
-        "Not the zonal railway — it takes the staff, it does not run the examination.",
+        "Not the zonal railway. It takes the staff, it does not run the examination.",
     },
     condition: "Only for a railway recruitment examination.",
   },
@@ -426,7 +426,7 @@ export const AUTHORITIES: Record<string, AuthorityMatch> = {
       records:
         "The RPO holds your file, the police verification report it received, and the reason recorded for any hold or delay.",
       notThem:
-        "Not the local police station — it writes the verification report, but the decision and the file sit with the RPO.",
+        "Not the local police station. It writes the verification report, but the decision and the file sit with the RPO.",
     },
   },
 };

@@ -13,25 +13,25 @@ import { Clarifier, ProblemTopic, RouteRule } from "./types";
 /** Asked on every topic: what window should the office cover. */
 const PERIOD: Clarifier = {
   id: "period",
-  question: "Which period should they cover?",
-  help: "A period stops them answering about one convenient month.",
+  question: "Which period should this cover?",
+  help: "A defined period prevents an answer limited to one convenient month.",
   kind: "period",
   options: [
     { value: "6m", label: "The last 6 months" },
     { value: "1y", label: "The last year" },
     { value: "3y", label: "The last 3 years" },
   ],
-  skipLabel: "I don't know",
+  skipLabel: "Not sure",
   blankLabel: "period",
 };
 
 const REFERENCE: Clarifier = {
   id: "ref",
   question: "Do you have a complaint number or file number?",
-  help: "If you have one, they cannot say they could not trace the matter.",
+  help: "If provided, the office cannot claim the matter could not be traced.",
   kind: "text",
   placeholder: "e.g. GHMC/2026/14827",
-  skipLabel: "I don't have one",
+  skipLabel: "Not available",
   blankLabel: "reference number",
 };
 
@@ -42,7 +42,7 @@ function placeClarifier(question: string, placeholder: string): Clarifier {
     help: "Any name a local would recognise is fine.",
     kind: "text",
     placeholder,
-    skipLabel: "I don't know",
+    skipLabel: "Not sure",
     blankLabel: "name of the place",
   };
 }
@@ -69,7 +69,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "state", label: "A highway between towns" },
         { value: "nh", label: "A National Highway (has an NH number)" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "kind of road",
     },
     draftClarifiers: [
@@ -144,7 +144,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "corp", label: "In a city or town, handled by the corporation" },
         { value: "village", label: "In a village or panchayat area" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "kind of area",
     },
     draftClarifiers: [
@@ -210,7 +210,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "city", label: "In a city or town with piped supply" },
         { value: "village", label: "In a village or panchayat area" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "kind of area",
     },
     draftClarifiers: [
@@ -279,7 +279,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "kv", label: "A Kendriya Vidyalaya" },
         { value: "jnv", label: "A Jawahar Navodaya Vidyalaya" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "kind of school",
     },
     draftClarifiers: [
@@ -355,7 +355,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "cghs", label: "A CGHS wellness centre" },
         { value: "esic", label: "An ESIC hospital or dispensary" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "kind of hospital",
     },
     draftClarifiers: [
@@ -523,7 +523,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "shop", label: "My card, my shop, or what it gave me" },
         { value: "allot", label: "The grain sent to the state or the godown stock" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "what this is about",
     },
     draftClarifiers: [
@@ -638,7 +638,7 @@ export const TOPICS: ProblemTopic[] = [
       {
         id: "reason",
         text: "The reasons recorded on file for the delay in settling this case, and copies of the relevant file notings.",
-        why: "File notings are records, so they must be given — unlike an explanation.",
+        why: "File notings are records and must be given, unlike an explanation.",
         defaultOn: true,
       },
       {
@@ -775,7 +775,7 @@ export const TOPICS: ProblemTopic[] = [
         { value: "zone", label: "A station, a train, or railway staff" },
         { value: "rrb", label: "A railway recruitment examination" },
       ],
-      skipLabel: "I'm not sure",
+      skipLabel: "Not sure",
       blankLabel: "what this is about",
     },
     draftClarifiers: [
@@ -847,7 +847,7 @@ export const TOPICS: ProblemTopic[] = [
       {
         id: "reason",
         text: "The reasons recorded on file for the delay or for keeping this application on hold, with copies of the relevant file notings.",
-        why: "File notings are records, so they must be given — unlike an explanation.",
+        why: "File notings are records and must be given, unlike an explanation.",
         defaultOn: true,
       },
       {

@@ -54,18 +54,18 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
   return (
     <AssistantShell
       step="problem"
-      title="What is the problem?"
-      subtitle="Write it the way you would tell a neighbour. You do not need to know any department or any law."
+      title="Describe the problem"
+      subtitle="Describe the issue in everyday language. No knowledge of the relevant department or law is required."
       primaryLabel="Continue"
       onPrimary={goNext}
       primaryDisabled={!topic}
-      primaryHint={topic ? undefined : "Pick a problem to continue"}
+      primaryHint={topic ? undefined : "Select a problem to continue"}
       secondary={
         <Link
           href="/file-request"
           className="text-[13px] font-medium text-navy-700 underline underline-offset-2"
         >
-          I already know the department — take me to the form
+          The department is already known. Go to the form.
         </Link>
       }
     >
@@ -96,17 +96,17 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
         onClick={() => setSheet("examples")}
         className="text-[13px] font-medium text-navy-700 underline underline-offset-2"
       >
-        Not sure how to start? Read an example request
+        Uncertain how to begin? Read an example request
       </button>
 
       <div>
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-          {noMatch ? "Pick the closest one" : "Or pick the closest one"}
+          {noMatch ? "Select the closest match" : "Or select the closest match"}
         </p>
         {noMatch ? (
           <p className="mt-1.5 text-[13px] leading-relaxed text-ink-2">
-            We could not place this one. Pick the closest problem below — you
-            can change it later.
+            This description could not be matched automatically. Select the
+            closest option below; it may be changed later.
           </p>
         ) : null}
         <div className="mt-2.5 grid grid-cols-2 gap-2">
@@ -149,7 +149,7 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
       {topic ? (
         <div className="rounded-xl border border-navy-600/25 bg-navy-50 p-4">
           <p className="text-[11px] font-bold uppercase tracking-wider text-navy-800/75">
-            We understood
+            Understood as
           </p>
           <div className="mt-2.5 flex flex-wrap gap-2">
             <Chip label={topic.label} onEdit={() => setSheet("topics")} />
@@ -168,7 +168,7 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
 
       <BottomSheet
         open={sheet === "topics"}
-        title="What is the problem about?"
+        title="Select a problem category"
         onClose={() => setSheet(null)}
       >
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

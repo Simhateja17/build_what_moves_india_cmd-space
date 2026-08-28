@@ -41,7 +41,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-3 gap-2.5">
         {[
           { label: "RTIs filed", value: overview.total },
-          { label: "Answered", value: overview.responses },
+          { label: "Answered", value: overview.answered },
           { label: "Appeals", value: overview.appeals },
         ].map((s) => (
           <div key={s.label} className="gov-card px-4 py-3.5 text-center">
@@ -61,7 +61,7 @@ export default function ProfilePage() {
         </h2>
         <div className="gov-card divide-y divide-line-2">
           <Row href="/check-payment" label="Payments" hint="Fees paid and their status" />
-          <Row href="/my-rtis?filter=response" label="Saved responses" hint="Every answer you have received" />
+          <Row href="/my-rtis?filter=answered" label="Saved responses" hint="Every answer you have received" />
           <Row href="/about" label="How this works" hint="What the law gives you, in plain words" />
         </div>
       </section>
@@ -71,8 +71,8 @@ export default function ProfilePage() {
           Preferences
         </h2>
         <div className="gov-card divide-y divide-line-2">
-          <Toggle label="Email me updates" hint="ananya.sharma@example.in" on />
-          <Toggle label="SMS me deadline reminders" hint="Three days before each deadline" on />
+          <Toggle label="Email updates" hint="ananya.sharma@example.in" on />
+          <Toggle label="SMS deadline reminders" hint="Three days before each deadline" on />
           <Toggle label="Show official terms" hint="Department wording under every status" on />
         </div>
       </section>

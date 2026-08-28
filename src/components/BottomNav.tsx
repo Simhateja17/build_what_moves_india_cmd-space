@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Same words as the desktop header, so the app does not rename its own
+// sections when you turn the phone sideways.
 const TABS = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
-  { href: "/my-rtis", label: "My RTIs", icon: FilesIcon },
+  { href: "/my-rtis", label: "Requests", icon: FilesIcon },
   { href: "/notifications", label: "Alerts", icon: BellIcon },
   { href: "/profile", label: "Profile", icon: UserIcon },
 ];
@@ -21,14 +23,16 @@ export function BottomNav({ alerts = 0 }: { alerts?: number }) {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-3 bottom-3 z-40 overflow-hidden rounded-2xl border border-line bg-surface/94 shadow-[0_16px_50px_rgba(45,87,143,0.2)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-3 bottom-3 z-40 overflow-hidden rounded-2xl border border-line bg-surface/94 shadow-[var(--shadow-panel-lg)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="mx-auto flex max-w-lg">
         {TABS.map((t) => {
           const active =
             t.href === "/dashboard"
               ? pathname === "/dashboard"
-              : pathname.startsWith(t.href);
+              : t.href === "/my-rtis"
+                ? pathname.startsWith("/my-rtis") || pathname.startsWith("/requests")
+                : pathname.startsWith(t.href);
           const Icon = t.icon;
           return (
             <li key={t.href} className="flex-1">

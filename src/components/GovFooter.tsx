@@ -44,8 +44,23 @@ export function GovFooter() {
               </Link>
             </li>
             <li>
+              <Link href="/track" className="hover:underline">
+                Track without signing in
+              </Link>
+            </li>
+            <li>
               <Link href="/login" className="hover:underline">
                 Demo sign in
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" className="hover:underline">
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:underline">
+                Contact us
               </Link>
             </li>
           </ul>
@@ -54,11 +69,21 @@ export function GovFooter() {
       <div className="relative border-t border-white/10">
         {/* A step up from white/50: this line sits over the densest
             part of the crowd, and needed the contrast back. */}
-        <p className="mx-auto w-full max-w-[1600px] px-4 py-4 text-xs text-white/65 sm:px-8 lg:px-10 xl:px-12">
-          This is an independent design concept and is not an official
-          Government of India website. All data shown is fictional and created
-          for demonstration. The real portal is at rtionline.gov.in.
-        </p>
+        <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-2.5 px-4 py-4 sm:px-8 lg:px-10 xl:px-12">
+          <p className="text-xs text-white/65">
+            This is an independent design concept and is not an official
+            Government of India website. All data shown is fictional and created
+            for demonstration. The real portal is at rtionline.gov.in.
+          </p>
+          {/* Moved off the dashboard, where these sat inside a call-to-action
+              strip and competed with it. Provenance belongs with the rest of
+              the disclaimer. */}
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-semibold text-white/70">
+            <li>✓ Local demo</li>
+            <li>✓ Fictional case data</li>
+            <li>✓ Independent concept</li>
+          </ul>
+        </div>
       </div>
     </footer>
   );

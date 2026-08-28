@@ -1,40 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Reveal } from "@/components/Reveal";
+
+const AUTO_ADVANCE_MS = 7000;
 
 const TOPICS = [
   {
     label: "About the RTI Act",
-    title: "About the Right to Information Act",
-    body: "The Right to Information Act, 2005 gives every Indian citizen the right to request records held by public authorities. It helps you ask for documents, orders, reports, dates and spending details—and requires the responsible office to reply within the legal time limit.",
+    title: "Why this law exists",
+    body: "The Right to Information Act, 2005 gives every citizen of India the right to request records held by a public authority. Files, orders, reports, dates, spending details: any record held by a government office may be requested, and the law requires the responsible office to answer within a fixed time.",
   },
   {
     label: "Who can file an RTI",
-    title: "Every Indian citizen can ask",
-    body: "Any citizen of India can submit an RTI request. You do not need to explain why you want the information or prove that you are personally affected. You only need to describe the records clearly enough for the public authority to identify them.",
+    title: "This right belongs to you",
+    body: "Any citizen of India may file a request, with no exceptions. No explanation is required for making a request, and there is no need to show that the matter affects you personally. The request need only describe what is sought clearly enough to be located.",
   },
   {
     label: "What information you can ask for",
-    title: "Ask for records the government holds",
-    body: "You can request copies of files, orders, contracts, reports, inspection records, expenditure details and other material held by a public authority. A strong RTI asks for existing records and facts instead of asking an officer for an opinion or justification.",
+    title: "Records held by the government",
+    body: "Copies of files, orders, contracts, reports, inspection records, expenditure details and more may be requested. The clearest requests ask for records and facts already held, rather than for opinion or justification.",
   },
   {
     label: "Fees and exemptions",
-    title: "Fees should not become a barrier",
-    body: "A small application fee may apply, along with charges for copies or other material. Eligible applicants below the poverty line are exempt from the application fee. Some protected categories of information may be withheld, but the authority must identify the legal reason.",
+    title: "The fee is not a barrier",
+    body: "A small fee applies to most requests, along with charges for copies. The fee is waived entirely for a BPL cardholder. Where a category of information is exempt under the Act, the exact reason for withholding it must still be provided.",
   },
   {
     label: "Response and appeal timelines",
-    title: "The process has legal deadlines",
-    body: "A standard RTI request should normally receive a response within 30 days. If the authority does not reply, refuses the request or gives an incomplete answer, the citizen can file a First Appeal. The case timeline should make every deadline and available next step visible.",
+    title: "Fixed timelines apply",
+    body: "A reply is required within 30 days. If that deadline is missed, or a request is refused without reason or answered only in part, a First Appeal may be filed. Every deadline and next step remains visible throughout.",
   },
 ];
 
 export function GeneralInformation() {
   const [selected, setSelected] = useState(0);
   const topic = TOPICS[selected];
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSelected((current) => (current + 1) % TOPICS.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => clearInterval(id);
+  }, [selected]);
 
   return (
     <Reveal className="grid gap-7 py-5 md:grid-cols-[minmax(220px,0.72fr)_minmax(0,2fr)] md:gap-12 lg:gap-16">

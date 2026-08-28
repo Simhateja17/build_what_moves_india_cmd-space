@@ -65,7 +65,8 @@ export function stagesFor({
   feeWaived = false,
 }: StageInput): Stage[] {
   const replied = d.hasReply;
-  const appealLive = d.appealFiled || d.canFileFirstAppeal || d.canFileSecondAppeal;
+  const appealLive =
+    d.appealFiled || d.canFileFirstAppeal || d.canFileSecondAppeal || d.secondAppealFiled;
 
   const submitted: Stage = {
     key: "submitted",
@@ -129,7 +130,9 @@ export function stagesFor({
     official: replied ? "DISPOSED OF" : "AWAITED",
     state: replied ? "done" : d.isOverdue ? "overdue" : "pending",
     note: replied
-      ? "Their answer is on your case, in full."
+      ? d.firstAppealOnRefusal
+        ? "Their reply is on your case, but it withheld what you asked for."
+        : "Their answer is on your case, in full."
       : d.isOverdue
         ? "No answer arrived within the 30 days the law allows."
         : "Their written answer will appear here.",
@@ -138,29 +141,35 @@ export function stagesFor({
   const appeal: Stage = {
     key: "appeal",
     label: "Appeal",
-    official: d.canFileSecondAppeal
-      ? "ELIGIBLE FOR SECOND APPEAL — S.19(3)"
-      : d.appealFiled
-        ? "FIRST APPEAL — PENDING"
-        : d.canFileFirstAppeal
-          ? "ELIGIBLE FOR FIRST APPEAL — S.19(1)"
-          : "NOT REQUIRED",
+    official: d.secondAppealFiled
+      ? "SECOND APPEAL — PENDING BEFORE CIC"
+      : d.canFileSecondAppeal
+        ? "ELIGIBLE FOR SECOND APPEAL — S.19(3)"
+        : d.appealFiled
+          ? "FIRST APPEAL — PENDING"
+          : d.canFileFirstAppeal
+            ? "ELIGIBLE FOR FIRST APPEAL — S.19(1)"
+            : "NOT REQUIRED",
     state: d.canFileSecondAppeal
       ? "attention"
-      : d.appealFiled
+      : d.appealFiled || d.secondAppealFiled
         ? "current"
         : d.canFileFirstAppeal
           ? "attention"
           : appealLive
             ? "pending"
             : "skipped",
-    note: d.canFileSecondAppeal
-      ? "Your appeal went undecided for 45 days. You can now go to the Information Commission."
-      : d.appealFiled
-        ? "With the senior Appellate Authority, who has 45 days to decide."
-        : d.canFileFirstAppeal
-          ? "You are entitled to appeal, free of cost, right now."
-          : "Only needed if they stay silent or their answer falls short.",
+    note: d.secondAppealFiled
+      ? "With the Central Information Commission, which sits outside the department."
+      : d.canFileSecondAppeal
+        ? "Your appeal went undecided past even the outer limit of 45 days. You can now go to the Information Commission."
+        : d.appealFiled
+          ? "With the senior Appellate Authority, who has 30 days to decide — 45 at the outside, and only if they record why."
+          : d.firstAppealOnRefusal
+            ? "Their answer withheld what you asked for. You are entitled to appeal, free of cost."
+            : d.canFileFirstAppeal
+              ? "You are entitled to appeal, free of cost, right now."
+              : "Only needed if they stay silent or their answer falls short.",
   };
 
   return [submitted, payment, received, processing, response, appeal];

@@ -10,14 +10,7 @@ import {
   SETTLEMENT_WORKING_DAYS,
   formatTime,
 } from "@/lib/payment";
-
-const CHIP: Record<AnswerTone, string> = {
-  good: "bg-govgreen-50 text-govgreen-700 ring-green-200",
-  warn: "bg-saffron-50 text-saffron-600 ring-orange-200",
-  danger: "bg-govred-50 text-govred-700 ring-red-200",
-  info: "bg-navy-50 text-navy-800 ring-navy-100",
-  neutral: "bg-slate-100 text-ink-2 ring-slate-200",
-};
+import { toneChip } from "@/lib/tone";
 
 export default function CheckPaymentPage() {
   const { payments } = useStore();
@@ -40,8 +33,8 @@ export default function CheckPaymentPage() {
         Check payment status
       </h1>
       <p className="mt-2 text-[15px] leading-relaxed text-ink-2">
-        Paid, but nothing seems to have happened? Find out exactly what became
-        of your money — and whether you need to do anything at all.
+        If a payment was made but no confirmation was received, its current
+        status can be checked here, along with any action required.
       </p>
       <p className="mt-1.5 text-[11px] uppercase tracking-wider text-muted">
         On the current portal this is called &ldquo;Payment Reconciliation&rdquo;
@@ -52,11 +45,12 @@ export default function CheckPaymentPage() {
       {/* Lookup, for someone holding a bank SMS and nothing else. */}
       <div className="gov-card p-5">
         <label htmlFor="lookup" className="field-label">
-          Have a reference number?
+          Reference number
         </label>
         <p className="mt-0.5 text-[13px] text-muted">
-          From your bank SMS, UPI app, or the receipt we showed you. Leave it
-          blank to see every payment on your account.
+          This may be found in the bank SMS, UPI app, or the receipt issued
+          at the time of payment. Leave this field blank to view all
+          payments on this account.
         </p>
         <div className="mt-2.5 flex flex-col gap-2 sm:flex-row">
           <input
@@ -79,9 +73,9 @@ export default function CheckPaymentPage() {
         </div>
         {notFound ? (
           <p className="mt-3 rounded-lg bg-govred-50 px-3 py-2.5 text-[13px] leading-relaxed text-govred-700">
-            No payment on this account matches that reference. If money did
-            leave your account, it was not received by this portal — your bank
-            reverses such debits automatically. Keep the SMS as proof.
+            No payment on this account matches that reference. If an amount
+            was debited, it was not received by this portal. Such debits are
+            reversed automatically by the bank. Retain the SMS as proof.
           </p>
         ) : null}
       </div>
@@ -96,8 +90,8 @@ export default function CheckPaymentPage() {
           <div className="mt-2 gov-card p-8 text-center">
             <p className="font-semibold text-ink">No payments yet</p>
             <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-2">
-              Once you pay the ₹10 fee for a request, it appears here with a
-              plain answer about where your money is.
+              Once the ₹10 fee for a request is paid, it will appear here
+              along with its current status.
             </p>
             <Link
               href="/start-rti"
@@ -119,17 +113,16 @@ export default function CheckPaymentPage() {
       {/* The promise, restated where a worried person will look for it. */}
       <div className="rounded-[var(--radius-panel)] border border-navy-600/20 bg-navy-50 p-5 xl:sticky xl:top-32 xl:p-6">
         <p className="text-[10px] font-bold uppercase tracking-wider text-navy-800/70">
-          The rule we hold ourselves to
+          Policy on payments
         </p>
         <p className="mt-1.5 text-[15px] font-semibold leading-snug text-navy-900">
           No payment is ever left unexplained.
         </p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-navy-800">
-          Every payment ends in one of two places within{" "}
-          {SETTLEMENT_WORKING_DAYS} working days — a registered RTI, or the full
-          amount back in the account it came from. You never have to apply for
-          the refund, and you are never asked to pay a second time for the same
-          request.
+          Every payment is resolved within {SETTLEMENT_WORKING_DAYS} working
+          days, either as a registered RTI application or as a refund to the
+          originating account. No application is required for a refund, and
+          no request is charged a second time.
         </p>
       </div>
       </div>
@@ -139,11 +132,14 @@ export default function CheckPaymentPage() {
 
 function PaymentRow({ payment }: { payment: PaymentRecord }) {
   const copy = PAYMENT_COPY[payment.state];
+  // "Safe to pay again" and "Nothing to do" were the same green chip, and
+  // they are opposite instructions — one invites a payment, the other says
+  // the request is done. A finished payment is solid; a live one is tinted.
   const verdict = copy.payingIsSafe
-    ? { text: "Safe to pay again", tone: "good" as AnswerTone }
+    ? { text: "Safe to pay again", tone: "good" as AnswerTone, done: false }
     : copy.isWorking
-      ? { text: "Do not pay again", tone: "danger" as AnswerTone }
-      : { text: "Nothing to do", tone: "good" as AnswerTone };
+      ? { text: "Do not pay again", tone: "danger" as AnswerTone, done: false }
+      : { text: "No action required", tone: "good" as AnswerTone, done: true };
 
   return (
     <li>
@@ -165,7 +161,7 @@ function PaymentRow({ payment }: { payment: PaymentRecord }) {
             </p>
           </div>
           <span
-            className={`shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-bold ring-1 ${CHIP[verdict.tone]}`}
+            className={`shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-bold ring-1 ${toneChip(verdict.tone, verdict.done ? "solid" : "tint")}`}
           >
             {verdict.text}
           </span>

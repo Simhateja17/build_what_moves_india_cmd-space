@@ -91,7 +91,7 @@ export function ReviewStep({
   return (
     <AssistantShell
       step="review"
-      title="Check it once"
+      title="Review before submission"
       onBack={goBack}
       primaryLabel={
         central
@@ -102,14 +102,14 @@ export function ReviewStep({
       onPrimary={central ? continueToForm : () => setSheet(true)}
     >
       <div className="gov-card divide-y divide-line-2">
-        <Row label="Going to" onEdit={() => dispatch({ type: "go", step: "authority" })}>
+        <Row label="Addressed to" onEdit={() => dispatch({ type: "go", step: "authority" })}>
           <span className="block">{fillPlaces(authority.name, place)}</span>
           <span className="block text-[13px] text-muted">
             {fillPlaces(authority.wing, place)}
           </span>
           <GovLevelBadge level={authority.level} className="mt-2" />
         </Row>
-        <Row label="You are asking for" onEdit={() => dispatch({ type: "go", step: "asks" })}>
+        <Row label="Information sought" onEdit={() => dispatch({ type: "go", step: "asks" })}>
           <span className="block">
             {asks.length} thing{asks.length === 1 ? "" : "s"}
           </span>
@@ -136,7 +136,7 @@ export function ReviewStep({
             central ? "text-govgreen-700/80" : "text-saffron-600/90"
           }`}
         >
-          Where this one goes
+          Filing route
         </p>
         <p
           className={`mt-1.5 text-sm leading-relaxed ${
@@ -146,14 +146,16 @@ export function ReviewStep({
           {central ? (
             <>
               {fillPlaces(authority.name, place)} is a Central Government
-              office, so you can file this here. We will carry your draft into
-              the form — you only need to add your own details.
+              office, and this application may be filed here. The draft will
+              be carried into the form; only the remaining details need to
+              be added.
             </>
           ) : (
             <>
-              This is a {state.stateName || "state"} matter, so it is not filed
-              through this portal. Your draft is ready to use — take it to the{" "}
-              {authority.pioTitle}, or file it on your state&apos;s RTI page.
+              This is a {state.stateName || "state"} matter and is not filed
+              through this portal. The draft is ready for use and may be
+              submitted to the {authority.pioTitle}, or filed on the
+              state&apos;s RTI portal.
             </>
           )}
         </p>
@@ -166,14 +168,14 @@ export function ReviewStep({
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(portalText);
-                setToast("Copied. Paste it wherever you need it.");
+                setToast("Copied to clipboard.");
               } catch {
-                setToast("Could not copy — use Save as a file instead.");
+                setToast("Could not copy automatically. Use Save as a file instead.");
               }
             }}
             className="btn-secondary flex-1 text-sm"
           >
-            ⧉ Copy my request
+            ⧉ Copy the request
           </button>
           <button
             type="button"

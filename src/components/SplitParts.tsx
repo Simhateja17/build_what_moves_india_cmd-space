@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { DerivedPart, formatInr } from "@/lib/derive";
-import { PENALTY_PER_DAY_INR } from "@/lib/types";
+import { badgeForStatus, PENALTY_PER_DAY_INR } from "@/lib/types";
 import { StatusPill } from "./StatusPill";
 
 export function SplitParts({ parts }: { parts: DerivedPart[] }) {
@@ -53,7 +53,7 @@ export function SplitParts({ parts }: { parts: DerivedPart[] }) {
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <StatusPill status={part.status} size="sm" />
+                  <StatusPill badge={badgeForStatus(part.status)} size="sm" />
                   <span aria-hidden className="text-muted">
                     {open ? "−" : "+"}
                   </span>

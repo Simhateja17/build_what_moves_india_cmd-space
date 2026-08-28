@@ -39,7 +39,7 @@ export function AuthorityCard({
 
       {assumedLabel ? (
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-saffron-400/40 bg-saffron-50 px-3 py-2 text-[13px] text-saffron-600">
-          <span>We assumed: {assumedLabel.toLowerCase()}.</span>
+          <span>Assumed: {assumedLabel.toLowerCase()}.</span>
           {onChangeAssumption ? (
             <button
               type="button"
@@ -53,8 +53,8 @@ export function AuthorityCard({
       ) : null}
 
       <div className="mt-4 space-y-2.5 border-t border-line-2 pt-4">
-        <WhyLine tone="yes" lead="They do the work." text={authority.why.work} />
-        <WhyLine tone="yes" lead="They hold the papers." text={authority.why.records} />
+        <WhyLine tone="yes" lead="This office does the work." text={authority.why.work} />
+        <WhyLine tone="yes" lead="This office holds the papers." text={authority.why.records} />
         <WhyLine tone="no" lead="" text={authority.why.notThem} />
       </div>
     </div>
@@ -101,7 +101,7 @@ export function AlternativeAuthorities({
   return (
     <div className="gov-card p-5">
       <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-        If that is not it
+        If this is not the correct office
       </p>
       <div className="mt-3 space-y-3">
         {alternatives.map((a) => (

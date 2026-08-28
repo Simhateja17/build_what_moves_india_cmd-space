@@ -20,7 +20,7 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
   return (
     <AssistantShell
       step="location"
-      title="Where is this happening?"
+      title="Location"
       subtitle="The same problem is handled by different offices in different places."
       onBack={goBack}
       primaryLabel="Find the department"
@@ -84,7 +84,7 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
       {clarifier ? (
         <div>
           <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-            One more thing
+            Additional detail
           </p>
           <ClarifierCard
             clarifier={clarifier}

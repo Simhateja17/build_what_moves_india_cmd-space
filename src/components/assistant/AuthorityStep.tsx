@@ -37,8 +37,8 @@ export function AuthorityStep({
 
   const continueLabel =
     mode === "finder"
-      ? "Continue — help me write the request"
-      : "What can I ask them?";
+      ? "Continue to draft the request"
+      : "What can be requested?";
 
   return (
     <AssistantShell
@@ -57,7 +57,7 @@ export function AuthorityStep({
             onClick={onContinue}
             className="text-[13px] font-medium text-navy-700 underline underline-offset-2"
           >
-            Continue anyway — I still want my draft
+            Continue anyway and prepare the draft
           </button>
         ) : null
       }

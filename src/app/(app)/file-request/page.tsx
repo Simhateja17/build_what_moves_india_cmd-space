@@ -8,12 +8,13 @@ import { MINISTRIES, OFFICES } from "@/lib/mock-data";
 import { AssistantHandoff, HANDOFF_KEY } from "@/lib/assistant/types";
 import { caseFromDraft, makeRegistrationNumber } from "@/lib/payment";
 import { GroundRealityNote } from "@/components/GroundRealityNote";
+import { DraftStatus } from "@/components/DraftStatus";
 
 const STEPS = [
-  { title: "Who has the answer", hint: "The office that holds the information" },
-  { title: "What you want to know", hint: "Your question, in your own words" },
-  { title: "About you", hint: "Only what the law actually requires" },
-  { title: "Check and send", hint: "Review, pay ₹10, done" },
+  { title: "Select the authority", hint: "The office that holds the information" },
+  { title: "Describe your request", hint: "State your question clearly" },
+  { title: "Applicant details", hint: "As required under the RTI Act" },
+  { title: "Review and submit", hint: "Review, pay the ₹10 fee, and submit" },
 ];
 
 const CHAR_LIMIT = 3000;
@@ -26,18 +27,50 @@ const QUESTION_STARTERS = [
   "Please state the reasons for the delay in …",
 ];
 
+/** Where a half-finished request lives between sittings. */
+const DRAFT_KEY = "rti.draft.file-request";
+
+interface Draft {
+  step: number;
+  ministry: string;
+  office: string;
+  question: string;
+  name: string;
+  email: string;
+  mobile: string;
+  isBpl: boolean;
+}
+
+/**
+ * Read the saved draft during state setup rather than in an effect, so the
+ * form never paints empty and then jump-fills a moment later.
+ */
+function loadDraft(): Draft | null {
+  if (typeof window === "undefined") return null;
+  try {
+    // A handoff from the assistant is a fresh intent and outranks whatever
+    // was left over from a previous sitting.
+    if (window.sessionStorage.getItem(HANDOFF_KEY)) return null;
+    const raw = window.localStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as Draft) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function FileRequestPage() {
   const { addCase, startPayment } = useStore();
   const router = useRouter();
 
-  const [step, setStep] = useState(0);
-  const [ministry, setMinistry] = useState("");
-  const [office, setOffice] = useState("");
-  const [question, setQuestion] = useState("");
-  const [name, setName] = useState("Ananya Sharma");
-  const [email, setEmail] = useState("ananya.sharma@example.in");
-  const [mobile, setMobile] = useState("");
-  const [isBpl, setIsBpl] = useState(false);
+  const [draft] = useState(loadDraft);
+  const [step, setStep] = useState(draft?.step ?? 0);
+  const [ministry, setMinistry] = useState(draft?.ministry ?? "");
+  const [office, setOffice] = useState(draft?.office ?? "");
+  const [question, setQuestion] = useState(draft?.question ?? "");
+  const [name, setName] = useState(draft?.name ?? "Ananya Sharma");
+  const [email, setEmail] = useState(draft?.email ?? "ananya.sharma@example.in");
+  const [mobile, setMobile] = useState(draft?.mobile ?? "");
+  const [isBpl, setIsBpl] = useState(draft?.isBpl ?? false);
   const [handoff, setHandoff] = useState<AssistantHandoff | null>(null);
 
   // Someone arriving from the assistant has already settled the three
@@ -62,6 +95,31 @@ export default function FileRequestPage() {
     }
   }, []);
 
+  // Serialised in render, so the effect has a single primitive dependency
+  // and needs no setState of its own to report that it saved.
+  const draftBody = JSON.stringify({
+    step, ministry, office, question, name, email, mobile, isBpl,
+  } satisfies Draft);
+
+  // Persist on every change. A citizen on a shared phone or a patchy
+  // connection should never lose a part-written request, and should be
+  // able to see that they will not.
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(DRAFT_KEY, draftBody);
+    } catch {
+      /* private mode — the draft simply is not kept */
+    }
+  }, [draftBody]);
+
+  const clearDraft = () => {
+    try {
+      window.localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* nothing to clear */
+    }
+  };
+
   const offices = ministry ? (OFFICES[ministry] ?? []) : [];
 
   const errors = useMemo(() => {
@@ -72,21 +130,38 @@ export default function FileRequestPage() {
     }
     if (step === 1) {
       if (question.trim().length < 15)
-        e.question = "Write at least a sentence so the officer knows what to look for.";
+        e.question = "Provide at least one sentence describing what is being requested.";
       if (question.length > CHAR_LIMIT)
-        e.question = `Trim to ${CHAR_LIMIT} characters, or attach the rest as a PDF.`;
+        e.question = `Reduce to ${CHAR_LIMIT} characters, or attach the remainder as a PDF.`;
     }
     if (step === 2) {
       if (!name.trim()) e.name = "The law requires your name on the request.";
-      if (!email.trim()) e.email = "We need an email to send your registration number.";
+      if (!email.trim()) e.email = "An email address is required to send the registration number.";
     }
     return e;
   }, [step, ministry, office, question, name, email]);
 
   const canContinue = Object.keys(errors).length === 0;
 
+  /**
+   * Which fields may show their error yet.
+   *
+   * Every error used to render on first paint, so a citizen opening the
+   * form was greeted by two red lines telling them off for not having
+   * filled in fields they had not reached. A field speaks up once it has
+   * been touched, or once Continue has been pressed on its step.
+   */
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [triedStep, setTriedStep] = useState<Record<number, boolean>>({});
+  const touch = (field: string) =>
+    setTouched((prev) => (prev[field] ? prev : { ...prev, [field]: true }));
+  const showError = (field: string) =>
+    (touched[field] || triedStep[step]) ? errors[field] : undefined;
+
   function submit() {
     const draft = { ministry, office, question, name, email, mobile, isBpl };
+    // It is a filed request now, not a draft.
+    clearDraft();
 
     // A BPL applicant owes nothing, so there is no payment to go wrong —
     // they are registered on the spot rather than sent through a fee screen.
@@ -109,7 +184,7 @@ export default function FileRequestPage() {
           File an RTI request
         </h1>
         <p className="mt-1.5 text-sm text-ink-2">
-          Four short steps. Nothing to read before you start.
+          This application has four steps.
         </p>
 
         {/* How much of the form is behind you — the reassurance the current
@@ -124,6 +199,7 @@ export default function FileRequestPage() {
           <p className="mt-1.5 text-xs text-muted">
             Step {step + 1} of {STEPS.length}
           </p>
+          <DraftStatus token={draftBody} />
         </div>
 
         <ol className="mt-5 space-y-1">
@@ -182,20 +258,20 @@ export default function FileRequestPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-bold text-ink">
-                  Who has the answer?
+                  Select the authority
                 </h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  Not sure? Pick your best guess — it cannot be held against
-                  you.
+                  If you are unsure, select your best estimate. This
+                  selection will not affect your application.
                 </p>
               </div>
 
               {handoff ? (
                 <div className="rounded-lg border border-govgreen-600/30 bg-govgreen-50 px-4 py-3">
                   <p className="text-sm leading-relaxed text-govgreen-700">
-                    <strong>✓ Chosen for you by the assistant</strong> —{" "}
-                    {handoff.authorityName}. Change anything below if it looks
-                    wrong.
+                    <strong>Selected by the assistant:</strong>{" "}
+                    {handoff.authorityName}. This may be changed below if
+                    incorrect.
                   </p>
                 </div>
               ) : (
@@ -203,7 +279,7 @@ export default function FileRequestPage() {
                   href="/find-department"
                   className="block rounded-lg border border-navy-600/20 bg-navy-50 px-4 py-3 text-sm font-medium text-navy-800 transition hover:border-navy-600/40"
                 >
-                  Don&apos;t know which department? Find it from your problem →
+                  Do not know which department? Identify it from your problem →
                 </Link>
               )}
 
@@ -217,6 +293,7 @@ export default function FileRequestPage() {
                   onChange={(e) => {
                     setMinistry(e.target.value);
                     setOffice("");
+                    touch("ministry");
                   }}
                   className="field-input"
                 >
@@ -225,7 +302,7 @@ export default function FileRequestPage() {
                     <option key={m}>{m}</option>
                   ))}
                 </select>
-                {errors.ministry ? (
+                {showError("ministry") ? (
                   <p className="mt-1.5 text-sm text-govred-700">{errors.ministry}</p>
                 ) : null}
                 <GroundRealityNote>
@@ -238,12 +315,12 @@ export default function FileRequestPage() {
 
               <div>
                 <label htmlFor="office" className="field-label">
-                  Which office within it
+                  Office within the ministry or department
                 </label>
                 <select
                   id="office"
                   value={office}
-                  onChange={(e) => setOffice(e.target.value)}
+                  onChange={(e) => { setOffice(e.target.value); touch("office"); }}
                   disabled={!ministry}
                   className="field-input disabled:cursor-not-allowed disabled:bg-canvas"
                 >
@@ -254,18 +331,18 @@ export default function FileRequestPage() {
                     <option key={o}>{o}</option>
                   ))}
                 </select>
-                {errors.office ? (
+                {showError("office") ? (
                   <p className="mt-1.5 text-sm text-govred-700">{errors.office}</p>
                 ) : null}
               </div>
 
               <div className="rounded-lg border border-saffron-400/40 bg-saffron-50 px-4 py-3">
                 <p className="text-sm leading-relaxed text-saffron-600">
-                  <strong>One thing worth knowing:</strong> this portal only
-                  covers central government bodies. A request meant for a state
-                  government is returned without a refund — so if your question
-                  is about a state office, file it on your state&apos;s own RTI
-                  portal instead.
+                  <strong>Note:</strong> this portal covers central
+                  government bodies only. A request intended for a state
+                  government will be returned without a refund. If your
+                  question concerns a state office, file it on that
+                  state&apos;s RTI portal.
                 </p>
               </div>
             </div>
@@ -275,12 +352,12 @@ export default function FileRequestPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-bold text-ink">
-                  What do you want to know?
+                  Describe your request
                 </h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  Write it plainly. You are asking for facts and documents the
-                  government already holds — you never have to justify why you
-                  want them.
+                  State your request clearly. You are entitled to request
+                  facts and documents already held by the government, and
+                  are not required to give a reason.
                 </p>
               </div>
 
@@ -306,7 +383,7 @@ export default function FileRequestPage() {
                   id="question"
                   rows={8}
                   value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
+                  onChange={(e) => { setQuestion(e.target.value); touch("question"); }}
                   placeholder="For example: Please provide the current status of pension case file PPO-2019/44871, the reason for the delay since January, and the name of the officer holding the file."
                   className="field-input"
                 />
@@ -322,11 +399,11 @@ export default function FileRequestPage() {
                   </span>
                   {question.length > CHAR_LIMIT ? (
                     <span className="text-govred-700">
-                      Over the limit — attach the rest as a PDF
+                      Over the limit. Attach the remaining text as a PDF.
                     </span>
                   ) : null}
                 </div>
-                {errors.question ? (
+                {showError("question") ? (
                   <p className="mt-1.5 text-sm text-govred-700">{errors.question}</p>
                 ) : null}
                 <GroundRealityNote>
@@ -342,11 +419,12 @@ export default function FileRequestPage() {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-xl font-bold text-ink">About you</h2>
+                <h2 className="text-xl font-bold text-ink">Applicant details</h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  The current form asks for your gender, whether you live in a
-                  rural or urban area, and whether you are literate. None of
-                  that changes your rights, so we do not ask.
+                  The current portal form asks for gender, rural or urban
+                  residence, and literacy status. None of this affects your
+                  rights under the Act, and this application does not
+                  request it.
                 </p>
               </div>
 
@@ -357,10 +435,10 @@ export default function FileRequestPage() {
                 <input
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); touch("name"); }}
                   className="field-input"
                 />
-                {errors.name ? (
+                {showError("name") ? (
                   <p className="mt-1.5 text-sm text-govred-700">{errors.name}</p>
                 ) : null}
               </div>
@@ -373,10 +451,10 @@ export default function FileRequestPage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); touch("email"); }}
                   className="field-input"
                 />
-                {errors.email ? (
+                {showError("email") ? (
                   <p className="mt-1.5 text-sm text-govred-700">{errors.email}</p>
                 ) : null}
                 <GroundRealityNote>
@@ -412,8 +490,8 @@ export default function FileRequestPage() {
                     I hold a Below Poverty Line card
                   </span>
                   <span className="mt-0.5 block text-sm text-ink-2">
-                    Then you pay nothing at all. Attach your BPL certificate and
-                    the ₹10 fee is waived — this is your right under the RTI
+                    No fee is payable. Attach your BPL certificate and the
+                    ₹10 fee will be waived. This is a right under the RTI
                     Rules, 2012, not a concession.
                   </span>
                 </span>
@@ -424,23 +502,23 @@ export default function FileRequestPage() {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-xl font-bold text-ink">Check and send</h2>
+                <h2 className="text-xl font-bold text-ink">Review and submit</h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  Last look before this becomes a legal request.
+                  Review the details below before submission.
                 </p>
               </div>
 
               <dl className="divide-y divide-line-2 rounded-lg border border-line">
-                <Row label="Going to" onEdit={() => setStep(0)}>
+                <Row label="Addressed to" onEdit={() => setStep(0)}>
                   {office}
                   <span className="block text-sm text-muted">{ministry}</span>
                 </Row>
-                <Row label="Your question" onEdit={() => setStep(1)}>
+                <Row label="Information sought" onEdit={() => setStep(1)}>
                   <span className="block whitespace-pre-wrap text-[15px] leading-relaxed">
                     {question}
                   </span>
                 </Row>
-                <Row label="From" onEdit={() => setStep(2)}>
+                <Row label="Applicant" onEdit={() => setStep(2)}>
                   {name}
                   <span className="block text-sm text-muted">
                     {email}
@@ -460,10 +538,11 @@ export default function FileRequestPage() {
 
               <div className="rounded-lg border border-navy-600/20 bg-navy-50 px-4 py-3.5">
                 <p className="text-sm leading-relaxed text-navy-800">
-                  <strong>The moment you send this,</strong> a 30-day legal
-                  clock starts. We will track it for you — and if they go
-                  silent, we will tell you the day you become entitled to
-                  appeal, and show you the penalty running against the officer.
+                  <strong>Once submitted,</strong> a 30-day statutory
+                  response period begins. This application will be tracked
+                  automatically. If no response is received, the date on
+                  which a First Appeal becomes available will be shown,
+                  along with any penalty accruing against the officer.
                 </p>
               </div>
             </div>
@@ -484,9 +563,18 @@ export default function FileRequestPage() {
             {step < STEPS.length - 1 ? (
               <button
                 type="button"
-                disabled={!canContinue}
-                onClick={() => setStep((s) => s + 1)}
-                className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700 disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
+                aria-disabled={!canContinue}
+                onClick={() => {
+                  // Pressing Continue is what makes this step's errors
+                  // speak, rather than showing them before it is asked for.
+                  setTriedStep((prev) => ({ ...prev, [step]: true }));
+                  if (canContinue) setStep((s) => s + 1);
+                }}
+                // aria-disabled, not disabled: the button stays focusable and
+                // clickable so pressing it can explain what is missing. A
+                // dead grey button that does nothing tells the citizen
+                // nothing about why they are stuck.
+                className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700 aria-disabled:bg-line aria-disabled:text-muted aria-disabled:hover:bg-line"
               >
                 Continue
               </button>
@@ -496,7 +584,7 @@ export default function FileRequestPage() {
                 onClick={submit}
                 className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700"
               >
-                {isBpl ? "Send my request" : "Continue to payment →"}
+                {isBpl ? "Submit request" : "Continue to payment →"}
               </button>
             )}
           </div>

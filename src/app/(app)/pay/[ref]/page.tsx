@@ -71,7 +71,7 @@ export default function PayPage() {
     return (
       <div className="gov-card p-8 text-center">
         <p className="font-semibold text-ink">
-          We could not find that payment.
+          This payment could not be found.
         </p>
         <Link
           href="/check-payment"
@@ -156,7 +156,7 @@ export default function PayPage() {
           {/* Where to go when you have had enough of waiting. */}
           {copy.isWorking && payment.state !== "processing" ? (
             <p className="text-center text-sm text-muted">
-              You can safely leave this page.{" "}
+              This page may be safely closed.{" "}
               <Link
                 href="/check-payment"
                 className="font-medium text-navy-700 hover:underline"
@@ -168,7 +168,7 @@ export default function PayPage() {
                 href="/dashboard"
                 className="font-medium text-navy-700 hover:underline"
               >
-                go to your requests
+                go to My requests
               </Link>
               .
             </p>
@@ -207,8 +207,8 @@ function PayForm({
           Pay ₹{amount} to send this request
         </h1>
         <p className="mt-1.5 text-[15px] text-ink-2">
-          The RTI application fee is ₹{RTI_FEE_INR}. That is the whole cost —
-          there is nothing else to pay later.
+          The RTI application fee is ₹{RTI_FEE_INR}. No additional charges
+          apply.
         </p>
 
         <div className="mt-5 flex items-baseline justify-between rounded-[10px] border border-line bg-canvas px-4 py-3.5">
@@ -266,10 +266,11 @@ function PayForm({
             Before you pay
           </p>
           <p className="mt-1 text-[13px] leading-relaxed text-govgreen-700">
-            If anything goes wrong, we will tell you exactly what happened and
-            whether your money was taken.{" "}
-            <strong>You will never be asked to pay twice for one request.</strong>{" "}
-            Any payment we cannot turn into an RTI is refunded automatically.
+            If a payment issue occurs, the exact status and whether the
+            amount was debited will be shown.{" "}
+            <strong>No request will ever require payment twice.</strong>{" "}
+            Any payment that cannot be converted into a registered RTI is
+            refunded automatically.
           </p>
         </div>
 
@@ -278,7 +279,7 @@ function PayForm({
           onClick={onPay}
           className="mt-5 w-full rounded-lg bg-navy-800 px-4 py-4 text-[15px] font-bold text-white transition hover:bg-navy-700"
         >
-          Pay ₹{amount} and send my request
+          Pay ₹{amount} and submit this request
         </button>
       </div>
 
@@ -338,12 +339,12 @@ function Actions({
     return (
       <div className="rounded-[10px] border border-navy-600/20 bg-surface px-4 py-3.5 text-center">
         <p className="text-sm font-semibold text-navy-800">
-          Talking to your bank… {elapsed}s
+          Contacting the bank… {elapsed}s
         </p>
         <p className="mt-1 text-[13px] text-ink-2">
           {elapsed < 10
             ? "This usually takes about ten seconds."
-            : "Taking longer than usual — your money is still safe. Do not close this page."}
+            : "This is taking longer than usual. The amount paid remains safe. Do not close this page."}
         </p>
       </div>
     );
@@ -362,7 +363,7 @@ function Actions({
           href="/dashboard"
           className="flex-1 rounded-lg border border-line bg-surface px-4 py-3.5 text-center text-sm font-semibold text-navy-800 transition hover:bg-navy-50"
         >
-          All my requests
+          My requests
         </Link>
       </div>
     );
@@ -404,7 +405,7 @@ function Actions({
         href="/dashboard"
         className="flex-1 rounded-lg border border-line bg-surface px-4 py-3.5 text-center text-sm font-semibold text-navy-800 transition hover:bg-navy-50"
       >
-        Go to my requests
+        Go to My requests
       </Link>
     </div>
   );

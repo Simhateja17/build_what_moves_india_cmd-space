@@ -62,14 +62,14 @@ export default function ContactPage() {
           <header className="mt-5 grid items-center gap-6 border-b border-line-2 pb-7 sm:grid-cols-[1fr_310px]">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl">Contact Us</h1>
-              <p className="mt-3 text-[15px] text-ink-2">We are here to help. Reach out to us for any assistance.</p>
+              <p className="mt-3 text-[15px] text-ink-2">Assistance is available. Contact any of the channels below.</p>
               <span className="mt-5 block h-0.5 w-20 rounded-full bg-saffron-400" />
             </div>
             <ContactIllustration />
           </header>
 
           <section className="mt-7" aria-labelledby="support-options-title">
-            <h2 id="support-options-title" className="text-lg font-bold text-navy-900">How can we help you?</h2>
+            <h2 id="support-options-title" className="text-lg font-bold text-navy-900">Support options</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {SUPPORT_OPTIONS.map((option) => (
                 <article key={option.title} className="rounded-2xl border border-line bg-white px-5 py-6 text-center shadow-[var(--shadow-panel)]">
@@ -83,7 +83,7 @@ export default function ContactPage() {
           </section>
 
           <section className="mt-8" aria-labelledby="message-title">
-            <h2 id="message-title" className="text-lg font-bold text-navy-900">Send us a message</h2>
+            <h2 id="message-title" className="text-lg font-bold text-navy-900">Send a message</h2>
             <form onSubmit={submit} className="mt-4 rounded-2xl border border-line bg-white p-5 shadow-[var(--shadow-panel)] sm:p-7">
               <div className="grid gap-5 md:grid-cols-2 md:gap-8">
                 <div className="space-y-5">
@@ -118,7 +118,7 @@ export default function ContactPage() {
               </div>
               {submitted ? (
                 <div role="status" className="mt-5 rounded-xl border border-govgreen-600/25 bg-govgreen-50 px-4 py-3 text-sm font-semibold text-govgreen-700">
-                  Your message has been sent. Our support team will get back to you within 1–2 working days.
+                  The message has been sent. A response will be provided within 1–2 working days.
                 </div>
               ) : null}
             </form>
@@ -127,7 +127,7 @@ export default function ContactPage() {
           <aside className="mt-7 flex flex-col gap-4 rounded-2xl border border-navy-600/15 bg-navy-50 p-5 sm:flex-row sm:items-center">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-navy-600 text-lg font-bold text-navy-700">i</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-navy-900">Before contacting us, please check our FAQ section.</p>
+              <p className="text-sm font-bold text-navy-900">Before submitting a query, the FAQ section may be checked.</p>
               <p className="mt-1 text-sm text-ink-2">You may find answers to common questions there.</p>
             </div>
             <Link href="/about" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-bold text-navy-700 shadow-sm hover:bg-navy-50">View FAQ <span aria-hidden>→</span></Link>

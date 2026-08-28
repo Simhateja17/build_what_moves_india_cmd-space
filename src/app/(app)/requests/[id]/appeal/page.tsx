@@ -22,7 +22,7 @@ export default function FirstAppealPage() {
   if (!c) {
     return (
       <div className="gov-card p-8 text-center">
-        <p className="font-semibold text-ink">We could not find that request.</p>
+        <p className="font-semibold text-ink">This request could not be found.</p>
         <Link
           href="/dashboard"
           className="mt-3 inline-block font-medium text-navy-700 hover:underline"
@@ -56,15 +56,41 @@ export default function FirstAppealPage() {
           ← Back to this request
         </Link>
         <section className="mt-5 rounded-2xl border border-saffron-400/35 bg-white p-6 shadow-[var(--shadow-panel)] sm:p-8">
-          <span className="inline-flex rounded-md bg-saffron-50 px-2.5 py-1 text-xs font-bold text-saffron-600">Appeal under review</span>
+          {/* The stage words the rest of the app uses, not a private label.
+              The "In appeal" flag that used to sit beside this is gone: the
+              headline below says the appeal was filed, so repeating it as a
+              second chip only made the citizen choose between two tags. */}
+          <span className="inline-flex rounded-md bg-navy-50 px-2.5 py-1 text-xs font-bold text-navy-800">
+            With the department
+          </span>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-navy-900">Your First Appeal has been filed</h1>
           <dl className="mt-6 divide-y divide-line-2 border-y border-line-2">
             <AppealDetail label="Appeal number" value={filedAppeal.number ?? "Being generated"} />
             <AppealDetail label="RTI application" value={c.registrationNumber} />
             <AppealDetail label="Ground" value={filedAppeal.ground ?? "First Appeal"} />
             <AppealDetail label="Public Authority" value={c.authority.office} />
+            {/* Who is actually deciding it. The confirmation named the
+                office and the ground and then never said whose desk the
+                appeal had landed on — the one particular s.7(8)(iii)
+                makes mandatory. */}
+            <AppealDetail
+              label="Appellate Authority"
+              value={`${c.authority.appellateAuthority.name}, ${c.authority.appellateAuthority.designation}`}
+            />
+            <AppealDetail
+              label="Address for correspondence"
+              value={c.authority.appellateAuthority.address}
+            />
+            {c.authority.appellateAuthority.email ? (
+              <AppealDetail label="Email" value={c.authority.appellateAuthority.email} />
+            ) : null}
           </dl>
-          <p className="mt-5 text-sm leading-6 text-ink-2">The Appellate Authority has up to 45 days to decide. The decision will appear on your status screen.</p>
+          <p className="mt-5 text-sm leading-6 text-ink-2">
+            The Appellate Authority has 30 days to decide, and 45 at the very
+            outside — the longer period is open to it only where it records
+            its reasons for taking it. The decision will appear on your status
+            screen.
+          </p>
         </section>
       </div>
     );
@@ -83,9 +109,10 @@ export default function FirstAppealPage() {
         File a First Appeal
       </h1>
       <p className="mt-2 text-ink-2">
-        This goes to a senior officer inside the same department — the Appellate
-        Authority. It is free, and everything below is already filled in from
-        your original request.
+        This appeal is addressed to a senior officer within the same
+        department, the Appellate Authority. It is filed free of cost, and
+        the details below have been filled in from your original
+        application.
       </p>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.2fr)] lg:gap-8">
@@ -104,7 +131,7 @@ export default function FirstAppealPage() {
         {d.penalty.active ? (
           <p className="mt-3 rounded-md bg-govred-50 px-3 py-2 text-sm text-govred-700">
             {d.daysLate} days overdue · {formatInr(d.penalty.accruedInr)}{" "}
-            penalty accrued against {c.authority.cpio}
+            penalty accrued against {c.authority.cpio.name}
           </p>
         ) : null}
         <GroundRealityNote>
@@ -136,9 +163,10 @@ export default function FirstAppealPage() {
 
       {/* Ground for appeal — plain language leads, official term follows */}
       <div className="mt-5 gov-card p-5">
-        <p className="field-label">What went wrong?</p>
+        <p className="field-label">Ground for appeal</p>
         <p className="mt-1 text-sm text-muted">
-          Pick the closest one. We send the official wording to the department.
+          Select the option that applies. The official wording will be sent
+          to the department.
         </p>
 
         <div className="mt-4 space-y-2.5">
@@ -190,11 +218,11 @@ export default function FirstAppealPage() {
           rows={4}
           value={extra}
           onChange={(e) => setExtra(e.target.value)}
-          placeholder="You do not need to write anything here. Your original request and their silence are the whole case."
+          placeholder="This field may be left blank. Your original application and the lack of a response form the basis of this appeal."
           className="field-input"
         />
         <label htmlFor="relief" className="mt-5 field-label">
-          What action do you want from the Appellate Authority?
+          Relief sought from the Appellate Authority
         </label>
         <textarea
           id="relief"
@@ -228,9 +256,10 @@ export default function FirstAppealPage() {
         </label>
         <GroundRealityNote>
           Your appeal reaches the Appellate Authority through the same Nodal
-          Officer. They have 45 days to decide — after that you can go to the
-          Central Information Commission, which is the body that can impose the
-          Section 20 penalty.
+          Officer. They have 30 days to decide, and 45 at the outside if they
+          record why — after that you can go to the Central Information
+          Commission, which is the body that can impose the Section 20
+          penalty.
         </GroundRealityNote>
       </div>
       </form>

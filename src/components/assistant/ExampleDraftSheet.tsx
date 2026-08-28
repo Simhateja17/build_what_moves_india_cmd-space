@@ -52,7 +52,7 @@ export function ExampleList({
                     onClick={() => onUse(e.text)}
                     className="btn-secondary mt-3 w-full text-sm"
                   >
-                    Use this as my starting point
+                    Use this as a starting point
                   </button>
                 ) : null}
               </div>

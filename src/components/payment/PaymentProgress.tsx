@@ -41,8 +41,8 @@ const NOTE: Record<StepState, string> = {
   pending: "Not started",
   active: "In progress",
   done: "Complete",
-  failed: "Did not go through",
-  stuck: "Taking longer than usual",
+  failed: "Not completed",
+  stuck: "Delayed",
 };
 
 export function PaymentProgress({ state }: { state: PaymentState }) {

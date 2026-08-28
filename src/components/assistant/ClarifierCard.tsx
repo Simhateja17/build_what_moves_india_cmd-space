@@ -103,12 +103,12 @@ export function ClarifierCard({
           skipped ? "text-saffron-600" : "text-navy-700"
         }`}
       >
-        {skipped ? `Skipped — ${clarifier.skipLabel.toLowerCase()}` : clarifier.skipLabel}
+        {skipped ? `Skipped: ${clarifier.skipLabel.toLowerCase()}` : clarifier.skipLabel}
       </button>
       {skipped ? (
         <p className="mt-1 text-[13px] leading-relaxed text-saffron-600">
-          We left a blank in your request. You can fill it in on the draft
-          screen.
+          A blank has been left in this request. It may be completed on the
+          draft screen.
         </p>
       ) : null}
     </div>

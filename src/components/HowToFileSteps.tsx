@@ -16,43 +16,43 @@ import { STEP_ART } from "./StepIllustrations";
 const STEPS = [
   {
     title: "Go to the RTI Online Portal",
-    body: "Visit the official RTI Online Portal at rtionline.gov.in. Only central ministries and departments can be asked here.",
+    body: "Visit the official RTI Online Portal at rtionline.gov.in. Requests for central ministries and departments are received here.",
   },
   {
     title: "Register yourself",
-    body: "Create an account using your email ID and mobile number. Your registration number and every alert will come to both.",
+    body: "Create an account with an email ID and mobile number. Both will be used to provide updates at every step.",
   },
   {
     title: "Login to your account",
-    body: "Sign in with the email ID and password you registered. Everything you file stays listed under this account.",
+    body: "Sign in with the registered email ID and password. Every application submitted remains listed here.",
   },
   {
     title: "Select the public authority",
-    body: "Choose the ministry, department and public authority that holds the record. Picking the wrong one gets the request returned.",
+    body: "Select the ministry, department and public authority that holds the record. An application sent to the wrong authority will be returned.",
   },
   {
     title: "Fill the RTI application form",
-    body: "Give your details and write your request clearly. Ask for records — files, orders, dates, amounts — not opinions.",
+    body: "Provide the required details and state the request clearly. Requests must be for records — files, orders, dates, amounts — not opinions.",
   },
   {
     title: "Pay the application fee",
-    body: "The fee is ₹10, by UPI, net banking, card or wallet. Nothing at all if you hold a BPL card and attach a copy.",
+    body: "The fee is ₹10, payable by UPI, net banking, card or wallet. No fee applies for a BPL cardholder who attaches a copy of the certificate.",
   },
   {
     title: "Submit your application",
-    body: "Check the details and submit. A unique registration number is issued — keep it, as tracking and appeals both need it.",
+    body: "Review the details before submission. A unique registration number is issued immediately and is required for tracking and appeals.",
   },
   {
     title: "Receive acknowledgement",
-    body: "An acknowledgement with your registration number arrives by email, and by SMS if you gave a mobile number.",
+    body: "Receipt is confirmed by email with the registration number, and by SMS if a mobile number was provided.",
   },
   {
     title: "Track your application",
-    body: "Use the registration number to see where the request has reached and what the officer has done with it.",
+    body: "The registration number may be used at any time to check the current status of the request.",
   },
   {
     title: "Receive information, or appeal",
-    body: "The officer must reply within 30 days — 48 hours where life or liberty is concerned. If they don't, a first appeal is free.",
+    body: "A reply is required within 30 days, or 48 hours where life or liberty is concerned. If no reply is received, a First Appeal may be filed free of cost.",
   },
 ];
 
@@ -67,8 +67,8 @@ export function HowToFileSteps() {
           How to file an RTI online
         </h2>
         <p className="mx-auto mt-2.5 max-w-2xl text-ink-2">
-          A step-by-step guide to requesting information from a public
-          authority — the ten screens you will actually see, in order.
+          Every screen is shown here in the order it will appear, so the
+          process is known in advance.
         </p>
       </div>
 

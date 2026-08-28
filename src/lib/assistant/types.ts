@@ -119,12 +119,12 @@ export const STEP_ORDER: AssistantStep[] = [
 ];
 
 export const STEP_LABEL: Record<AssistantStep, string> = {
-  problem: "Your problem",
-  location: "Where",
-  authority: "Who answers",
-  asks: "What to ask",
-  draft: "Your draft",
-  review: "Check",
+  problem: "Describe the problem",
+  location: "Location",
+  authority: "Authority",
+  asks: "Information sought",
+  draft: "Draft",
+  review: "Review",
 };
 
 export interface AssistantState {

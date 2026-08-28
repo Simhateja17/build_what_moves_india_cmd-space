@@ -21,7 +21,20 @@ import {
   makeRegistrationNumber,
   seedPayments,
 } from "./payment";
-import { RtiCase } from "./types";
+import { HearingChoice, RtiCase } from "./types";
+
+/**
+ * A document the citizen sent in answer to a "supporting document
+ * requested" notice. Only the metadata is kept — the file itself never
+ * leaves the browser in this build, and storing bytes would fill the
+ * 5 MB localStorage budget with a single scanned page.
+ */
+export interface UploadedDoc {
+  name: string;
+  sizeBytes: number;
+  /** Epoch ms, so the receipt can name the day it was sent. */
+  uploadedAt: number;
+}
 
 interface StoreState {
   ready: boolean;
@@ -40,12 +53,22 @@ interface StoreState {
 
   appealOf: (id: string) => AppealState;
   fileAppeal: (id: string, ground: string, onDay: number) => void;
+  /** Escalate to the Information Commission once the 45 days lapse. */
+  fileSecondAppeal: (id: string, ground: string, onDay: number) => void;
+  /** Record how the citizen intends to answer a hearing notice. */
+  setHearingChoice: (id: string, choice: HearingChoice) => void;
 
   /** Responses the citizen has opened — drives "review it" clearing. */
   readResponses: string[];
   markResponseRead: (caseId: string) => void;
   readNotifications: string[];
   markNotificationsRead: (ids: string[]) => void;
+
+  /** Documents sent per case, newest first. */
+  uploads: Record<string, UploadedDoc[]>;
+  uploadsFor: (caseId: string) => UploadedDoc[];
+  addUpload: (caseId: string, file: { name: string; size: number }) => void;
+  removeUpload: (caseId: string, name: string, uploadedAt: number) => void;
 
   payments: PaymentRecord[];
   getPayment: (ref: string) => PaymentRecord | undefined;
@@ -76,6 +99,9 @@ const READ_NOTIF_KEY = "rti_saral_read_notifications";
 // worst kind of lie this portal could tell.
 const APPEALS_KEY = "rti_saral_appeals";
 const DAYS_KEY = "rti_saral_days";
+// Sending a document is a step in the case, like filing an appeal. If it
+// vanished on reload the citizen would send it twice.
+const UPLOADS_KEY = "rti_saral_uploads";
 
 /** Cases the citizen created, as opposed to the three seeded stories. */
 function isUserCase(c: RtiCase): boolean {
@@ -94,6 +120,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [payments, setPayments] = useState<PaymentRecord[]>(seedPayments);
   const [readResponses, setReadResponses] = useState<string[]>(SEED_READ_RESPONSES);
   const [readNotifications, setReadNotifications] = useState<string[]>([]);
+  const [uploads, setUploads] = useState<Record<string, UploadedDoc[]>>({});
 
   // localStorage is only read after mount so the server and first client
   // render agree — otherwise every guarded page flashes.
@@ -114,6 +141,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
       const savedAppeals = window.localStorage.getItem(APPEALS_KEY);
       if (savedAppeals) setAppeals(JSON.parse(savedAppeals));
+
+      const savedUploads = window.localStorage.getItem(UPLOADS_KEY);
+      if (savedUploads) setUploads(JSON.parse(savedUploads));
 
       const savedDays = window.localStorage.getItem(DAYS_KEY);
       if (savedDays) setDays((prev) => ({ ...prev, ...JSON.parse(savedDays) }));
@@ -152,6 +182,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       );
       window.localStorage.setItem(APPEALS_KEY, JSON.stringify(appeals));
       window.localStorage.setItem(DAYS_KEY, JSON.stringify(days));
+      window.localStorage.setItem(UPLOADS_KEY, JSON.stringify(uploads));
     } catch {
       /* storage full or blocked — the session still works in memory */
     }
@@ -163,6 +194,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     readNotifications,
     appeals,
     days,
+    uploads,
   ]);
 
   const login = useCallback((name?: string) => {
@@ -214,11 +246,38 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const number = `FA${Math.floor(Math.random() * 9000) + 1000}`;
       setAppeals((prev) => ({
         ...prev,
-        [id]: { filedOnDay: onDay, ground, number },
+        [id]: { ...prev[id], filedOnDay: onDay, ground, number },
       }));
     },
     [],
   );
+
+  /**
+   * The Commission is a different body, so its reference looks nothing
+   * like the department's — CIC/A/YYYY/NNNNNN, the format the Commission
+   * actually issues. Spread over the existing state: the First Appeal is
+   * what the Second Appeal is *against*, and losing it would orphan the
+   * case history.
+   */
+  const fileSecondAppeal = useCallback(
+    (id: string, ground: string, onDay: number) => {
+      const serial = String(Math.floor(Math.random() * 900000) + 100000);
+      setAppeals((prev) => ({
+        ...prev,
+        [id]: {
+          ...prev[id],
+          secondFiledOnDay: onDay,
+          secondGround: ground,
+          secondNumber: `CIC/A/2026/${serial}`,
+        },
+      }));
+    },
+    [],
+  );
+
+  const setHearingChoice = useCallback((id: string, choice: HearingChoice) => {
+    setAppeals((prev) => ({ ...prev, [id]: { ...prev[id], hearingChoice: choice } }));
+  }, []);
 
   const markResponseRead = useCallback((caseId: string) => {
     setReadResponses((prev) =>
@@ -229,6 +288,38 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const markNotificationsRead = useCallback((ids: string[]) => {
     setReadNotifications((prev) => [...new Set([...prev, ...ids])]);
   }, []);
+
+  const uploadsFor = useCallback(
+    (caseId: string) => uploads[caseId] ?? [],
+    [uploads],
+  );
+
+  const addUpload = useCallback(
+    (caseId: string, file: { name: string; size: number }) => {
+      setUploads((prev) => ({
+        ...prev,
+        [caseId]: [
+          { name: file.name, sizeBytes: file.size, uploadedAt: Date.now() },
+          ...(prev[caseId] ?? []),
+        ],
+      }));
+    },
+    [],
+  );
+
+  // Sent the wrong scan is a normal mistake, and one a citizen must be
+  // able to undo themselves rather than by ringing an office.
+  const removeUpload = useCallback(
+    (caseId: string, name: string, uploadedAt: number) => {
+      setUploads((prev) => ({
+        ...prev,
+        [caseId]: (prev[caseId] ?? []).filter(
+          (u) => !(u.name === name && u.uploadedAt === uploadedAt),
+        ),
+      }));
+    },
+    [],
+  );
 
   const getPayment = useCallback(
     (ref: string) => payments.find((p) => p.ref === ref),
@@ -315,10 +406,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setDay,
       appealOf,
       fileAppeal,
+      fileSecondAppeal,
+      setHearingChoice,
       readResponses,
       markResponseRead,
       readNotifications,
       markNotificationsRead,
+      uploads,
+      uploadsFor,
+      addUpload,
+      removeUpload,
       payments,
       getPayment,
       startPayment,
@@ -339,10 +436,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setDay,
       appealOf,
       fileAppeal,
+      fileSecondAppeal,
+      setHearingChoice,
       readResponses,
       markResponseRead,
       readNotifications,
       markNotificationsRead,
+      uploads,
+      uploadsFor,
+      addUpload,
+      removeUpload,
       payments,
       getPayment,
       startPayment,

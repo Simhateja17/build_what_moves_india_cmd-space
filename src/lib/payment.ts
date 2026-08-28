@@ -16,7 +16,7 @@
 ------------------------------------------------------------------- */
 
 import { MINISTRY_CODES } from "./mock-data";
-import { RtiCase } from "./types";
+import { RtiCase, Tone } from "./types";
 
 export const RTI_FEE_INR = 10;
 
@@ -32,7 +32,13 @@ export type PaymentState =
   | "unknown" // we never got an answer, money may or may not have moved
   | "registered"; // done, number issued
 
-export type AnswerTone = "good" | "warn" | "danger" | "info" | "neutral";
+/**
+ * The same tone vocabulary the case badges use — payment had its own
+ * copy of the list, which is how two vocabularies drift apart. Payment
+ * chips add the fill variant from `tone.ts`: a state nothing will change
+ * on its own renders solid, a state still in flight renders tinted.
+ */
+export type AnswerTone = Tone;
 
 export interface Answer {
   value: string;
@@ -69,14 +75,14 @@ export interface PaymentStateCopy {
 export const PAYMENT_COPY: Record<PaymentState, PaymentStateCopy> = {
   payment: {
     headline: `Pay ₹${RTI_FEE_INR} to send this request`,
-    lead: `The RTI application fee is ₹${RTI_FEE_INR}. That is the whole cost.`,
+    lead: `The RTI application fee is ₹${RTI_FEE_INR}. No additional charges apply.`,
     official: "PAYMENT PENDING — IPO/DD/NEFT/UPI",
     tone: "neutral",
     answers: {
-      paid: { value: "Not yet — nothing has been charged", tone: "neutral" },
+      paid: { value: "Not yet. No amount has been charged.", tone: "neutral" },
       registered: { value: "Not yet", tone: "neutral" },
       action: { value: `Pay ₹${RTI_FEE_INR} to send your request`, tone: "info" },
-      payAgain: { value: "Not applicable — this is your first attempt", tone: "neutral" },
+      payAgain: { value: "Not applicable. This is the first attempt.", tone: "neutral" },
     },
     payingIsSafe: true,
     isWorking: false,
@@ -89,10 +95,10 @@ export const PAYMENT_COPY: Record<PaymentState, PaymentStateCopy> = {
     official: "TRANSACTION IN PROGRESS — AWAITING GATEWAY RESPONSE",
     tone: "info",
     answers: {
-      paid: { value: "Checking with your bank now", tone: "info" },
-      registered: { value: "Not yet — registration happens after payment", tone: "neutral" },
-      action: { value: "Nothing. Do not press Back or close this page", tone: "info" },
-      payAgain: { value: "No — this attempt is still live", tone: "danger" },
+      paid: { value: "Confirmation is being sought from the bank", tone: "info" },
+      registered: { value: "Not yet. Registration occurs after payment is confirmed.", tone: "neutral" },
+      action: { value: "No action is required. Do not press Back or close this page.", tone: "info" },
+      payAgain: { value: "No. This payment attempt is still in progress.", tone: "danger" },
     },
     payingIsSafe: false,
     isWorking: true,
@@ -101,14 +107,14 @@ export const PAYMENT_COPY: Record<PaymentState, PaymentStateCopy> = {
 
   paid: {
     headline: "Payment successful",
-    lead: `₹${RTI_FEE_INR} received. Registering your RTI now.`,
+    lead: `₹${RTI_FEE_INR} received. The RTI application is being registered.`,
     official: "TRANSACTION SUCCESSFUL — REGISTRATION IN PROGRESS",
     tone: "good",
     answers: {
-      paid: { value: "Yes — your bank confirmed it", tone: "good" },
-      registered: { value: "Being registered right now", tone: "info" },
-      action: { value: "Nothing. Your registration number is seconds away", tone: "info" },
-      payAgain: { value: "No — your payment is already through", tone: "danger" },
+      paid: { value: "Yes. Confirmed by the bank.", tone: "good" },
+      registered: { value: "Registration is in progress", tone: "info" },
+      action: { value: "No action is required. The registration number will be available shortly.", tone: "info" },
+      payAgain: { value: "No. This payment has already been completed.", tone: "danger" },
     },
     payingIsSafe: false,
     isWorking: true,
@@ -121,81 +127,85 @@ export const PAYMENT_COPY: Record<PaymentState, PaymentStateCopy> = {
   pending_registration: {
     headline: "Payment received. Your RTI registration is being confirmed.",
     lead: "Do not pay again.",
-    banner: "Do not pay again. Your money has already reached the government.",
+    banner: "Do not pay again. The amount has already been received by the government.",
     official: "TRANSACTION SUCCESSFUL — REGISTRATION PENDING RECONCILIATION",
     tone: "warn",
     answers: {
       paid: {
-        value: `Yes — ₹${RTI_FEE_INR} was debited and has reached the government`,
+        value: `Yes. ₹${RTI_FEE_INR} was debited and has been received by the government.`,
         tone: "good",
       },
       registered: {
-        value: "Not yet — your registration number is still being generated",
+        value: "Not yet. The registration number is still being generated.",
         tone: "warn",
       },
       action: {
         value:
-          "Nothing. We are checking every few minutes and will email and SMS you the moment your number is ready",
+          "No action is required. The status is checked automatically at regular intervals, and an email and SMS will be sent once the registration number is available.",
         tone: "info",
       },
       payAgain: {
         value:
-          `No. Paying again would take another ₹${RTI_FEE_INR} and create a duplicate request`,
+          `No. Paying again would take another ₹${RTI_FEE_INR} and create a duplicate request.`,
         tone: "danger",
       },
     },
     guarantee:
-      `Your money is safe and accounted for. If no registration number is generated within ${SETTLEMENT_WORKING_DAYS} working days, your ₹${RTI_FEE_INR} is refunded automatically to the same account — you do not have to apply for it.`,
+      `The amount paid is accounted for. If no registration number is generated within ${SETTLEMENT_WORKING_DAYS} working days, the ₹${RTI_FEE_INR} fee will be refunded automatically to the same account. No application is required for the refund.`,
     payingIsSafe: false,
     isWorking: true,
     isTerminal: false,
   },
 
   failed: {
-    headline: "Payment failed — your money was not taken",
-    lead: "Nothing was charged. Your request is saved and ready to send.",
+    headline: "Payment failed — the transaction was not charged",
+    lead: "No amount was charged. The request has been saved and is ready to submit.",
     official: "TRANSACTION FAILED — DECLINED BY BANK",
     tone: "danger",
     answers: {
-      paid: { value: "No — the payment did not go through", tone: "danger" },
-      registered: { value: "No — a request is only registered once the fee is paid", tone: "neutral" },
-      action: { value: "Try paying again. Your request has been kept exactly as you wrote it", tone: "info" },
+      paid: { value: "No. The payment was not completed.", tone: "danger" },
+      registered: { value: "No. A request is registered only once the fee is paid.", tone: "neutral" },
+      action: { value: "Payment may be attempted again. The request has been saved exactly as entered.", tone: "info" },
       payAgain: {
-        value: "Yes — it is safe. You were not charged, so there is nothing to duplicate",
+        value: "Yes. This is safe, as no amount was charged and there is no duplicate risk.",
         tone: "good",
       },
     },
     guarantee:
-      `If your bank app shows ₹${RTI_FEE_INR} debited despite this message, it is a temporary hold. Under the RBI's Turn Around Time rules your bank must reverse it automatically, and owes you ₹100 for every day it is late. Use Check Payment Status to track it.`,
+      `If the bank app shows ₹${RTI_FEE_INR} debited despite this message, it is a temporary hold. Under the RBI's Turn Around Time rules, the bank is required to reverse it automatically, and is liable to pay ₹100 for each day of delay. Use Check Payment Status to track this.`,
     payingIsSafe: true,
     isWorking: false,
     isTerminal: true,
   },
 
   unknown: {
-    headline: "We could not confirm your payment yet",
+    headline: "Payment confirmation is pending",
     lead: "Do not pay again.",
-    banner: "Do not pay again until we know whether your money was taken.",
+    banner: "Do not pay again until the payment status has been confirmed.",
     official: "TRANSACTION STATUS AWAITED FROM PAYMENT GATEWAY",
-    tone: "warn",
+    // Not "warn". Pending-registration wore the identical saffron chip,
+    // and the two are not the same news: there the money is known to have
+    // reached the government and is guaranteed back; here nobody yet knows
+    // whether it moved at all. Tinted red, against failed's solid red.
+    tone: "danger",
     answers: {
       paid: {
-        value: "We are still finding out — the connection to your bank broke before we got an answer",
+        value: "Confirmation is pending. The connection to the bank was interrupted before a response was received.",
         tone: "warn",
       },
       registered: { value: "Not yet", tone: "neutral" },
       action: {
-        value: "Nothing right now. We will email and SMS you as soon as your bank answers",
+        value: "No action is required at this time. An email and SMS will be sent once confirmation is received from the bank.",
         tone: "info",
       },
       payAgain: {
         value:
-          "No. If your money was taken, paying again would charge you twice. We will tell you the moment it is safe",
+          "No. If the amount was already debited, paying again would result in a duplicate charge. Notification will be sent once it is safe to proceed.",
         tone: "danger",
       },
     },
     guarantee:
-      `Every unconfirmed payment is settled within ${SETTLEMENT_WORKING_DAYS} working days — either your RTI is registered, or your money is refunded in full. Nothing is left hanging.`,
+      `Every unconfirmed payment is settled within ${SETTLEMENT_WORKING_DAYS} working days. Either the RTI is registered, or the amount is refunded in full.`,
     payingIsSafe: false,
     isWorking: true,
     isTerminal: false,
@@ -207,13 +217,13 @@ export const PAYMENT_COPY: Record<PaymentState, PaymentStateCopy> = {
     official: "REGISTERED — FEE REALISED",
     tone: "good",
     answers: {
-      paid: { value: `Yes — ₹${RTI_FEE_INR} paid and receipted`, tone: "good" },
-      registered: { value: "Yes — your registration number is below", tone: "good" },
+      paid: { value: `Yes. ₹${RTI_FEE_INR} paid and receipted.`, tone: "good" },
+      registered: { value: "Yes. The registration number is shown below.", tone: "good" },
       action: {
-        value: "Nothing. They have 30 days to answer, and we are counting them for you",
+        value: "No action is required. The Public Authority has 30 days to respond, and this period is tracked automatically.",
         tone: "good",
       },
-      payAgain: { value: "No — this request is complete", tone: "good" },
+      payAgain: { value: "No. This request is complete.", tone: "good" },
     },
     payingIsSafe: false,
     isWorking: false,
@@ -359,11 +369,43 @@ export function caseFromDraft(
     authority: {
       ministry: draft.ministry,
       office: draft.office,
-      cpio: "CPIO (to be assigned by the Nodal Officer)",
+      // Not yet a person. Saying so plainly is better than printing a
+      // placeholder name the citizen might try to write to — the Nodal
+      // Officer has two days to name the officer under s.5(1), and the
+      // page says when that will happen rather than inventing it now.
+      cpio: {
+        name: "Not yet assigned",
+        designation: "Central Public Information Officer",
+        address: `${draft.office}, ${draft.ministry}`,
+      },
+      appellateAuthority: {
+        name: "Not yet assigned",
+        designation: "First Appellate Authority",
+        address: `${draft.office}, ${draft.ministry}`,
+      },
     },
-    feeLabel: draft.isBpl
-      ? "Fee waived — BPL certificate attached"
-      : `₹${RTI_FEE_INR} paid by UPI`,
+    fee: draft.isBpl
+      ? {
+          amountInr: 0,
+          waived: true,
+          waiverBasis: "BPL certificate submitted with the application.",
+        }
+      : {
+          amountInr: RTI_FEE_INR,
+          waived: false,
+          mode: "UPI",
+          receiptNumber: registrationNumber.replace(/\//g, ""),
+          paidOn: new Date().toISOString().slice(0, 10),
+        },
+    applicant: {
+      name: draft.name,
+      address: "As given in your application",
+      email: draft.email,
+      mobile: draft.mobile,
+      isCitizen: true,
+      isBpl: draft.isBpl,
+    },
+    format: "electronic",
     startDay: 0,
     maxDay: 120,
     demoNote:
@@ -373,20 +415,20 @@ export function caseFromDraft(
         day: 0,
         kind: "filed",
         plain: draft.isBpl
-          ? "You filed this request — no fee, as you hold a BPL card"
-          : `You filed this request and paid ₹${RTI_FEE_INR}`,
+          ? "The application was filed. No fee was charged, as a BPL certificate was submitted."
+          : `The application was filed, with the ₹${RTI_FEE_INR} fee paid.`,
         official: "REGISTERED",
       },
       {
         day: 0,
         kind: "routed",
-        plain: "It reached the department's Nodal Officer",
+        plain: "The application reached the department's Nodal Officer.",
         official: "FORWARDED TO NODAL OFFICER",
       },
       {
         day: 2,
         kind: "cpio",
-        plain: "The Nodal Officer passed it to the CPIO who must answer you",
+        plain: "The Nodal Officer forwarded the application to the CPIO responsible for reply.",
         official: "TRANSMITTED TO CPIO",
       },
     ],

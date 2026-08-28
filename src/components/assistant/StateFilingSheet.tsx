@@ -49,7 +49,7 @@ export function StateFilingSheet({
 
       <div>
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-          How to hand it over
+          Filing method
         </p>
         <p className="mt-1.5 text-sm leading-relaxed text-ink-2">{filing.how}</p>
       </div>
