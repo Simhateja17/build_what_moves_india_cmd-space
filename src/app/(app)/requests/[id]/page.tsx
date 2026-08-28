@@ -312,26 +312,14 @@ export default function CaseDetailPage() {
               </Link>
             ) : null}
 
-            {appealAvailable ? (
+            {v.d.appealFiled ? (
               <Link
                 href={`/requests/${c.id}/appeal`}
                 className="inline-flex items-center rounded-lg border border-navy-600 bg-white px-5 py-2.5 text-sm font-bold text-navy-700 transition hover:bg-navy-50"
               >
-                {v.d.appealFiled ? "View First Appeal" : "File First Appeal"}
+                View First Appeal
               </Link>
-            ) : (
-              // Not a hidden control — a citizen should be able to see the
-              // appeal exists and learn the date it becomes theirs.
-              <span className="inline-flex flex-col">
-                <span className="inline-flex cursor-not-allowed items-center rounded-lg border border-line bg-white/60 px-5 py-2.5 text-sm font-bold text-muted">
-                  File First Appeal
-                </span>
-                <span className="mt-1 text-xs text-ink-2">
-                  Available from {formatDate(v.expectedBy)}, if no response
-                  is received by then.
-                </span>
-              </span>
-            )}
+            ) : null}
           </div>
 
           {appealAvailable && !v.d.appealFiled ? (
