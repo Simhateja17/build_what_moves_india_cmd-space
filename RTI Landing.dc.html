@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<title>RTI Saral — File an RTI request plainly</title>
+<meta name="description" content="A clearer way to file, follow and appeal a Right to Information request." />
+<meta name="theme-color" content="#FAFAFA" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Display:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    color-scheme: light;
+    --ux-bg: #FAFAFA;
+    --ux-surface: #FFFFFF;
+    --ux-surface-subtle: #F5F3FF;
+    --ux-surface-muted: #F2F2F2;
+    --ux-text-primary: #171717;
+    --ux-text-secondary: #404040;
+    --ux-text-tertiary: #737373;
+    --ux-text-disabled: #A1A1A1;
+    --ux-text-on-brand: #FAFAFA;
+    --ux-brand: #4A2BC2;
+    --ux-brand-hover: #3D239F;
+    --ux-brand-active: #301C7D;
+    --ux-brand-soft: #F2EFFF;
+    --ux-success: #128937;
+    --ux-success-soft: #DDF8D8;
+    --ux-border: #D9D9D9;
+    --ux-border-subtle: #E5E5E5;
+    --ux-focus: #4A2BC2;
+    --ux-shadow-1: 0 1px 2px rgba(23,23,23,.08), 0 4px 12px rgba(23,23,23,.06);
+    --ux-shadow-2: 0 12px 32px rgba(23,23,23,.12), 0 2px 8px rgba(23,23,23,.06);
+    --ux-shadow-3: 0 24px 56px rgba(23,23,23,.16), 0 4px 12px rgba(23,23,23,.08);
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ux-bg: #171717;
+    --ux-surface: #262626;
+    --ux-surface-subtle: #24145C;
+    --ux-surface-muted: #303030;
+    --ux-text-primary: #FAFAFA;
+    --ux-text-secondary: #E5E5E5;
+    --ux-text-tertiary: #D9D9D9;
+    --ux-text-disabled: #737373;
+    --ux-text-on-brand: #171717;
+    --ux-brand: #A391FF;
+    --ux-brand-hover: #C0B3FF;
+    --ux-brand-active: #8670FF;
+    --ux-brand-soft: #24145C;
+    --ux-success: #1AA64A;
+    --ux-success-soft: #00522C;
+    --ux-border: #525252;
+    --ux-border-subtle: #404040;
+    --ux-focus: #A391FF;
+    --ux-shadow-1: 0 1px 2px rgba(0,0,0,.25), 0 4px 12px rgba(0,0,0,.18);
+    --ux-shadow-2: 0 12px 32px rgba(0,0,0,.34), 0 2px 8px rgba(0,0,0,.2);
+    --ux-shadow-3: 0 24px 56px rgba(0,0,0,.48), 0 4px 12px rgba(0,0,0,.28);
+  }
+  :root[data-theme="contrast"] {
+    color-scheme: light;
+    --ux-bg: #FFFFFF;
+    --ux-surface: #FFFFFF;
+    --ux-surface-subtle: #FFF8E8;
+    --ux-surface-muted: #F3F3F3;
+    --ux-text-primary: #000000;
+    --ux-text-secondary: #171717;
+    --ux-text-tertiary: #404040;
+    --ux-text-disabled: #525252;
+    --ux-text-on-brand: #FFFFFF;
+    --ux-brand: #32148F;
+    --ux-brand-hover: #24105F;
+    --ux-brand-active: #170A3D;
+    --ux-brand-soft: #EDE7FF;
+    --ux-success: #00522C;
+    --ux-success-soft: #DDF8D8;
+    --ux-border: #171717;
+    --ux-border-subtle: #525252;
+    --ux-focus: #000000;
+    --ux-shadow-1: 0 1px 2px rgba(0,0,0,.18), 0 4px 12px rgba(0,0,0,.12);
+    --ux-shadow-2: 0 12px 32px rgba(0,0,0,.2), 0 2px 8px rgba(0,0,0,.12);
+    --ux-shadow-3: 0 24px 56px rgba(0,0,0,.25), 0 4px 12px rgba(0,0,0,.16);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--ux-bg); }
+  body { margin: 0; min-width: 320px; background: var(--ux-bg); color: var(--ux-text-primary); font-family: "Noto Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  button, input { font: inherit; }
+  button { cursor: pointer; }
+  a { color: var(--ux-brand); text-decoration: none; }
+  a:hover { color: var(--ux-brand-hover); }
+  :where(a, button, input, summary, [tabindex]):focus-visible { outline: 3px solid var(--ux-focus); outline-offset: 3px; }
+  ::selection { background: var(--ux-brand); color: var(--ux-text-on-brand); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .skip-link { position: fixed; z-index: 100; top: 12px; left: 12px; padding: 10px 16px; border-radius: 8px; background: var(--ux-brand); color: var(--ux-text-on-brand); font-size: 14px; font-weight: 700; transform: translateY(-150%); transition: transform .2s ease; }
+  .skip-link:focus { transform: translateY(0); }
+  .site-shell { min-height: 100vh; background: var(--ux-bg); }
+  .container { width: min(calc(100% - 32px), 1200px); margin: 0 auto; }
+  .utility-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 7px max(16px, calc((100% - 1200px) / 2)); background: var(--ux-text-primary); color: var(--ux-bg); font-size: 12px; line-height: 18px; }
+  .utility-copy, .utility-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .utility-actions { gap: 14px; }
+  .concept-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 2px 8px; border: 1px solid currentColor; border-radius: 999px; opacity: .78; font-size: 11px; font-weight: 600; }
+  .accessibility-menu { position: relative; }
+  .accessibility-menu summary { padding: 2px 0; color: inherit; cursor: pointer; list-style: none; }
+  .accessibility-menu summary::-webkit-details-marker { display: none; }
+  .accessibility-menu summary::after { content: "⌄"; margin-left: 6px; }
+  .accessibility-panel { position: absolute; z-index: 30; top: calc(100% + 10px); right: 0; width: 240px; padding: 14px; border: 1px solid var(--ux-border); border-radius: 12px; background: var(--ux-surface); color: var(--ux-text-primary); box-shadow: var(--ux-shadow-2); }
+  .accessibility-panel p { margin: 0 0 10px; font-size: 13px; line-height: 18px; }
+  .accessibility-panel button { width: 100%; min-height: 40px; border: 1px solid var(--ux-border); border-radius: 8px; background: var(--ux-surface); color: var(--ux-text-primary); font-size: 13px; font-weight: 600; }
+  .accessibility-panel button:hover { border-color: var(--ux-brand); background: var(--ux-brand-soft); }
+  .site-header { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid var(--ux-border-subtle); background: color-mix(in srgb, var(--ux-bg) 88%, transparent); backdrop-filter: blur(14px); }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 76px; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ux-text-primary); }
+  .brand:hover { color: var(--ux-text-primary); }
+  .brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 12px; background: var(--ux-brand); color: var(--ux-text-on-brand); font-size: 20px; font-weight: 700; box-shadow: 0 8px 18px color-mix(in srgb, var(--ux-brand) 28%, transparent); }
+  .brand-name { display: block; font-size: 19px; font-weight: 700; letter-spacing: -.02em; line-height: 24px; }
+  .brand-subtitle { display: block; color: var(--ux-text-tertiary); font-size: 11px; letter-spacing: .055em; line-height: 16px; text-transform: uppercase; }
+  .primary-nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .nav-link, .language-label { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 8px; color: var(--ux-text-secondary); font-size: 14px; font-weight: 500; }
+  .nav-link:hover { background: var(--ux-brand-soft); color: var(--ux-brand); }
+  .language-label { color: var(--ux-text-tertiary); }
+  .mobile-nav { display: none; }
+  .mobile-nav summary { cursor: pointer; list-style: none; }
+  .mobile-nav summary::-webkit-details-marker { display: none; }
+  .mobile-menu-button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--ux-border); border-radius: 8px; background: var(--ux-surface); color: var(--ux-text-primary); font-size: 14px; font-weight: 600; }
+  .mobile-menu { display: grid; gap: 4px; padding: 8px 0 14px; }
+  .tricolour-rule { height: 3px; background: linear-gradient(90deg, #FFBE6F 0 33.33%, var(--ux-border-subtle) 33.33% 66.66%, #128937 66.66% 100%); }
+  .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px; border: 1px solid transparent; border-radius: 8px; font-size: 15px; font-weight: 600; line-height: 22px; transition: background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease; }
+  .button:hover { transform: translateY(-1px); }
+  .button:active { transform: translateY(0); }
+  .button-primary { background: var(--ux-brand); color: var(--ux-text-on-brand); box-shadow: 0 8px 18px color-mix(in srgb, var(--ux-brand) 24%, transparent); }
+  .button-primary:hover { background: var(--ux-brand-hover); color: var(--ux-text-on-brand); }
+  .button-neutral { background: var(--ux-text-primary); color: var(--ux-bg); }
+  .button-neutral:hover { background: var(--ux-brand); color: var(--ux-text-on-brand); }
+  .button-outline { border-color: var(--ux-border); background: var(--ux-surface); color: var(--ux-text-primary); }
+  .button-outline:hover { border-color: var(--ux-brand); background: var(--ux-brand-soft); color: var(--ux-brand); }
+  .hero { position: relative; overflow: hidden; padding: 88px 0 80px; border-bottom: 1px solid var(--ux-border-subtle); background: var(--ux-bg); }
+  .hero::before, .hero::after { content: ""; position: absolute; pointer-events: none; border-radius: 50%; }
+  .hero::before { top: -210px; right: -80px; width: 680px; height: 500px; background: radial-gradient(circle, color-mix(in srgb, var(--ux-brand) 13%, transparent), transparent 68%); animation: drift 7s ease-in-out infinite alternate; }
+  .hero::after { bottom: -230px; left: -180px; width: 560px; height: 420px; background: radial-gradient(circle, color-mix(in srgb, #128937 10%, transparent), transparent 70%); animation: drift 9s 1s ease-in-out infinite alternate-reverse; }
+  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr); gap: 72px; align-items: center; }
+  .hero-copy { animation: rise .7s ease both; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 9px; min-height: 30px; margin: 0; padding: 5px 12px; border: 1px solid var(--ux-border); border-radius: 999px; background: var(--ux-surface); color: var(--ux-text-secondary); font-size: 12px; font-weight: 600; letter-spacing: .035em; }
+  .status-dot { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--ux-success); animation: pulsedot 2.8s ease-in-out infinite; }
+  .display-title { max-width: 720px; margin: 24px 0 0; font-family: "Noto Sans Display", "Noto Sans", system-ui, sans-serif; font-size: clamp(38px, 5vw, 60px); font-weight: 700; letter-spacing: -.045em; line-height: 1.075; text-wrap: balance; }
+  .display-title span { color: var(--ux-brand); }
+  .hero-intro { max-width: 58ch; margin: 24px 0 0; color: var(--ux-text-secondary); font-size: 18px; line-height: 26px; text-wrap: pretty; }
+  .stat-grid { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 36px; }
+  .stat { min-width: 104px; }
+  .stat-value { margin: 0; font-family: "Noto Sans Display", "Noto Sans", system-ui, sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -.035em; line-height: 42px; }
+  .stat-label { margin: 0; color: var(--ux-text-tertiary); font-size: 13px; line-height: 19px; }
+  .hero-panel { animation: rise .9s .12s ease both; }
+  .card { border: 1px solid var(--ux-border-subtle); border-radius: 16px; background: var(--ux-surface); box-shadow: var(--ux-shadow-2); }
+  .prompt-card { padding: 24px; }
+  .panel-kicker { color: var(--ux-brand); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .panel-title { margin: 9px 0 0; font-size: 24px; font-weight: 700; letter-spacing: -.025em; line-height: 32px; }
+  .panel-helper { margin: 5px 0 0; color: var(--ux-text-tertiary); font-size: 14px; line-height: 20px; }
+  .query-preview { display: flex; align-items: center; gap: 12px; min-height: 56px; margin-top: 18px; padding: 14px 16px; border: 1px solid var(--ux-border); border-radius: 10px; background: var(--ux-bg); color: var(--ux-text-primary); }
+  .query-icon { color: var(--ux-brand); font-size: 18px; line-height: 20px; }
+  .query-text { flex: 1; min-width: 0; font-size: 16px; line-height: 24px; }
+  .query-caret { display: inline-block; width: 2px; height: 19px; margin-left: 2px; vertical-align: -3px; background: var(--ux-success); animation: caret 1s step-end infinite; }
+  .panel-actions { display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap; margin-top: 18px; }
+  .fee-note { color: var(--ux-text-tertiary); font-size: 13px; line-height: 19px; }
+  .example-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--ux-border); }
+  .chip { display: inline-flex; align-items: center; min-height: 38px; padding: 7px 12px; border: 1px solid var(--ux-border-subtle); border-radius: 999px; background: var(--ux-bg); color: var(--ux-text-secondary); font-size: 13px; line-height: 20px; transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease; }
+  .chip:hover { border-color: var(--ux-brand); background: var(--ux-brand-soft); color: var(--ux-brand); transform: translateY(-1px); }
+  .section { padding: 84px 0; border-bottom: 1px solid var(--ux-border-subtle); }
+  .section-muted { background: color-mix(in srgb, var(--ux-surface-muted) 45%, var(--ux-bg)); }
+  .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .section-title { margin: 0; font-family: "Noto Sans Display", "Noto Sans", system-ui, sans-serif; font-size: clamp(30px, 3.4vw, 40px); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; text-wrap: balance; }
+  .section-note { max-width: 34ch; margin: 0; color: var(--ux-text-tertiary); font-size: 14px; line-height: 20px; }
+  .journey-wrap { position: relative; margin-top: 48px; }
+  .journey-track { position: relative; height: 5px; overflow: hidden; border-radius: 999px; background: var(--ux-border-subtle); }
+  .journey-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--ux-brand), var(--ux-success)); }
+  .journey-sweep { position: absolute; top: -6px; width: 2px; height: 17px; border-radius: 2px; background: var(--ux-success); pointer-events: none; }
+  .journey-glow { position: absolute; top: -16px; width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--ux-success) 22%, transparent), transparent 70%); pointer-events: none; }
+  .journey-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin: 26px 0 0; padding: 0; list-style: none; }
+  .step-button { display: block; width: 100%; min-height: 210px; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; }
+  .step-top { display: flex; align-items: center; gap: 12px; }
+  .step-dot { display: inline-flex; width: 34px; height: 34px; flex: none; align-items: center; justify-content: center; border: 2px solid var(--ux-brand); border-radius: 50%; background: var(--ux-surface); color: var(--ux-brand); font-size: 14px; font-weight: 700; transition: background-color .3s ease, color .3s ease, box-shadow .3s ease, transform .3s ease; }
+  .step-when { color: var(--ux-success); font-size: 12px; font-weight: 700; letter-spacing: .06em; line-height: 18px; text-transform: uppercase; }
+  .step-title { display: block; margin-top: 15px; font-size: 18px; font-weight: 700; line-height: 25px; }
+  .step-copy { position: relative; display: block; min-height: 86px; margin: 9px 0 0; color: var(--ux-text-secondary); font-size: 14px; line-height: 22px; }
+  .step-skeleton { display: block; height: 58px; border-radius: 6px; background: repeating-linear-gradient(180deg, var(--ux-border-subtle) 0 11px, transparent 11px 23px); }
+  .step-description { position: absolute; inset: 0; margin: 0; }
+  .step-button:hover .step-dot { border-color: var(--ux-brand-hover); box-shadow: 0 7px 18px color-mix(in srgb, var(--ux-brand) 22%, transparent); }
+  .sahayak-grid, .track-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .9fr); gap: 64px; align-items: center; }
+  .overline { color: var(--ux-success); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .body-large { max-width: 52ch; margin: 16px 0 0; color: var(--ux-text-secondary); font-size: 18px; line-height: 26px; text-wrap: pretty; }
+  .feature-list { display: grid; gap: 16px; margin: 28px 0 0; padding: 0; list-style: none; }
+  .feature-item { padding: 14px 0 14px 16px; border-left: 3px solid var(--ux-brand); }
+  .feature-content { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; }
+  .feature-mark { color: var(--ux-brand); font-size: 22px; line-height: 25px; }
+  .feature-title { display: block; font-size: 16px; font-weight: 700; line-height: 23px; }
+  .feature-body { display: block; margin: 4px 0 0; color: var(--ux-text-secondary); font-size: 15px; line-height: 23px; }
+  .assistant-demo { margin: 0; }
+  .assistant-card { padding: 24px; border-radius: 18px; background: var(--ux-text-primary); color: var(--ux-bg); box-shadow: var(--ux-shadow-3); }
+  .assistant-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .assistant-label { color: var(--ux-text-tertiary); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .assistant-status { width: 9px; height: 9px; border-radius: 50%; background: var(--ux-success); animation: pulsedot 2.8s ease-in-out infinite; }
+  .assistant-quote { margin: 18px 0 0; color: var(--ux-bg); font-size: 20px; font-weight: 700; line-height: 28px; }
+  .conversation { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+  .message { max-width: 90%; padding: 11px 14px; border-radius: 14px; font-size: 15px; line-height: 23px; }
+  .message-user { align-self: flex-end; border-radius: 14px 14px 4px 14px; background: var(--ux-surface-muted); color: var(--ux-text-primary); }
+  .message-assistant { align-self: flex-start; border-radius: 14px 14px 14px 4px; background: var(--ux-brand); color: var(--ux-text-on-brand); animation: fade 1s .3s both; }
+  .assistant-options { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .assistant-options .chip { border-color: var(--ux-border); background: transparent; color: var(--ux-text-secondary); }
+  .assistant-caption { margin: 14px 4px 0; color: var(--ux-text-tertiary); font-size: 13px; line-height: 20px; }
+  .track-form { margin-top: 26px; }
+  .field-label { display: block; color: var(--ux-text-primary); font-size: 14px; font-weight: 700; line-height: 20px; }
+  .track-input-row { display: flex; gap: 10px; margin-top: 8px; }
+  .field-input { width: 100%; min-height: 48px; padding: 11px 14px; border: 1px solid var(--ux-border); border-radius: 8px; background: var(--ux-surface); color: var(--ux-text-primary); font-size: 16px; line-height: 24px; }
+  .field-input::placeholder { color: var(--ux-text-tertiary); }
+  .field-input:focus { border-color: var(--ux-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ux-brand) 18%, transparent); outline: none; }
+  .field-note { margin: 8px 0 0; color: var(--ux-text-tertiary); font-size: 13px; line-height: 19px; }
+  .timeline-card { padding: 20px 24px; }
+  .timeline { margin: 0; padding: 0; list-style: none; }
+  .timeline-row { display: grid; grid-template-columns: 18px 1fr auto; gap: 14px; align-items: start; padding: 13px 0; border-bottom: 1px solid var(--ux-border-subtle); }
+  .timeline-row:last-child { border-bottom: 0; }
+  .timeline-dot { display: block; width: 11px; height: 11px; margin-top: 5px; border-radius: 50%; }
+  .timeline-label, .timeline-note { display: block; }
+  .timeline-label { font-size: 15px; font-weight: 600; line-height: 22px; }
+  .timeline-note { color: var(--ux-text-tertiary); font-size: 13px; line-height: 20px; }
+  .timeline-date { color: var(--ux-text-tertiary); font-size: 12px; line-height: 20px; white-space: nowrap; }
+  .cta { padding: 88px 0; border-bottom: 1px solid var(--ux-border-subtle); background: var(--ux-brand-soft); text-align: center; }
+  .cta-title { max-width: 760px; margin: 0 auto; font-family: "Noto Sans Display", "Noto Sans", system-ui, sans-serif; font-size: clamp(30px, 3.5vw, 42px); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }
+  .cta-copy { max-width: 58ch; margin: 16px auto 0; color: var(--ux-text-secondary); font-size: 18px; line-height: 26px; }
+  .cta-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .site-footer { padding: 38px 0; background: var(--ux-text-primary); color: var(--ux-text-tertiary); }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-size: 13px; line-height: 20px; }
+  .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+  .footer-links a { color: var(--ux-bg); }
+  .footer-links a:hover { color: var(--ux-brand); }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pulsedot { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ux-success) 42%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
+  @keyframes drift { from { transform: translateY(0) translateX(0); } to { transform: translateY(-10px) translateX(8px); } }
+  @keyframes caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @media (max-width: 960px) {
+    .hero-grid, .sahayak-grid, .track-grid { grid-template-columns: 1fr; gap: 44px; }
+    .hero { padding-top: 68px; }
+    .hero-panel { max-width: 680px; }
+    .journey-list { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 30px; }
+    .primary-nav { display: none; }
+    .mobile-nav { display: block; }
+    .header-inner { min-height: 70px; }
+  }
+  @media (max-width: 640px) {
+    .container { width: min(calc(100% - 24px), 1200px); }
+    .utility-bar { padding-inline: 12px; }
+    .utility-actions { width: 100%; justify-content: space-between; }
+    .hero { padding: 56px 0 60px; }
+    .display-title { font-size: clamp(34px, 11vw, 48px); letter-spacing: -.04em; }
+    .hero-intro, .body-large, .cta-copy { font-size: 16px; line-height: 24px; }
+    .stat-grid { gap: 18px 24px; }
+    .stat-value { font-size: 30px; line-height: 38px; }
+    .prompt-card, .timeline-card { padding: 18px; }
+    .section, .cta { padding: 64px 0; }
+    .section-heading { display: block; }
+    .section-note { margin-top: 12px; }
+    .journey-wrap { margin-top: 32px; }
+    .journey-list { grid-template-columns: 1fr; gap: 12px; }
+    .step-button { min-height: 0; padding: 16px 0; border-bottom: 1px solid var(--ux-border-subtle); }
+    .step-copy { min-height: 72px; }
+    .track-input-row { align-items: stretch; flex-direction: column; }
+    .footer-inner { align-items: flex-start; flex-direction: column; }
+    .footer-links { gap: 8px 16px; }
+  }
+  @media (prefers-contrast: more) {
+    :root:not([data-theme="dark"]):not([data-theme="contrast"]) { --ux-text-primary: #000000; --ux-text-secondary: #171717; --ux-text-tertiary: #404040; --ux-border: #171717; --ux-border-subtle: #525252; --ux-brand: #32148F; }
+  }
+  @media (forced-colors: active) {
+    .button, .chip, .field-input, .card { border: 1px solid CanvasText; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
+    .skip-link { transition: none; }
+    .button:hover, .chip:hover { transform: none; }
+  }
+</style>
+</helmet>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="site-shell">
+  <div class="utility-bar">
+    <div class="utility-copy">
+      <strong lang="hi">भारत सरकार</strong>
+      <span aria-hidden="true">·</span>
+      <span>Government of India</span>
+      <span class="concept-badge">Redesign concept</span>
+    </div>
+    <div class="utility-actions">
+      <span>Department of Personnel &amp; Training</span>
+      <details class="accessibility-menu">
+        <summary>Accessibility</summary>
+        <div class="accessibility-panel">
+          <p>Theme: <strong aria-live="polite">{{ themeLabel }}</strong></p>
+          <button type="button" onClick="{{ cycleTheme }}">Change theme</button>
+          <p style="margin:10px 0 0;color:var(--ux-text-tertiary)">Light, dark and high-contrast modes are available.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#main" aria-label="RTI Saral home">
+        <span class="brand-mark" aria-hidden="true">अ</span>
+        <span><span class="brand-name">RTI Saral</span><span class="brand-subtitle">Right to Information, made plain</span></span>
+      </a>
+
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a class="nav-link" href="#how">How it works</a>
+        <a class="nav-link" href="#sahayak">Sahayak AI</a>
+        <a class="nav-link" href="#track">Track a request</a>
+        <a class="nav-link" href="#help">Help</a>
+        <span class="language-label" lang="en" aria-label="Current language: English">English</span>
+        <a class="button button-neutral" href="#track">Sign in</a>
+      </nav>
+
+      <details class="mobile-nav">
+        <summary class="mobile-menu-button">Menu</summary>
+        <nav class="mobile-menu" aria-label="Mobile navigation">
+          <a class="nav-link" href="#how">How it works</a>
+          <a class="nav-link" href="#sahayak">Sahayak AI</a>
+          <a class="nav-link" href="#track">Track a request</a>
+          <a class="nav-link" href="#help">Help</a>
+          <a class="button button-neutral" href="#track">Sign in</a>
+        </nav>
+      </details>
+    </div>
+    <div class="tricolour-rule" aria-hidden="true"></div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Right to Information Act, 2005</p>
+          <h1 id="hero-title" class="display-title">Ask the government anything. <span>They must answer.</span></h1>
+          <p class="hero-intro">File a Right to Information request in about four minutes. We help you find the right department, phrase your question, and follow it to a reply — no jargon, no lost drafts.</p>
+          <dl class="stat-grid" aria-label="RTI service facts">
+            <div class="stat"><dt class="stat-value">30 days</dt><dd class="stat-label">statutory reply deadline</dd></div>
+            <div class="stat"><dt class="stat-value">2,200+</dt><dd class="stat-label">central public authorities</dd></div>
+            <div class="stat"><dt class="stat-value">₹10</dt><dd class="stat-label">flat filing fee</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-panel">
+          <div class="card prompt-card" aria-labelledby="prompt-title">
+            <div class="panel-kicker">Start with the question</div>
+            <h2 id="prompt-title" class="panel-title">What do you want to know?</h2>
+            <p class="panel-helper" id="prompt-helper">Here are examples of questions people ask.</p>
+            <div class="query-preview" aria-describedby="prompt-helper">
+              <span class="query-icon" aria-hidden="true">✳</span>
+              <span class="query-text"><span aria-hidden="true">{{ typed }}</span><span class="query-caret" aria-hidden="true"></span></span>
+            </div>
+            <div class="panel-actions">
+              <a class="button button-primary" href="#how">Start my request <span aria-hidden="true">→</span></a>
+              <span class="fee-note">₹10 fee · free if you hold a BPL card</span>
+            </div>
+            <div class="example-list" aria-label="Example questions">
+              <sc-for list="{{ examples }}" as="ex" hint-placeholder-count="3">
+                <button class="chip" type="button" onClick="{{ ex.onSelect }}">{{ ex.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section" aria-labelledby="how-title">
+      <div class="container">
+        <div ref="{{ headRef }}" class="section-heading">
+          <h2 id="how-title" class="section-title">What happens after you press submit</h2>
+          <p class="section-note">Every stage is tracked. You’ll never wonder where it sits.</p>
+        </div>
+        <div ref="{{ rootRef }}" class="journey-wrap">
+          <div class="journey-track" aria-hidden="true"><div style="{{ fillStyle }}"></div></div>
+          <div class="journey-sweep" style="{{ sweepStyle }}" aria-hidden="true"></div>
+          <div class="journey-glow" style="{{ sweepGlowStyle }}" aria-hidden="true"></div>
+          <ol class="journey-list" aria-label="RTI request journey">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+              <li>
+                <button class="step-button" type="button" onClick="{{ s.onSelect }}" aria-label="{{ s.accessibleLabel }}">
+                  <span class="step-top"><span class="step-dot" style="{{ s.dotStyle }}">{{ s.n }}</span><span class="step-when" style="{{ s.whenStyle }}">{{ s.when }}</span></span>
+                  <span class="step-title">{{ s.title }}</span>
+                  <span class="step-copy"><span class="step-skeleton" style="{{ s.skelStyle }}" aria-hidden="true"></span><span class="step-description" style="{{ s.bodyStyle }}">{{ s.body }}</span></span>
+                </button>
+              </li>
+            </sc-for>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="sahayak" class="section section-muted" aria-labelledby="sahayak-title">
+      <div ref="{{ fixRef }}" class="container sahayak-grid">
+        <div style="{{ sahLeftStyle }}">
+          <span class="overline">Sahayak · AI helper</span>
+          <h2 id="sahayak-title" class="section-title" style="margin-top:14px">Describe the problem. We’ll do the paperwork.</h2>
+          <p class="body-large">Speak or type in Hindi or English. Sahayak reads it, points to the right authority, and turns it into a request an officer cannot dismiss as vague.</p>
+          <ul class="feature-list">
+            <sc-for list="{{ fixes }}" as="f" hint-placeholder-count="3">
+              <li class="feature-item" style="{{ f.style }}"><div class="feature-content"><span class="feature-mark" aria-hidden="true">{{ f.mark }}</span><span><span class="feature-title">{{ f.title }}</span><span class="feature-body">{{ f.body }}</span></span></div></li>
+            </sc-for>
+          </ul>
+        </div>
+        <figure style="{{ sahCardStyle }}" class="assistant-demo">
+          <div class="assistant-card">
+            <div class="assistant-header"><span class="assistant-label">Sahayak · AI helper</span><span class="assistant-status" aria-label="Sahayak is available"></span></div>
+            <blockquote class="assistant-quote">“Tell me your problem in your own words — I’ll find the department and draft the request.”</blockquote>
+            <div class="conversation" role="log" aria-label="Example Sahayak conversation">
+              <div class="message message-user"><span class="sr-only">You: </span>My village road work stopped a year ago. Who do I ask?</div>
+              <div class="message message-assistant"><span class="sr-only">Sahayak: </span>That’s the Ministry of Rural Development (PMGSY). I’ve drafted a request for the sanction date, contractor name, and funds released. Review it?</div>
+            </div>
+            <div class="assistant-options" aria-label="Sahayak options"><span class="chip">हिन्दी में बोलें</span><span class="chip">Voice input</span></div>
+          </div>
+          <figcaption class="assistant-caption">Sahayak only suggests. Nothing is filed until you read it and press submit.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="track" class="section" aria-labelledby="track-title">
+      <div ref="{{ trackRef }}" class="container track-grid">
+        <div style="{{ trackLeftStyle }}">
+          <h2 id="track-title" class="section-title">Already filed? Check where it stands.</h2>
+          <p class="body-large">Enter your registration number. No password, no captcha — a one-time code to your phone is enough.</p>
+          <form class="track-form" action="#track" method="get">
+            <label class="field-label" for="registration-number">Registration number</label>
+            <div class="track-input-row"><input class="field-input" id="registration-number" name="registration" value="DOPT/R/E/26/00123" autocomplete="off" spellcheck="false" aria-describedby="registration-note" /><button class="button button-neutral" type="submit">Track</button></div>
+            <p class="field-note" id="registration-note">Example: DOPT/R/E/26/00123. You’ll receive a one-time code before details are shown.</p>
+          </form>
+        </div>
+        <div style="{{ trackCardStyle }}" class="card timeline-card">
+          <ol class="timeline" aria-label="Example request status">
+            <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+              <li class="timeline-row" style="{{ t.rowStyle }}"><span class="timeline-dot" style="{{ t.dotStyle }}" aria-hidden="true"></span><span><span class="timeline-label">{{ t.label }}</span><span class="timeline-note">{{ t.note }}</span></span><span class="timeline-date">{{ t.date }}</span></li>
+            </sc-for>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="help" class="cta" aria-labelledby="cta-title">
+      <div ref="{{ ctaRef }}" class="container">
+        <h2 id="cta-title" class="cta-title" style="{{ ctaTitleStyle }}">Information is a right, not a favour.</h2>
+        <p class="cta-copy" style="{{ ctaBodyStyle }}">If you can describe your problem, you can file an RTI. Start now and finish later — your draft is saved on this device.</p>
+        <div class="cta-actions" style="{{ ctaBtnStyle }}"><a class="button button-primary" href="#how">File a request</a><a class="button button-outline" href="#sahayak">Talk to a helper</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner"><span>RTI Saral · redesign concept</span><nav class="footer-links" aria-label="Footer navigation"><a href="#help">Accessibility</a><a href="#help">RTI Act, 2005</a><a href="#help">Second appeal to CIC</a><a href="#help">Helpdesk 011-24010690</a></nav></div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1024}}">
+class Component extends DCLogic {
+  state = { typed: "", i: 0, c: 0, theme: "light", themeLabel: "Light mode", t: 0 };
+  END = 10.4;
+  themeOrder = ["light", "dark", "contrast"];
+  themeLabels = { light: "Light mode", dark: "Dark mode", contrast: "High contrast" };
+  reducedMotion = false;
+  advanceUnused() {
+    const cl = (x, a, b) => Math.min(b, Math.max(a, x));
+    this.cl = cl;
+    const start = () => {
+      if (this.started) return;
+      this.started = true; this.t0 = performance.now(); this.loop();
+    };
+    this.startClock = start;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      this.setState({ t: this.END }); return;
+    }
+    if (!this.rootEl || !("IntersectionObserver" in window)) { start(); return; }
+    this.io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting && e.intersectionRatio > 0.3) start();
+    }), { threshold: [0, 0.3, 0.6] });
+    this.io.observe(this.rootEl);
+  }
+  loop = () => {
+    const t = (performance.now() - this.t0) / 1000;
+    if (t >= this.END) { this.setState({ t: this.END }); return; }
+    this.setState({ t });
+    this.raf = requestAnimationFrame(this.loop);
+  };
+  phrases = [
+    "Why is the road work in my village stalled?",
+    "How much was spent on the new district hospital?",
+    "Where is my pension file pending?"
+  ];
+  keys = {}; clockNow = 0; observed = new WeakSet(); pending = [];
+  io2 = ("IntersectionObserver" in window)
+    ? new IntersectionObserver(es => es.forEach(e => {
+        const k = e.target.getAttribute("data-rev");
+        if (e.isIntersecting && e.intersectionRatio > 0.15 && !this.keys[k]) {
+          this.keys[k] = performance.now();
+          this.runLoop();
+        }
+      }), { threshold: [0, 0.15, 0.4] })
+    : null;
+  initReveal() {
+    const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || !this.io2) { this.allOn = true; this.forceUpdate(); return; }
+    this.pending.splice(0).forEach(el => this.io2.observe(el));
+    // safety net: never leave content hidden
+    this.fallback = setTimeout(() => {
+      if (Object.keys(this.keys).length === 0) { this.allOn = true; this.forceUpdate(); }
+    }, 4000);
+  }
+  refFor(k) {
+    return el => {
+      if (!el) return;
+      el.setAttribute("data-rev", k);
+      if (this.observed.has(el)) return;
+      this.observed.add(el);
+      if (this.io2) this.io2.observe(el); else this.pending.push(el);
+    };
+  }
+  runLoop() {
+    if (this.rafR) return;
+    const step = () => {
+      const now = performance.now();
+      this.clockNow = now;
+      const live = Object.values(this.keys).some(t0 => now - t0 < 11200);
+      this.forceUpdate();
+      if (live) this.rafR = requestAnimationFrame(step);
+      else this.rafR = null;
+    };
+    this.rafR = requestAnimationFrame(step);
+  }
+  elapsed(k) {
+    if (this.allOn) return 99;
+    const t0 = this.keys[k];
+    return t0 ? (this.clockNow - t0) / 1000 : 0;
+  }
+  componentDidMount() {
+    this.reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const stored = (() => { try { return window.localStorage.getItem("rti-saral-theme"); } catch (_) { return null; } })();
+    const systemDark = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const theme = stored && this.themeOrder.includes(stored) ? stored : (systemDark ? "dark" : "light");
+    this.applyTheme(theme);
+    this.setState({ theme, themeLabel: this.themeLabels[theme] });
+    this.initReveal();
+    this.tick();
+  }
+  componentWillUnmount() {
+    clearTimeout(this.t);
+    clearTimeout(this.fallback);
+    this.io && this.io.disconnect();
+    this.io2 && this.io2.disconnect();
+    cancelAnimationFrame(this.raf);
+    this.rafR && cancelAnimationFrame(this.rafR);
+  }
+  applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { window.localStorage.setItem("rti-saral-theme", theme); } catch (_) {}
+  }
+  cycleTheme = () => {
+    const current = this.themeOrder.indexOf(this.state.theme);
+    const theme = this.themeOrder[(current + 1) % this.themeOrder.length];
+    this.applyTheme(theme);
+    this.setState({ theme, themeLabel: this.themeLabels[theme] });
+  };
+  tick() {
+    if (this.reducedMotion) {
+      this.setState({ typed: this.phrases[0] });
+      return;
+    }
+    const p = this.phrases[this.state.i % this.phrases.length];
+    const c = this.state.c;
+    if (c <= p.length) {
+      this.setState({ typed: p.slice(0, c), c: c + 1 });
+      this.t = setTimeout(() => this.tick(), 45);
+    } else {
+      this.t = setTimeout(() => { this.setState({ i: this.state.i + 1, c: 0 }); this.tick(); }, 2200);
+    }
+  }
+  renderVals() {
+    const cl = (x, a, b) => Math.min(b, Math.max(a, x));
+    const ramp = (t, a, b) => cl((t - a) / (b - a), 0, 1);
+    const easeOut = p => 1 - Math.pow(1 - p, 3);
+    const backOut = p => { const c = 1.9, q = p - 1; return 1 + (c + 1) * q * q * q + c * q * q; };
+    const t = Math.min(this.elapsed("how"), this.END);
+    const pct = cl(t / this.END, 0, 1);
+    const ANCH = [0.5, 2.9, 5.3, 7.7];
+    const lift = (e, d, dy, base) => {
+      const p = easeOut(ramp(e, d, d + 0.7));
+      return Object.assign({
+        opacity: p.toFixed(3),
+        transform: "translateY(" + ((dy || 18) * (1 - p)).toFixed(2) + "px)",
+        willChange: "opacity, transform"
+      }, base || {});
+    };
+    return {
+      typed: this.state.typed,
+      themeLabel: this.state.themeLabel,
+      cycleTheme: this.cycleTheme,
+      fixRef: this.refFor("fix"),
+      trackRef: this.refFor("track"),
+      ctaRef: this.refFor("cta"),
+      headRef: this.refFor("head"),
+      ctaTitleStyle: lift(this.elapsed("cta"), 0, 18),
+      ctaBodyStyle: lift(this.elapsed("cta"), 0.12, 18),
+      ctaBtnStyle: lift(this.elapsed("cta"), 0.24, 18),
+      headTitleStyle: lift(this.elapsed("head"), 0, 18),
+      headNoteStyle: lift(this.elapsed("head"), 0.14, 18),
+      sahLeftStyle: lift(this.elapsed("fix"), 0),
+      sahCardStyle: lift(this.elapsed("fix"), 0.18, 26),
+      trackLeftStyle: lift(this.elapsed("track"), 0),
+      trackCardStyle: lift(this.elapsed("track"), 0.15, 18),
+      examples: ["Village road work", "School mid-day meals", "Pension file status", "Tender details"].map(label => ({ label, onSelect: () => { this.setState({ typed: label }); } })),
+      rootRef: this.refFor("how"),
+      fillStyle: {
+        height: "100%", borderRadius: "999px", width: (pct * 100).toFixed(2) + "%",
+        background: "linear-gradient(90deg,var(--ux-brand),var(--ux-success))"
+      },
+      sweepStyle: {
+        position: "absolute", top: "-6px", left: "calc(" + (pct * 100).toFixed(2) + "% - 1px)",
+        width: "2px", height: "17px", borderRadius: "2px", background: "var(--ux-success)",
+        boxShadow: "0 0 14px color-mix(in srgb,var(--ux-success) 65%,transparent)", opacity: (pct > 0.002 && pct < 0.999 ? 1 : 0),
+        pointerEvents: "none"
+      },
+      sweepGlowStyle: {
+        position: "absolute", top: "-16px", left: "calc(" + (pct * 100).toFixed(2) + "% - 18px)",
+        width: "36px", height: "36px", borderRadius: "50%", pointerEvents: "none",
+        background: "radial-gradient(circle,color-mix(in srgb,var(--ux-success) 22%,transparent),transparent 70%)",
+        opacity: (pct > 0.002 && pct < 0.999 ? 1 : 0)
+      },
+      steps: [
+        { n: "1", when: "Day 0", title: "You file", body: "Four short sections, saved as you go. A registration number arrives by SMS and email straight away." },
+        { n: "2", when: "Day 1–5", title: "It reaches the right officer", body: "If it lands in the wrong department, it is transferred for you — you see the transfer, not a silence." },
+        { n: "3", when: "By day 30", title: "The reply is due", body: "The officer must answer within 30 days. We count down and nudge them, and you, at day 25." },
+        { n: "4", when: "If unhappy", title: "Appeal in one tap", body: "No re-typing. Your original request pre-fills the first appeal, and the CIC route is explained plainly." }
+      ].map((s, i) => {
+        const a = ANCH[i];
+        const rev = easeOut(ramp(t, a, a + 0.75));
+        const pop = backOut(cl(ramp(t, a - 0.15, a + 0.45), 0, 1));
+        return {
+          ...s,
+          dotStyle: {
+            background: rev > 0.5 ? "var(--ux-brand)" : "var(--ux-surface)",
+            color: rev > 0.5 ? "var(--ux-text-on-brand)" : "var(--ux-brand)",
+            transform: "scale(" + Math.max(0.2, pop).toFixed(3) + ")",
+            boxShadow: rev > 0.5 ? "0 8px 20px color-mix(in srgb,var(--ux-brand) 26%,transparent)" : "none"
+          },
+          whenStyle: {
+            opacity: rev.toFixed(3)
+          },
+          skelStyle: {
+            opacity: (0.9 * (1 - rev)).toFixed(3)
+          },
+          bodyStyle: {
+            opacity: rev.toFixed(3), filter: "blur(" + (4 * (1 - rev)).toFixed(2) + "px)",
+            transform: "translateX(" + (6 * (1 - rev)).toFixed(2) + "px)"
+          },
+          onSelect: () => { this.keys.how = performance.now(); this.runLoop(); }
+        };
+      }),
+      fixes: [
+        { mark: "✳", title: "We find the department", body: "Describe the problem in plain Hindi or English. Sahayak matches it against 2,200+ public authorities so you never pick from a blind dropdown." },
+        { mark: "❝", title: "We help you word it", body: "Vague requests get rejected. You get a clear draft with specific, answerable questions — always yours to edit." },
+        { mark: "◷", title: "Nothing gets lost", body: "Every field is saved locally as you type. Close the tab, switch phones, come back — the draft is waiting." }
+      ].map((f, i) => ({ ...f, style: lift(this.elapsed("fix"), 0.3 + i * 0.14, 14) })),
+      timeline: [
+        { dot: "var(--ux-brand)", label: "Request filed", note: "Ministry of Rural Development", date: "12 Aug" },
+        { dot: "var(--ux-brand)", label: "Fee paid · ₹10", note: "UPI · receipt sent", date: "12 Aug" },
+        { dot: "var(--ux-success)", label: "With the PIO", note: "Reply due in 19 days", date: "14 Aug" },
+        { dot: "var(--ux-border)", label: "Reply received", note: "Pending", date: "—" }
+      ].map((r, i) => {
+        const e = this.elapsed("track");
+        const p = easeOut(ramp(e, 0.35 + i * 0.16, 1.05 + i * 0.16));
+        return {
+          ...r,
+          rowStyle: { opacity: p.toFixed(3), transform: "translateX(" + (10 * (1 - p)).toFixed(2) + "px)" },
+          dotStyle: { background: r.dot, transform: "scale(" + Math.max(0.2, backOut(p)).toFixed(3) + ")" }
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

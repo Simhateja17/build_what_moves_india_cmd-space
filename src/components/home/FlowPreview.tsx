@@ -312,7 +312,7 @@ const PHASES = 12;
 /**
  * How long each beat holds before the next.
  *
- * Both good endings get their own beat and a full two seconds after it —
+ * Both good endings get their own beat and just under a second after it —
  * beat 3, where a reply settles the request, and beat 10, where the appeal
  * does. The refusal that follows each one waits out that pause: a SATISFIED
  * box and a Not Satisfied box appearing together is the one thing this
@@ -322,8 +322,8 @@ const DWELL: Record<number, number> = {
   0: 500,
   1: 1000,
   2: 1200,
-  3: 2000,
-  10: 2000,
+  3: 980,
+  10: 980,
 };
 const DWELL_DEFAULT = 560;
 
