@@ -9,6 +9,7 @@ import { addDays, formatDate } from "@/lib/dates";
 import { buildView, caseStage } from "@/lib/dashboard";
 import { AppealTag } from "@/components/AppealTag";
 import { StatusPill } from "@/components/StatusPill";
+import { useLocale } from "@/lib/i18n";
 import {
   ACCESS_FORMAT_COPY,
   AdditionalFee,
@@ -29,6 +30,7 @@ import {
 type ProgressState = "complete" | "current" | "pending";
 
 export default function CaseDetailPage() {
+  const { t } = useLocale();
   const { id } = useParams<{ id: string }>();
   const { getCase, dayOf, appealOf, readResponses, markResponseRead, uploadsFor } =
     useStore();
@@ -44,9 +46,9 @@ export default function CaseDetailPage() {
   if (!c) {
     return (
       <div className="gov-card p-8 text-center">
-        <p className="font-semibold text-ink">This request could not be found.</p>
+        <p className="font-semibold text-ink">{t("This request could not be found.")}</p>
         <Link href="/my-rtis" className="mt-3 inline-block font-medium text-navy-700 hover:underline">
-          Back to My requests
+          {t("Back to My requests")}
         </Link>
       </div>
     );
@@ -166,7 +168,7 @@ export default function CaseDetailPage() {
   return (
     <div className="mx-auto max-w-[1240px]">
       <Link href="/my-rtis" className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700 hover:underline">
-        <span aria-hidden>←</span> My requests
+        <span aria-hidden>←</span> {t("My requests")}
       </Link>
 
       {/* The heading is the office and the question, not "View Status" —
@@ -197,7 +199,7 @@ export default function CaseDetailPage() {
           href={`/requests/${c.id}/acknowledgement`}
           className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-navy-600/50 bg-white px-5 py-2.5 text-sm font-bold text-navy-700 transition hover:bg-navy-50 print:hidden"
         >
-          <DownloadIcon /> Acknowledgement
+          <DownloadIcon /> {t("Acknowledgement")}
         </Link>
       </header>
 
@@ -296,7 +298,7 @@ export default function CaseDetailPage() {
                     : "bg-navy-900 text-white hover:bg-navy-700"
                 }`}
               >
-                View the response
+                {t("View the response")}
               </a>
             ) : null}
 
@@ -317,14 +319,14 @@ export default function CaseDetailPage() {
                 href={`/requests/${c.id}/appeal`}
                 className="inline-flex items-center rounded-lg border border-navy-600 bg-white px-5 py-2.5 text-sm font-bold text-navy-700 transition hover:bg-navy-50"
               >
-                View First Appeal
+                {t("View First Appeal")}
               </Link>
             ) : null}
           </div>
 
           {appealAvailable && !v.d.appealFiled ? (
             <p className="mt-3 text-xs text-ink-2">
-              Filing a First Appeal is free and does not require a lawyer.
+              {t("Filing a First Appeal is free and does not require a lawyer.")}
             </p>
           ) : null}
         </div>
@@ -361,7 +363,7 @@ export default function CaseDetailPage() {
       ) : null}
 
       <section id="application" className="mt-6 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7">
-        <h2 className="text-lg font-bold text-navy-900">Information sought</h2>
+        <h2 className="text-lg font-bold text-navy-900">{t("Information sought")}</h2>
         <p className="mt-2 text-sm leading-6 text-ink-2">{c.question}</p>
 
         {/* The facts, once. The old page had a header card and a Details
@@ -371,7 +373,7 @@ export default function CaseDetailPage() {
             and by when — rather than by the shape of the record. */}
         <dl className="mt-6 grid gap-x-8 border-t border-line-2 pt-2 sm:grid-cols-2">
           <DetailRow
-            label="Officer (CPIO)"
+            label={t("Officer (CPIO)")}
             value={`${c.authority.cpio.name} · ${c.authority.cpio.designation}`}
           />
           <DetailRow
@@ -382,20 +384,20 @@ export default function CaseDetailPage() {
                 : `${formatDate(v.expectedBy)} (${v.d.clock.spec.label})`
             }
           />
-          <DetailRow label="Fee" value={feeLabelOf(c.fee)} />
-          <DetailRow label="Filed" value={`Online · ${formatDate(v.submittedOn)}`} />
-          <DetailRow label="Ministry" value={c.authority.ministry} />
+          <DetailRow label={t("Fee")} value={feeLabelOf(c.fee)} />
+          <DetailRow label={t("Filed")} value={`Online · ${formatDate(v.submittedOn)}`} />
+          <DetailRow label={t("Ministry")} value={c.authority.ministry} />
           {/* s.7(9) — the form the information was asked for in. An office
               may depart from it only where doing so would disproportionately
               divert its resources, so the form asked for is worth a line. */}
           {c.format ? (
-            <DetailRow label="Form requested" value={ACCESS_FORMAT_COPY[c.format]} />
+            <DetailRow label={t("Form requested")} value={ACCESS_FORMAT_COPY[c.format]} />
           ) : null}
           {c.fee.receiptNumber ? (
-            <DetailRow label="Fee receipt" value={c.fee.receiptNumber} />
+            <DetailRow label={t("Fee receipt")} value={c.fee.receiptNumber} />
           ) : null}
           {c.fee.waived && c.fee.waiverBasis ? (
-            <DetailRow label="Basis of waiver" value={c.fee.waiverBasis} />
+            <DetailRow label={t("Basis of waiver")} value={c.fee.waiverBasis} />
           ) : null}
         </dl>
       </section>
@@ -481,6 +483,7 @@ function ResponseSection({
   appellateAuthority: OfficerContact;
   appealBy?: Date;
 }) {
+  const { t } = useLocale();
   const outcome = decision?.outcome ?? "provided";
   const look = OUTCOME_COPY[outcome];
   const refused = outcome !== "provided";
@@ -507,7 +510,7 @@ function ResponseSection({
           {decision?.withheld ? (
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted">
-                What was withheld
+                {t("What was withheld")}
               </h3>
               <p className="mt-1.5 text-sm leading-6 text-ink-2">
                 {decision.withheld}
@@ -518,7 +521,7 @@ function ResponseSection({
           {clauses.length ? (
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted">
-                The provision relied on
+                {t("The provision relied on")}
               </h3>
               <ul className="mt-1.5 space-y-3">
                 {clauses.map((ex) => (
@@ -539,7 +542,7 @@ function ResponseSection({
           {decision?.reasons ? (
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted">
-                The reasons recorded
+                {t("The reasons recorded")}
               </h3>
               <p className="mt-1.5 text-sm leading-6 text-ink-2">
                 {decision.reasons}
@@ -549,10 +552,7 @@ function ResponseSection({
 
           {decision?.publicInterestConsidered === false ? (
             <p className="rounded-lg bg-saffron-50 px-4 py-3 text-sm leading-6 text-ink">
-              Nothing on the record shows that the public interest in
-              disclosure was weighed against the harm claimed. Section 8(2)
-              requires that weighing, and its absence is itself a ground of
-              appeal.
+              {t("Nothing on the record shows that the public interest in disclosure was weighed against the harm claimed. Section 8(2) requires that weighing, and its absence is itself a ground of appeal.")}
             </p>
           ) : null}
 
@@ -561,7 +561,7 @@ function ResponseSection({
               favour the portal may or may not do. */}
           <div className="border-t border-line-2 pt-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted">
-              Your right of appeal
+              {t("Your right of appeal")}
             </h3>
             <p className="mt-1.5 text-sm leading-6 text-ink-2">
               You may appeal this decision free of cost within 30 days
@@ -588,28 +588,27 @@ function ResponseSection({
  * the only person entitled to pursue it.
  */
 function OfficersSection({ authority }: { authority: Authority }) {
+  const { t } = useLocale();
   return (
     <section
       id="officers"
       className="mt-6 scroll-mt-28 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7"
     >
-      <h2 className="text-lg font-bold text-navy-900">Who is answerable</h2>
+      <h2 className="text-lg font-bold text-navy-900">{t("Who is answerable")}</h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2">
-        Correspondence about this request may be sent to either officer
-        directly, quoting the registration number. Neither of them may charge
-        you for doing so.
+        {t("Correspondence about this request may be sent to either officer directly, quoting the registration number. Neither of them may charge you for doing so.")}
       </p>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-muted">
-            Answers the request — s.5(1)
+            {t("Answers the request — s.5(1)")}
           </p>
           <OfficerCard officer={authority.cpio} className="mt-2" />
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-muted">
-            Hears a First Appeal — s.19(1)
+            {t("Hears a First Appeal — s.19(1)")}
           </p>
           <OfficerCard officer={authority.appellateAuthority} className="mt-2" />
         </div>
@@ -668,23 +667,24 @@ function ApplicantSection({
   applicant: Applicant;
   office: string;
 }) {
+  const { t } = useLocale();
   return (
     <section className="mt-6 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7">
-      <h2 className="text-lg font-bold text-navy-900">Your details on record</h2>
+      <h2 className="text-lg font-bold text-navy-900">{t("Your details on record")}</h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2">
         This is what {office} holds against this request, and where any reply
         by post will be sent. If any of it is wrong, tell the officer above —
         a reply sent to the wrong address is still treated as a reply given.
       </p>
       <dl className="mt-5 grid gap-x-8 border-t border-line-2 pt-2 sm:grid-cols-2">
-        <DetailRow label="Name" value={applicant.name} />
-        <DetailRow label="Email" value={applicant.email} />
-        <DetailRow label="Address" value={applicant.address} />
+        <DetailRow label={t("Name")} value={applicant.name} />
+        <DetailRow label={t("Email")} value={applicant.email} />
+        <DetailRow label={t("Address")} value={applicant.address} />
         {applicant.mobile ? (
-          <DetailRow label="Mobile" value={applicant.mobile} />
+          <DetailRow label={t("Mobile")} value={applicant.mobile} />
         ) : null}
         <DetailRow
-          label="Citizenship"
+          label={t("Citizenship")}
           value={
             applicant.isCitizen
               ? "Declared a citizen of India — s.6(1)"
@@ -692,7 +692,7 @@ function ApplicantSection({
           }
         />
         {applicant.isBpl ? (
-          <DetailRow label="Fee category" value="Below Poverty Line — no fee payable" />
+          <DetailRow label={t("Fee category")} value="Below Poverty Line — no fee payable" />
         ) : null}
       </dl>
     </section>
@@ -714,23 +714,24 @@ function AdditionalFeeSection({
   fee: AdditionalFee;
   submittedOn: string;
 }) {
+  const { t } = useLocale();
   const paid = fee.paidOnDay !== undefined;
   const excluded = paid ? fee.paidOnDay! - fee.day : undefined;
 
   return (
     <section className="mt-6 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7">
       <h2 className="text-lg font-bold text-navy-900">
-        Additional fee for the cost of supply
+        {t("Additional fee for the cost of supply")}
       </h2>
       <dl className="mt-5 grid gap-x-8 border-t border-line-2 pt-2 sm:grid-cols-2">
-        <DetailRow label="Amount" value={`₹${fee.amountInr}`} />
+        <DetailRow label={t("Amount")} value={`₹${fee.amountInr}`} />
         <DetailRow
-          label="Demanded on"
+          label={t("Demanded on")}
           value={formatDate(addDays(submittedOn, fee.day))}
         />
-        <DetailRow label="How it was worked out" value={fee.calculation} />
+        <DetailRow label={t("How it was worked out")} value={fee.calculation} />
         <DetailRow
-          label="Paid on"
+          label={t("Paid on")}
           value={
             paid ? formatDate(addDays(submittedOn, fee.paidOnDay!)) : "Not yet paid"
           }
@@ -774,21 +775,21 @@ function RightsSection({
   decisionDue?: Date;
   outerLimit?: Date;
 }) {
+  const { t } = useLocale();
   return (
     <section
       id="rights"
       className="mt-6 scroll-mt-28 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7"
     >
-      <h2 className="text-lg font-bold text-navy-900">Your rights from here</h2>
+      <h2 className="text-lg font-bold text-navy-900">{t("Your rights from here")}</h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2">
-        All three are free. None of them requires a lawyer, and none of them
-        may be refused for want of a form or a stamp.
+        {t("All three are free. None of them requires a lawyer, and none of them may be refused for want of a form or a stamp.")}
       </p>
 
       <ol className="mt-6 flex flex-col gap-6 border-l-2 border-navy-600/30 pl-5">
         <li>
           <h3 className="text-sm font-bold text-ink">
-            First Appeal — section 19(1)
+            {t("First Appeal — section 19(1)")}
           </h3>
           <p className="mt-1.5 text-sm leading-6 text-ink-2">
             To a senior officer in the same department, within 30 days of the
@@ -806,7 +807,7 @@ function RightsSection({
 
         <li>
           <h3 className="text-sm font-bold text-ink">
-            Second Appeal — section 19(3)
+            {t("Second Appeal — section 19(3)")}
           </h3>
           <p className="mt-1.5 text-sm leading-6 text-ink-2">
             To the Central Information Commission, which sits outside the
@@ -827,14 +828,10 @@ function RightsSection({
 
         <li>
           <h3 className="text-sm font-bold text-ink">
-            Complaint — section 18
+            {t("Complaint — section 18")}
           </h3>
           <p className="mt-1.5 text-sm leading-6 text-ink-2">
-            A complaint is not an appeal. It goes straight to the same
-            Commission, at any time, and it is the remedy where an office
-            refused to accept the application, refused to name a CPIO, charged
-            a fee it was not entitled to, or gave information that was
-            knowingly false. There is no deadline on it.
+            {t("A complaint is not an appeal. It goes straight to the same Commission, at any time, and it is the remedy where an office refused to accept the application, refused to name a CPIO, charged a fee it was not entitled to, or gave information that was knowingly false. There is no deadline on it.")}
           </p>
         </li>
       </ol>
@@ -878,6 +875,7 @@ function HearingSection({
   fallbackVenue: string;
   appealNumber?: string;
 }) {
+  const { t } = useLocale();
   const { appealOf, setHearingChoice } = useStore();
   const chosen = appealOf(caseId).hearingChoice;
 
@@ -886,7 +884,7 @@ function HearingSection({
       id="hearing"
       className="mt-6 scroll-mt-28 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7"
     >
-      <h2 className="text-lg font-bold text-navy-900">Hearing on your appeal</h2>
+      <h2 className="text-lg font-bold text-navy-900">{t("Hearing on your appeal")}</h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2">
         A hearing has been fixed{appealNumber ? ` in appeal ${appealNumber}` : ""}.
         Tell them how you want to be heard. All three choices carry the same
@@ -899,26 +897,26 @@ function HearingSection({
           loses an appeal they were entitled to win. */}
       <dl className="mt-5 grid gap-x-8 border-y border-line-2 py-2 sm:grid-cols-2">
         <DetailRow
-          label="Date and time"
+          label={t("Date and time")}
           value={`${formatDate(on)}${notice.hearingTime ? `, ${notice.hearingTime}` : ""}`}
         />
-        <DetailRow label="Before" value={notice.hearingBefore ?? fallbackBefore} />
+        <DetailRow label={t("Before")} value={notice.hearingBefore ?? fallbackBefore} />
         <DetailRow
-          label="How it sits"
+          label={t("How it sits")}
           value={
             notice.hearingMode
               ? HEARING_MODE_COPY[notice.hearingMode]
               : "In person"
           }
         />
-        <DetailRow label="Venue" value={notice.hearingVenue ?? fallbackVenue} />
+        <DetailRow label={t("Venue")} value={notice.hearingVenue ?? fallbackVenue} />
         {notice.hearingLink ? (
-          <DetailRow label="Joining link" value={notice.hearingLink} />
+          <DetailRow label={t("Joining link")} value={notice.hearingLink} />
         ) : null}
       </dl>
 
       <fieldset className="mt-5">
-        <legend className="sr-only">How you want to be heard</legend>
+        <legend className="sr-only">{t("How you want to be heard")}</legend>
         <ul className="space-y-3">
           {HEARING_CHOICES.map((option) => {
             const selected = chosen === option.value;
@@ -961,8 +959,7 @@ function HearingSection({
         </p>
       ) : (
         <p className="mt-4 text-xs text-ink-2">
-          If you record nothing, the hearing goes ahead on the date fixed and
-          the appeal is decided whether or not you attend.
+          {t("If you record nothing, the hearing goes ahead on the date fixed and the appeal is decided whether or not you attend.")}
         </p>
       )}
     </section>
@@ -995,6 +992,7 @@ function DocumentsSection({
   ask?: string;
   office: string;
 }) {
+  const { t } = useLocale();
   const { uploadsFor, addUpload, removeUpload } = useStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -1025,7 +1023,7 @@ function DocumentsSection({
       id="documents"
       className="mt-6 scroll-mt-28 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-7"
     >
-      <h2 className="text-lg font-bold text-navy-900">Documents submitted</h2>
+      <h2 className="text-lg font-bold text-navy-900">{t("Documents submitted")}</h2>
       {ask ? (
         <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2">{ask}.</p>
       ) : null}
@@ -1049,7 +1047,7 @@ function DocumentsSection({
                 onClick={() => removeUpload(caseId, doc.name, doc.uploadedAt)}
                 className="shrink-0 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-ink-2 transition hover:bg-canvas"
               >
-                Remove
+                {t("Remove")}
               </button>
             </li>
           ))}
@@ -1073,7 +1071,7 @@ function DocumentsSection({
           {sent.length ? "Submit another document" : "Choose a document to submit"}
         </button>
         <p className="mt-2 text-xs text-muted">
-          Accepted formats: PDF, JPG or PNG, up to 5 MB. A clear photograph of the document is acceptable.
+          {t("Accepted formats: PDF, JPG or PNG, up to 5 MB. A clear photograph of the document is acceptable.")}
         </p>
       </div>
 
@@ -1085,8 +1083,7 @@ function DocumentsSection({
 
       {sent.length && ask ? (
         <p className="mt-4 rounded-xl bg-govgreen-50 px-4 py-3 text-sm leading-6 text-govgreen-700">
-          Submitted. The office has received the requested document. The
-          30-day response period continues to run.
+          {t("Submitted. The office has received the requested document. The 30-day response period continues to run.")}
         </p>
       ) : null}
     </section>
@@ -1102,13 +1099,14 @@ function DocumentsSection({
  * the page, inside a sentence, below the fold.
  */
 function Deadline({ v }: { v: ReturnType<typeof buildView> }) {
+  const { t } = useLocale();
   const { d } = v;
 
   if (d.hasReply) {
     return (
       <div>
         <p className="text-2xl font-bold tracking-tight text-govgreen-700">
-          Response received
+          {t("Response received")}
         </p>
         <p className="mt-1 text-sm text-ink-2">
           {v.repliedOn ? `Replied ${formatDate(v.repliedOn)}` : "Reply received"}
@@ -1184,9 +1182,7 @@ function Deadline({ v }: { v: ReturnType<typeof buildView> }) {
 
       {d.clock.stopped ? (
         <p className="mt-3 rounded-lg bg-saffron-50/80 px-4 py-3 text-sm leading-6 text-ink">
-          <strong className="font-semibold">The clock is stopped.</strong> It
-          will not run again until the additional fee is paid, and the days it
-          is stopped for do not count against the department.
+          <strong className="font-semibold">{t("The clock is stopped.")}</strong> {t("It will not run again until the additional fee is paid, and the days it is stopped for do not count against the department.")}
         </p>
       ) : null}
     </div>

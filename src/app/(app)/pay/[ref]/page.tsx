@@ -11,6 +11,7 @@ import {
 } from "@/lib/payment";
 import { PaymentStatusPanel } from "@/components/payment/PaymentStatusPanel";
 import { MoneyTrail } from "@/components/payment/MoneyTrail";
+import { useLocale } from "@/lib/i18n";
 
 const METHODS = [
   { id: "upi", label: "UPI", hint: "ananya@okhdfc", detail: "UPI · ananya@okhdfc" },
@@ -27,6 +28,7 @@ const OUTCOMES: Array<{ state: PaymentState; label: string }> = [
 ];
 
 export default function PayPage() {
+  const { t } = useLocale();
   const { ref } = useParams<{ ref: string }>();
   const router = useRouter();
   const {
@@ -63,21 +65,21 @@ export default function PayPage() {
   useEffect(() => {
     if (state !== "processing") return;
     const start = Date.now();
-    const t = setInterval(() => setElapsed(Date.now() - start), 250);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setElapsed(Date.now() - start), 250);
+    return () => clearInterval(timer);
   }, [state]);
 
   if (!payment) {
     return (
       <div className="gov-card p-8 text-center">
         <p className="font-semibold text-ink">
-          This payment could not be found.
+          {t("This payment could not be found.")}
         </p>
         <Link
           href="/check-payment"
           className="mt-3 inline-block font-medium text-navy-700 hover:underline"
         >
-          Check payment status
+          {t("Check payment status")}
         </Link>
       </div>
     );
@@ -121,7 +123,7 @@ export default function PayPage() {
   return (
     <div className="w-full">
       <p className="text-[11px] uppercase tracking-wider text-muted">
-        Step 4 of 4 · Payment
+        {t("Step 4 of 4 · Payment")}
       </p>
 
       {payment.state === "payment" ? (
@@ -161,14 +163,14 @@ export default function PayPage() {
                 href="/check-payment"
                 className="font-medium text-navy-700 hover:underline"
               >
-                Check Payment Status
+                {t("Check Payment Status")}
               </Link>{" "}
               any time, or{" "}
               <Link
                 href="/dashboard"
                 className="font-medium text-navy-700 hover:underline"
               >
-                go to My requests
+                {t("go to My requests")}
               </Link>
               .
             </p>
@@ -200,6 +202,7 @@ function PayForm({
   onPay: () => void;
   office: string;
 }) {
+  const { t } = useLocale();
   return (
     <div className="mt-3 grid items-start gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(340px,0.75fr)] xl:gap-8">
       <div className="gov-card p-5 sm:p-6">
@@ -214,10 +217,10 @@ function PayForm({
         <div className="mt-5 flex items-baseline justify-between rounded-[10px] border border-line bg-canvas px-4 py-3.5">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-              Paying for
+              {t("Paying for")}
             </p>
             <p className="mt-0.5 text-sm font-medium text-ink">
-              RTI application fee
+              {t("RTI application fee")}
             </p>
             <p className="text-xs text-muted">{office}</p>
           </div>
@@ -227,7 +230,7 @@ function PayForm({
         </div>
 
         <fieldset className="mt-5">
-          <legend className="field-label">Pay using</legend>
+          <legend className="field-label">{t("Pay using")}</legend>
           <div className="mt-2 space-y-2">
             {METHODS.map((m) => {
               const active = method === m.detail;
@@ -263,12 +266,12 @@ function PayForm({
             by the time it matters. */}
         <div className="mt-5 rounded-[10px] border border-govgreen-600/25 bg-govgreen-50 px-4 py-3.5">
           <p className="text-[10px] font-bold uppercase tracking-wider text-govgreen-700/80">
-            Before you pay
+            {t("Before you pay")}
           </p>
           <p className="mt-1 text-[13px] leading-relaxed text-govgreen-700">
             If a payment issue occurs, the exact status and whether the
             amount was debited will be shown.{" "}
-            <strong>No request will ever require payment twice.</strong>{" "}
+            <strong>{t("No request will ever require payment twice.")}</strong>{" "}
             Any payment that cannot be converted into a registered RTI is
             refunded automatically.
           </p>
@@ -285,15 +288,14 @@ function PayForm({
 
       {/* Demo control, in the same navy livery as the time machine. */}
       <section
-        aria-label="Demo control"
+        aria-label={t("Demo control")}
         className="rounded-xl border border-navy-600/20 bg-navy-800 p-4 text-white xl:sticky xl:top-32 xl:p-6"
       >
         <p className="text-[10px] font-bold uppercase tracking-wider text-saffron-400">
-          Demo control · what the bank does next
+          {t("Demo control · what the bank does next")}
         </p>
         <p className="mt-0.5 text-sm text-white/70">
-          Choose the outcome to walk through. The default is the one that
-          breaks people on the real portal.
+          {t("Choose the outcome to walk through. The default is the one that breaks people on the real portal.")}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {OUTCOMES.map((o) => (
@@ -335,6 +337,7 @@ function Actions({
   onRetry: () => void;
   caseId?: string;
 }) {
+  const { t } = useLocale();
   if (state === "processing") {
     return (
       <div className="rounded-[10px] border border-navy-600/20 bg-surface px-4 py-3.5 text-center">
@@ -357,13 +360,13 @@ function Actions({
           href={`/requests/${caseId}`}
           className="flex-1 rounded-lg bg-navy-800 px-4 py-3.5 text-center text-sm font-bold text-white transition hover:bg-navy-700"
         >
-          Track this request
+          {t("Track this request")}
         </Link>
         <Link
           href="/dashboard"
           className="flex-1 rounded-lg border border-line bg-surface px-4 py-3.5 text-center text-sm font-semibold text-navy-800 transition hover:bg-navy-50"
         >
-          My requests
+          {t("My requests")}
         </Link>
       </div>
     );
@@ -377,13 +380,13 @@ function Actions({
           onClick={onRetry}
           className="flex-1 rounded-lg bg-navy-800 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-navy-700"
         >
-          Try payment again
+          {t("Try payment again")}
         </button>
         <Link
           href="/check-payment"
           className="flex-1 rounded-lg border border-line bg-surface px-4 py-3.5 text-center text-sm font-semibold text-navy-800 transition hover:bg-navy-50"
         >
-          Check payment status
+          {t("Check payment status")}
         </Link>
       </div>
     );
@@ -405,7 +408,7 @@ function Actions({
         href="/dashboard"
         className="flex-1 rounded-lg border border-line bg-surface px-4 py-3.5 text-center text-sm font-semibold text-navy-800 transition hover:bg-navy-50"
       >
-        Go to My requests
+        {t("Go to My requests")}
       </Link>
     </div>
   );

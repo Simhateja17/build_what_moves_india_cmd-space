@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * A sheet, not a modal. On a phone a centred dialog puts its close
@@ -19,6 +20,7 @@ export function BottomSheet({
   onClose: () => void;
   children: React.ReactNode;
 }) {
+  const { t } = useLocale();
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -38,7 +40,7 @@ export function BottomSheet({
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <button
         type="button"
-        aria-label="Close"
+        aria-label={t("Close")}
         onClick={onClose}
         className="absolute inset-0 bg-navy-900/40"
       />
@@ -55,7 +57,7 @@ export function BottomSheet({
             onClick={onClose}
             className="-mr-1 rounded-md px-2 py-1 text-sm font-semibold text-ink-2 hover:bg-canvas"
           >
-            Close
+            {t("Close")}
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>

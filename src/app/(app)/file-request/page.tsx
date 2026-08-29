@@ -9,6 +9,7 @@ import { AssistantHandoff, GovLevel, HANDOFF_KEY } from "@/lib/assistant/types";
 import { caseFromDraft, makeRegistrationNumber } from "@/lib/payment";
 import { GroundRealityNote } from "@/components/GroundRealityNote";
 import { DraftStatus } from "@/components/DraftStatus";
+import { useLocale } from "@/lib/i18n";
 
 const STEPS = [
   { title: "Select the authority", hint: "The office that holds the information" },
@@ -88,6 +89,7 @@ function loadDraft(): Draft | null {
 }
 
 export default function FileRequestPage() {
+  const { t } = useLocale();
   const { addCase, startPayment } = useStore();
   const router = useRouter();
 
@@ -215,10 +217,10 @@ export default function FileRequestPage() {
       {/* Vertical stepper */}
       <aside>
         <h1 className="text-2xl font-bold tracking-tight text-navy-900">
-          File an RTI request
+          {t("File an RTI request")}
         </h1>
         <p className="mt-1.5 text-sm text-ink-2">
-          This application has four steps.
+          {t("This application has four steps.")}
         </p>
 
         {/* How much of the form is behind you — the reassurance the current
@@ -304,7 +306,7 @@ export default function FileRequestPage() {
               {handoff ? (
                 <div className="rounded-lg border border-govgreen-600/30 bg-govgreen-50 px-4 py-3">
                   <p className="text-sm leading-relaxed text-govgreen-700">
-                    <strong>Selected by the assistant:</strong>{" "}
+                    <strong>{t("Selected by the assistant:")}</strong>{" "}
                     {handoff.authorityName}.
                     {stateRoute
                       ? " Your draft has been carried over — review the applicant details and send it."
@@ -316,14 +318,14 @@ export default function FileRequestPage() {
                   href="/find-department"
                   className="block rounded-lg border border-navy-600/20 bg-navy-50 px-4 py-3 text-sm font-medium text-navy-800 transition hover:border-navy-600/40"
                 >
-                  Do not know which department? Identify it from your problem →
+                  {t("Do not know which department? Identify it from your problem →")}
                 </Link>
               )}
 
               {stateRoute ? (
                 <div className="rounded-lg border border-line bg-canvas px-4 py-3.5">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-                    Addressed to
+                    {t("Addressed to")}
                   </p>
                   <p className="mt-1 text-sm font-semibold text-ink">
                     {pioTitle ?? "Public Information Officer"}
@@ -335,18 +337,14 @@ export default function FileRequestPage() {
                   )}
                   <p className="text-sm text-ink-2">{ministry}</p>
                   <GroundRealityNote>
-                    A state office is not listed in the central
-                    ministry dropdowns, so this application names it
-                    directly. Section 6(3) still applies: if it reaches the
-                    wrong officer, they must forward it within 5 days rather
-                    than reject it.
+                    {t("A state office is not listed in the central ministry dropdowns, so this application names it directly. Section 6(3) still applies: if it reaches the wrong officer, they must forward it within 5 days rather than reject it.")}
                   </GroundRealityNote>
                 </div>
               ) : (
                 <>
                 <div>
                   <label htmlFor="ministry" className="field-label">
-                    Ministry or department
+                    {t("Ministry or department")}
                   </label>
                   <select
                     id="ministry"
@@ -358,7 +356,7 @@ export default function FileRequestPage() {
                     }}
                     className="field-input"
                   >
-                    <option value="">Select a ministry or department</option>
+                    <option value="">{t("Select a ministry or department")}</option>
                     {MINISTRIES.map((m) => (
                       <option key={m}>{m}</option>
                     ))}
@@ -367,16 +365,13 @@ export default function FileRequestPage() {
                     <p className="mt-1.5 text-sm text-govred-700">{errors.ministry}</p>
                   ) : null}
                   <GroundRealityNote>
-                    This decides which Nodal Officer receives your request. If you
-                    pick the wrong one, Section 6(3) of the RTI Act requires them
-                    to forward it to the correct authority within 5 days — they
-                    cannot simply reject it.
+                    {t("This decides which Nodal Officer receives your request. If you pick the wrong one, Section 6(3) of the RTI Act requires them to forward it to the correct authority within 5 days — they cannot simply reject it.")}
                   </GroundRealityNote>
                 </div>
 
                 <div>
                   <label htmlFor="office" className="field-label">
-                    Office within the ministry or department
+                    {t("Office within the ministry or department")}
                   </label>
                   <select
                     id="office"
@@ -403,7 +398,7 @@ export default function FileRequestPage() {
                 <p className="text-sm leading-relaxed text-saffron-600">
                   {stateRoute ? (
                     <>
-                      <strong>Note:</strong> this is a state matter, so it
+                      <strong>{t("Note:")}</strong> this is a state matter, so it
                       goes to the officer named above rather than to a
                       central ministry. {handoff?.stateName ?? "Your state"}{" "}
                       may also accept the same application at its own
@@ -413,11 +408,7 @@ export default function FileRequestPage() {
                     </>
                   ) : (
                     <>
-                      <strong>Note:</strong> this portal covers central
-                      government bodies only. A request intended for a state
-                      government will be returned without a refund. If your
-                      question concerns a state office, file it on that
-                      state&apos;s RTI portal.
+                      <strong>{t("Note:")}</strong> {t("this portal covers central government bodies only. A request intended for a state government will be returned without a refund. If your question concerns a state office, file it on that state's RTI portal.")}
                     </>
                   )}
                 </p>
@@ -429,12 +420,10 @@ export default function FileRequestPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-bold text-ink">
-                  Describe your request
+                  {t("Describe your request")}
                 </h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  State your request clearly. You are entitled to request
-                  facts and documents already held by the government, and
-                  are not required to give a reason.
+                  {t("State your request clearly. You are entitled to request facts and documents already held by the government, and are not required to give a reason.")}
                 </p>
               </div>
 
@@ -454,14 +443,14 @@ export default function FileRequestPage() {
                   ))}
                 </div>
                 <label htmlFor="question" className="field-label sr-only">
-                  Your question
+                  {t("Your question")}
                 </label>
                 <textarea
                   id="question"
                   rows={8}
                   value={question}
                   onChange={(e) => { setQuestion(e.target.value); touch("question"); }}
-                  placeholder="For example: Please provide the current status of pension case file PPO-2019/44871, the reason for the delay since January, and the name of the officer holding the file."
+                  placeholder={t("For example: Please provide the current status of pension case file PPO-2019/44871, the reason for the delay since January, and the name of the officer holding the file.")}
                   className="field-input"
                 />
                 <div className="mt-1.5 flex items-center justify-between text-xs">
@@ -476,7 +465,7 @@ export default function FileRequestPage() {
                   </span>
                   {question.length > CHAR_LIMIT ? (
                     <span className="text-govred-700">
-                      Over the limit. Attach the remaining text as a PDF.
+                      {t("Over the limit. Attach the remaining text as a PDF.")}
                     </span>
                   ) : null}
                 </div>
@@ -484,10 +473,7 @@ export default function FileRequestPage() {
                   <p className="mt-1.5 text-sm text-govred-700">{errors.question}</p>
                 ) : null}
                 <GroundRealityNote>
-                  This text is what the CPIO actually reads. From the day it
-                  reaches them, they have 30 days to answer — and if they do
-                  not, the law already treats that silence as a refusal you can
-                  appeal.
+                  {t("This text is what the CPIO actually reads. From the day it reaches them, they have 30 days to answer — and if they do not, the law already treats that silence as a refusal you can appeal.")}
                 </GroundRealityNote>
               </div>
             </div>
@@ -496,18 +482,15 @@ export default function FileRequestPage() {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-xl font-bold text-ink">Applicant details</h2>
+                <h2 className="text-xl font-bold text-ink">{t("Applicant details")}</h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  The current portal form asks for gender, rural or urban
-                  residence, and literacy status. None of this affects your
-                  rights under the Act, and this application does not
-                  request it.
+                  {t("The current portal form asks for gender, rural or urban residence, and literacy status. None of this affects your rights under the Act, and this application does not request it.")}
                 </p>
               </div>
 
               <div>
                 <label htmlFor="name" className="field-label">
-                  Your name
+                  {t("Your name")}
                 </label>
                 <input
                   id="name"
@@ -522,7 +505,7 @@ export default function FileRequestPage() {
 
               <div>
                 <label htmlFor="email" className="field-label">
-                  Email address
+                  {t("Email address")}
                 </label>
                 <input
                   id="email"
@@ -535,22 +518,20 @@ export default function FileRequestPage() {
                   <p className="mt-1.5 text-sm text-govred-700">{errors.email}</p>
                 ) : null}
                 <GroundRealityNote>
-                  Your registration number arrives here, and it is the only way
-                  to track or appeal this request later. We keep it on your case
-                  so you never have to remember it.
+                  {t("Your registration number arrives here, and it is the only way to track or appeal this request later. We keep it on your case so you never have to remember it.")}
                 </GroundRealityNote>
               </div>
 
               <div>
                 <label htmlFor="mobile" className="field-label">
                   Mobile number{" "}
-                  <span className="font-normal text-muted">(optional)</span>
+                  <span className="font-normal text-muted">{t("(optional)")}</span>
                 </label>
                 <input
                   id="mobile"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
-                  placeholder="For SMS updates"
+                  placeholder={t("For SMS updates")}
                   className="field-input"
                 />
               </div>
@@ -564,12 +545,10 @@ export default function FileRequestPage() {
                 />
                 <span>
                   <span className="block font-medium text-ink">
-                    I hold a Below Poverty Line card
+                    {t("I hold a Below Poverty Line card")}
                   </span>
                   <span className="mt-0.5 block text-sm text-ink-2">
-                    No fee is payable. Attach your BPL certificate and the
-                    ₹10 fee will be waived. This is a right under the RTI
-                    Rules, 2012, not a concession.
+                    {t("No fee is payable. Attach your BPL certificate and the ₹10 fee will be waived. This is a right under the RTI Rules, 2012, not a concession.")}
                   </span>
                 </span>
               </label>
@@ -579,33 +558,33 @@ export default function FileRequestPage() {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-xl font-bold text-ink">Review and submit</h2>
+                <h2 className="text-xl font-bold text-ink">{t("Review and submit")}</h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  Review the details below before submission.
+                  {t("Review the details below before submission.")}
                 </p>
               </div>
 
               <dl className="divide-y divide-line-2 rounded-lg border border-line">
-                <Row label="Addressed to" onEdit={() => setStep(0)}>
+                <Row label={t("Addressed to")} onEdit={() => setStep(0)}>
                   {office}
                   <span className="block text-sm text-muted">{ministry}</span>
                 </Row>
-                <Row label="Information sought" onEdit={() => setStep(1)}>
+                <Row label={t("Information sought")} onEdit={() => setStep(1)}>
                   <span className="block whitespace-pre-wrap text-[15px] leading-relaxed">
                     {question}
                   </span>
                 </Row>
-                <Row label="Applicant" onEdit={() => setStep(2)}>
+                <Row label={t("Applicant")} onEdit={() => setStep(2)}>
                   {name}
                   <span className="block text-sm text-muted">
                     {email}
                     {mobile ? ` · ${mobile}` : ""}
                   </span>
                 </Row>
-                <Row label="Fee" onEdit={() => setStep(2)}>
+                <Row label={t("Fee")} onEdit={() => setStep(2)}>
                   {isBpl ? (
                     <span className="text-govgreen-700">
-                      ₹0 — waived, BPL certificate attached
+                      {t("₹0 — waived, BPL certificate attached")}
                     </span>
                   ) : (
                     "₹10 by UPI"
@@ -615,11 +594,7 @@ export default function FileRequestPage() {
 
               <div className="rounded-lg border border-navy-600/20 bg-navy-50 px-4 py-3.5">
                 <p className="text-sm leading-relaxed text-navy-800">
-                  <strong>Once submitted,</strong> a 30-day statutory
-                  response period begins. This application will be tracked
-                  automatically. If no response is received, the date on
-                  which a First Appeal becomes available will be shown,
-                  along with any penalty accruing against the officer.
+                  <strong>{t("Once submitted,")}</strong> {t("a 30-day statutory response period begins. This application will be tracked automatically. If no response is received, the date on which a First Appeal becomes available will be shown, along with any penalty accruing against the officer.")}
                 </p>
               </div>
             </div>
@@ -634,7 +609,7 @@ export default function FileRequestPage() {
                 step === 0 ? "invisible" : ""
               }`}
             >
-              ← Back
+              {t("← Back")}
             </button>
 
             {step < STEPS.length - 1 ? (
@@ -653,7 +628,7 @@ export default function FileRequestPage() {
                 // nothing about why they are stuck.
                 className="rounded-lg bg-navy-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-700 aria-disabled:bg-line aria-disabled:text-muted aria-disabled:hover:bg-line"
               >
-                Continue
+                {t("Continue")}
               </button>
             ) : (
               <button
@@ -680,6 +655,7 @@ function Row({
   children: React.ReactNode;
   onEdit: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <div className="flex items-start justify-between gap-4 px-4 py-3.5">
       <div className="min-w-0">
@@ -693,7 +669,7 @@ function Row({
         onClick={onEdit}
         className="shrink-0 text-sm font-medium text-navy-700 hover:underline"
       >
-        Edit
+        {t("Edit")}
       </button>
     </div>
   );

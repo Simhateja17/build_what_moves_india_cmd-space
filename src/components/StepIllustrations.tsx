@@ -1,3 +1,4 @@
+import { useLocale } from "@/lib/i18n";
 /* ------------------------------------------------------------------
    The ten steps of filing an RTI online, drawn.
 
@@ -130,6 +131,7 @@ function Plant({ x, y }: { x: number; y: number }) {
 
 /* ---- 1. Go to the portal ----------------------------------------- */
 export function Step1Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       {/* Behind the laptop, so only the leaves clear its right edge —
@@ -138,9 +140,9 @@ export function Step1Art({ className }: ArtProps) {
       <Laptop>
         <circle cx="46" cy="34" r="9" fill={NAVY} />
         <circle cx="46" cy="34" r="5" fill={PAPER} />
-        <text x="62" y="32" fontSize="11" fontWeight="700" fill={NAVY}>RTI ONLINE</text>
-        <text x="62" y="42" fontSize="5" fill={GREY}>An Initiative of Department of</text>
-        <text x="62" y="50" fontSize="5" fill={GREY}>Personnel &amp; Training, GOI</text>
+        <text x="62" y="32" fontSize="11" fontWeight="700" fill={NAVY}>{t("RTI ONLINE")}</text>
+        <text x="62" y="42" fontSize="5" fill={GREY}>{t("An Initiative of Department of")}</text>
+        <text x="62" y="50" fontSize="5" fill={GREY}>{t("Personnel & Training, GOI")}</text>
         <Btn x={46} y={66} w={106} h={17} label="www.rtionline.gov.in" />
       </Laptop>
       <Badge>
@@ -153,20 +155,21 @@ export function Step1Art({ className }: ArtProps) {
 
 /* ---- 2. Register ------------------------------------------------- */
 export function Step2Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <Phone>
         <text x="100" y="30" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>
-          Create an Account
+          {t("Create an Account")}
         </text>
         <circle cx="100" cy="48" r="11" fill={FIELD_BG} />
         <circle cx="100" cy="44.5" r="4" fill={GREY} />
         <path d="M93 54.5 C94.5 50 105.5 50 107 54.5 Z" fill={GREY} />
-        <Input x={68} y={66} w={64} label="Name" />
-        <Input x={68} y={82} w={64} label="Email ID" />
-        <Input x={68} y={98} w={64} label="Mobile Number" />
-        <Input x={68} y={114} w={64} label="Password" />
-        <Btn x={68} y={131} w={64} h={12} label="Register" />
+        <Input x={68} y={66} w={64} label={t("Name")} />
+        <Input x={68} y={82} w={64} label={t("Email ID")} />
+        <Input x={68} y={98} w={64} label={t("Mobile Number")} />
+        <Input x={68} y={114} w={64} label={t("Password")} />
+        <Btn x={68} y={131} w={64} h={12} label={t("Register")} />
       </Phone>
       {/* Leaf flourish, bottom right, as on the reference */}
       <path d="M150 118 C168 108 182 118 178 136 C164 142 150 132 150 118" fill={LEAF} opacity="0.5" />
@@ -180,15 +183,16 @@ export function Step2Art({ className }: ArtProps) {
 
 /* ---- 3. Login ---------------------------------------------------- */
 export function Step3Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <Plant x={168} y={62} />
       <Laptop>
-        <text x="100" y="30" textAnchor="middle" fontSize="9" fontWeight="700" fill={NAVY}>Login</text>
-        <Input x={44} y={38} w={112} label="User ID / Email ID" />
-        <Input x={44} y={56} w={112} label="Password" />
-        <Btn x={44} y={74} w={112} label="Login" />
-        <text x="100" y="99" textAnchor="middle" fontSize="5.5" fill={BLUE}>Forgot Password?</text>
+        <text x="100" y="30" textAnchor="middle" fontSize="9" fontWeight="700" fill={NAVY}>{t("Login")}</text>
+        <Input x={44} y={38} w={112} label={t("User ID / Email ID")} />
+        <Input x={44} y={56} w={112} label={t("Password")} />
+        <Btn x={44} y={74} w={112} label={t("Login")} />
+        <text x="100" y="99" textAnchor="middle" fontSize="5.5" fill={BLUE}>{t("Forgot Password?")}</text>
       </Laptop>
       <Badge>
         <rect x="168" y="21" width="16" height="13" rx="3" fill={BLUE} />
@@ -200,17 +204,18 @@ export function Step3Art({ className }: ArtProps) {
 
 /* ---- 4. Select public authority ---------------------------------- */
 export function Step4Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <Laptop>
-        <text x="34" y="26" fontSize="7.5" fontWeight="700" fill={NAVY}>Select Public Authority</text>
-        <text x="34" y="42" fontSize="6" fill={NAVY}>State</text>
-        <Select x={82} y={33} w={82} label="Select State" />
-        <text x="34" y="60" fontSize="6" fill={NAVY}>Department</text>
-        <Select x={82} y={51} w={82} label="Select Department" />
-        <text x="34" y="78" fontSize="6" fill={NAVY}>Public Authority</text>
-        <Select x={82} y={69} w={82} label="Select Public Authority" />
-        <Btn x={82} y={87} w={44} h={13} label="Continue" />
+        <text x="34" y="26" fontSize="7.5" fontWeight="700" fill={NAVY}>{t("Select Public Authority")}</text>
+        <text x="34" y="42" fontSize="6" fill={NAVY}>{t("State")}</text>
+        <Select x={82} y={33} w={82} label={t("Select State")} />
+        <text x="34" y="60" fontSize="6" fill={NAVY}>{t("Department")}</text>
+        <Select x={82} y={51} w={82} label={t("Select Department")} />
+        <text x="34" y="78" fontSize="6" fill={NAVY}>{t("Public Authority")}</text>
+        <Select x={82} y={69} w={82} label={t("Select Public Authority")} />
+        <Btn x={82} y={87} w={44} h={13} label={t("Continue")} />
       </Laptop>
       <Badge>
         <path d="M166 20 L176 13 L186 20 Z" fill={BLUE} />
@@ -233,12 +238,13 @@ const FORM_ROWS = [
 ];
 
 export function Step5Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <rect x="34" y="14" width="116" height="134" rx="8" fill={PAPER} stroke={NAVY} strokeWidth="2.8" />
       <rect x="78" y="6" width="30" height="15" rx="5" fill={NAVY} />
       <circle cx="93" cy="13.5" r="3.5" fill={PAPER} />
-      <text x="48" y="42" fontSize="7.5" fontWeight="700" fill={NAVY}>RTI Application Form</text>
+      <text x="48" y="42" fontSize="7.5" fontWeight="700" fill={NAVY}>{t("RTI Application Form")}</text>
       {FORM_ROWS.map((label, i) => {
         const y = 56 + i * 17;
         return (
@@ -262,14 +268,15 @@ export function Step5Art({ className }: ArtProps) {
 const MODES = ["Net Banking", "UPI", "Debit/Credit Card", "Wallet"];
 
 export function Step6Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <g transform="translate(-22 0)">
         <Phone>
-          <text x="100" y="30" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>Payment</text>
-          <text x="100" y="42" textAnchor="middle" fontSize="5.5" fill={GREY}>Application Fee</text>
+          <text x="100" y="30" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>{t("Payment")}</text>
+          <text x="100" y="42" textAnchor="middle" fontSize="5.5" fill={GREY}>{t("Application Fee")}</text>
           <text x="100" y="58" textAnchor="middle" fontSize="15" fontWeight="700" fill={GREEN}>₹10</text>
-          <text x="70" y="72" fontSize="5.5" fontWeight="600" fill={NAVY}>Select Payment Mode</text>
+          <text x="70" y="72" fontSize="5.5" fontWeight="600" fill={NAVY}>{t("Select Payment Mode")}</text>
           {MODES.map((m, i) => {
             const y = 80 + i * 13;
             return (
@@ -280,7 +287,7 @@ export function Step6Art({ className }: ArtProps) {
               </g>
             );
           })}
-          <Btn x={68} y={131} w={64} h={12} label="Pay Now" />
+          <Btn x={68} y={131} w={64} h={12} label={t("Pay Now")} />
         </Phone>
       </g>
       <g transform="rotate(-14 148 66)">
@@ -295,13 +302,14 @@ export function Step6Art({ className }: ArtProps) {
 
 /* ---- 7. Submit --------------------------------------------------- */
 export function Step7Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <Laptop>
         <Tick cx={100} cy={30} r={12} />
-        <text x="100" y="54" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>Application Submitted</text>
-        <text x="100" y="64" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>Successfully!</text>
-        <text x="100" y="76" textAnchor="middle" fontSize="5.5" fill={GREY}>Your RTI Application Number is</text>
+        <text x="100" y="54" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>{t("Application Submitted")}</text>
+        <text x="100" y="64" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>{t("Successfully!")}</text>
+        <text x="100" y="76" textAnchor="middle" fontSize="5.5" fill={GREY}>{t("Your RTI Application Number is")}</text>
         <text x="100" y="86" textAnchor="middle" fontSize="6.5" fontWeight="700" fill={NAVY}>MORTH/R/E/26/01193</text>
         <Btn x={86} y={91} w={28} h={12} label="OK" />
       </Laptop>
@@ -331,21 +339,22 @@ export function Step8Art({ className }: ArtProps) {
 
 /* ---- 9. Track ---------------------------------------------------- */
 export function Step9Art({ className }: ArtProps) {
+  const { t } = useLocale();
   return (
     <svg {...VB} className={className} aria-hidden>
       <Laptop>
-        <text x="100" y="26" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>Track RTI Application</text>
-        <Input x={40} y={32} w={120} label="Enter Application Number" />
+        <text x="100" y="26" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={NAVY}>{t("Track RTI Application")}</text>
+        <Input x={40} y={32} w={120} label={t("Enter Application Number")} />
         <Input x={40} y={49} w={120} label="MORTH/R/E/26/01193" value />
-        <Btn x={78} y={67} w={44} h={13} label="Track" />
+        <Btn x={78} y={67} w={44} h={13} label={t("Track")} />
         <line x1="48" y1="90" x2="152" y2="90" stroke={PALE} strokeWidth="3" strokeLinecap="round" />
         <line x1="48" y1="90" x2="100" y2="90" stroke={GREEN} strokeWidth="3" strokeLinecap="round" />
         <circle cx="48" cy="90" r="5.5" fill={GREEN} />
         <circle cx="100" cy="90" r="5.5" fill={GREEN} />
         <circle cx="152" cy="90" r="5.5" fill={PALE} />
-        <text x="48" y="102" textAnchor="middle" fontSize="5" fill={GREY}>Received</text>
-        <text x="100" y="102" textAnchor="middle" fontSize="5" fill={GREY}>In Progress</text>
-        <text x="152" y="102" textAnchor="middle" fontSize="5" fill={GREY}>Disposed</text>
+        <text x="48" y="102" textAnchor="middle" fontSize="5" fill={GREY}>{t("Received")}</text>
+        <text x="100" y="102" textAnchor="middle" fontSize="5" fill={GREY}>{t("In Progress")}</text>
+        <text x="152" y="102" textAnchor="middle" fontSize="5" fill={GREY}>{t("Disposed")}</text>
       </Laptop>
       <Badge>
         <path d="M164 22 C169 15 183 15 188 22 C183 29 169 29 164 22 Z" fill="none" stroke={BLUE} strokeWidth="2.4" />

@@ -6,6 +6,7 @@ import { useAssistant } from "@/lib/assistant/state";
 import { AuthorityStep } from "@/components/assistant/AuthorityStep";
 import { LocationStep } from "@/components/assistant/LocationStep";
 import { ProblemStep } from "@/components/assistant/ProblemStep";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The finder on its own: describe the problem, say where you are, and
@@ -17,6 +18,7 @@ import { ProblemStep } from "@/components/assistant/ProblemStep";
  * with them, and is asked nothing twice.
  */
 export default function FindDepartmentPage() {
+  const { t } = useLocale();
   const assistant = useAssistant();
   const router = useRouter();
   const { state, ready, dispatch } = assistant;
@@ -31,7 +33,7 @@ export default function FindDepartmentPage() {
   if (!ready) {
     return (
       <div className="mx-auto w-full max-w-xl py-12 text-center text-sm text-muted">
-        Loading…
+        {t("Loading…")}
       </div>
     );
   }

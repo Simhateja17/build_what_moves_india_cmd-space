@@ -1,6 +1,7 @@
 "use client";
 
 import { REPLY_DEADLINE_DAYS } from "@/lib/types";
+import { useLocale } from "@/lib/i18n";
 
 interface Marker {
   day: number;
@@ -18,27 +19,27 @@ export function TimeMachine({
   onChange: (day: number) => void;
   markers: Marker[];
 }) {
+  const { t } = useLocale();
   const pct = (d: number) => Math.min(100, (d / maxDay) * 100);
 
   return (
     <section
-      aria-label="Demo time machine"
+      aria-label={t("Demo time machine")}
       className="rounded-xl border border-navy-600/20 bg-navy-800 p-4 text-white shadow-sm"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-saffron-400">
-            Demo control · time machine
+            {t("Demo control · time machine")}
           </p>
           <p className="mt-0.5 text-sm text-white/70">
-            Drag to move this request through time and watch the law take
-            effect.
+            {t("Drag to move this request through time and watch the law take effect.")}
           </p>
         </div>
         <p className="text-2xl font-bold tabular-nums">
           Day {day}
           <span className="ml-1 text-sm font-normal text-white/50">
-            since you filed
+            {t("since you filed")}
           </span>
         </p>
       </div>
@@ -60,7 +61,7 @@ export function TimeMachine({
           className="w-full accent-saffron-400"
         />
         <div className="mt-1 flex justify-between text-[11px] text-white/45">
-          <span>Day 0 — filed</span>
+          <span>{t("Day 0 — filed")}</span>
           <span>Day {maxDay}</span>
         </div>
       </div>

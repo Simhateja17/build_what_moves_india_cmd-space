@@ -3,16 +3,15 @@
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { useDashboard } from "@/lib/use-dashboard";
-import {
-  Notification,
-  Overview,
-  Tone,
-  caseRows,
-  relativeAge,
-} from "@/lib/dashboard";
+import { Notification, Overview, Tone, caseRows } from "@/lib/dashboard";
 import { CaseList } from "@/components/CaseList";
 import { ActionGrid } from "@/components/ActionCard";
 import { formatDate } from "@/lib/dates";
+import { useLocale } from "@/lib/i18n";
+import {
+  translateDashboardCopy,
+  translateRelativeAge,
+} from "@/lib/localize-dashboard";
 
 /**
  * How many actions the home page leads with. Two, because the point of
@@ -24,6 +23,7 @@ export default function DashboardPage() {
   const { citizenName } = useStore();
   const { views, actions, overview, notifications, actionCaseIds } =
     useDashboard();
+  const { t } = useLocale();
 
   // Same rows, same order, same status wording as My requests — this is
   // that list at a lower density, not a second implementation of it.
@@ -42,14 +42,19 @@ export default function DashboardPage() {
           that matter. */}
       {actions.length > 0 ? (
         <section aria-labelledby="attention-title">
-          <SectionHead id="attention-title" title="Requires your attention" />
+          <SectionHead
+            id="attention-title"
+            title={t("Requires your attention")}
+          />
           <ActionGrid items={actions} limit={DASHBOARD_ACTIONS} />
           {actions.length > DASHBOARD_ACTIONS ? (
             <Link
               href="/actions"
               className="mt-4 inline-flex items-center gap-2 rounded-lg border border-navy-600/40 bg-white px-5 py-2.5 text-sm font-bold text-navy-700 transition hover:bg-navy-50"
             >
-              View {actions.length - DASHBOARD_ACTIONS} more
+              {t("View {count} more", undefined, {
+                count: actions.length - DASHBOARD_ACTIONS,
+              })}
               <span aria-hidden>→</span>
             </Link>
           ) : null}
@@ -66,7 +71,7 @@ export default function DashboardPage() {
             ✓
           </span>
           <p id="attention-title" className="text-sm font-bold text-ink">
-            There are no pending actions on your requests.
+            {t("There are no pending actions on your requests.")}
           </p>
         </section>
       )}
@@ -80,9 +85,9 @@ export default function DashboardPage() {
       <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-7">
         <section className="flex min-w-0 flex-col lg:col-span-8">
           <SectionHead
-            title="Recent requests"
+            title={t("Recent requests")}
             href="/my-rtis"
-            cta="View all requests"
+            cta={t("View all requests")}
           />
           <div className="gov-card overflow-hidden">
             <CaseList rows={recent} density="compact" />
@@ -91,9 +96,9 @@ export default function DashboardPage() {
 
         <aside className="flex min-w-0 flex-col lg:col-span-4">
           <SectionHead
-            title="Recent activity"
+            title={t("Recent activity")}
             href="/notifications"
-            cta="View all activity"
+            cta={t("View all activity")}
           />
           <ActivityPanel notifications={notifications} />
         </aside>
@@ -104,13 +109,13 @@ export default function DashboardPage() {
           the disclaimer, in the footer. */}
       <section className="dashboard-trust-strip flex flex-col gap-3 rounded-2xl border border-navy-600/15 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-7">
         <p className="text-[13px] text-ink-2">
-          Need help wording a request?
+          {t("Need help wording a request?")}
         </p>
         <Link
           href="/assistant"
           className="inline-flex w-fit items-center rounded-lg bg-navy-800 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-navy-700"
         >
-          Get assistance →
+          {t("Get assistance")} →
         </Link>
       </section>
     </div>
@@ -125,6 +130,7 @@ export default function DashboardPage() {
  * that says where things stand, with each number still a filter link.
  */
 function WelcomeBar({ name, overview }: { name: string; overview: Overview }) {
+  const { t } = useLocale();
   // The same five words the badges and chips use. These three used to read
   // "filed / in progress / answered" — a fourth vocabulary for the same set.
   const counts: Array<{ value: number; label: string; href: string }> = [
@@ -145,7 +151,7 @@ function WelcomeBar({ name, overview }: { name: string; overview: Overview }) {
     <section className="dashboard-welcome-bar flex flex-col gap-5 rounded-2xl border border-navy-600/15 px-5 py-5 shadow-[var(--shadow-panel)] sm:px-7 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
       <div className="min-w-0">
         <h1 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-[26px]">
-          Namaste, {name.split(" ")[0]}
+          {t("Namaste, {name}", undefined, { name: name.split(" ")[0] })}
         </h1>
 
         {/* The count used to be stated here as well, in the attention cards
@@ -162,14 +168,17 @@ function WelcomeBar({ name, overview }: { name: string; overview: Overview }) {
               href={count.href}
               className="group flex items-baseline gap-1.5 rounded-full border border-navy-600/20 bg-white/70 px-3 py-1.5 transition hover:border-navy-600/50 hover:bg-white"
             >
-              <dt className="sr-only">{count.label}</dt>
+              <dt className="sr-only">{t(count.label)}</dt>
               <dd className="text-base font-bold tabular-nums leading-none text-navy-900">
                 {count.value}
               </dd>
               <span className="text-[12px] font-semibold text-ink-2 group-hover:text-navy-700">
-                {count.label}
+                {t(count.label)}
               </span>
-              <span aria-hidden className="text-[11px] text-muted group-hover:text-navy-700">
+              <span
+                aria-hidden
+                className="text-[11px] text-muted group-hover:text-navy-700"
+              >
                 →
               </span>
             </Link>
@@ -181,8 +190,10 @@ function WelcomeBar({ name, overview }: { name: string; overview: Overview }) {
         href="/start-rti"
         className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-navy-700 px-5 py-3 text-[14px] font-bold text-white shadow-[0_10px_22px_rgba(61,111,179,0.22)] transition hover:-translate-y-0.5 hover:bg-navy-800"
       >
-        <span aria-hidden className="text-lg leading-none">+</span>
-        File a request
+        <span aria-hidden className="text-lg leading-none">
+          +
+        </span>
+        {t("File a request")}
       </Link>
     </section>
   );
@@ -207,6 +218,7 @@ const DOT_LEGEND: Array<{ tone: Tone; label: string }> = [
 ];
 
 function ActivityPanel({ notifications }: { notifications: Notification[] }) {
+  const { t, locale } = useLocale();
   // Three, not five. The column used to run ~250px past the bottom of the
   // requests table beside it, leaving a dead corner on the page.
   const shown = notifications.slice(0, 3);
@@ -214,48 +226,52 @@ function ActivityPanel({ notifications }: { notifications: Notification[] }) {
   return (
     <div className="gov-card flex flex-col px-5 py-4 sm:px-6">
       <ul className="flex flex-col">
-      {shown.map((notification, index) => (
-        <li key={notification.id} className="relative flex gap-4 py-3">
-          {index < shown.length - 1 ? (
-            <span
-              aria-hidden
-              className="absolute left-[5px] top-5 h-[calc(100%-0.75rem)] w-px bg-line"
-            />
-          ) : null}
-          {/* A plain tone dot: the old numbered circles read as a ranking
+        {shown.map((notification, index) => (
+          <li key={notification.id} className="relative flex gap-4 py-3">
+            {index < shown.length - 1 ? (
+              <span
+                aria-hidden
+                className="absolute left-[5px] top-5 h-[calc(100%-0.75rem)] w-px bg-line"
+              />
+            ) : null}
+            {/* A plain tone dot: the old numbered circles read as a ranking
               or a step order, and these events are neither. */}
-          <span
-            className={`relative z-[1] mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${DOT[notification.tone]}`}
-          >
-            <span className="sr-only">
-              {DOT_LEGEND.find((d) => d.tone === notification.tone)?.label ??
-                "Update"}
-              :{" "}
+            <span
+              className={`relative z-[1] mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${DOT[notification.tone]}`}
+            >
+              <span className="sr-only">
+                {DOT_LEGEND.find((d) => d.tone === notification.tone)?.label ??
+                  "Update"}
+                :{" "}
+              </span>
             </span>
-          </span>
-          <Link href={notification.href} className="group min-w-0 flex-1">
-            <span className="block text-[13px] font-semibold text-ink group-hover:text-navy-700">
-              {notification.title}
-            </span>
-            <span className="mt-0.5 block line-clamp-2 text-[11.5px] leading-relaxed text-ink-2">
-              {notification.body}
-            </span>
-            {/* Days-ago leads, the calendar date follows. Each case runs on
+            <Link href={notification.href} className="group min-w-0 flex-1">
+              <span className="block text-[13px] font-semibold text-ink group-hover:text-navy-700">
+                {t(notification.title, notification.title)}
+              </span>
+              <span className="mt-0.5 block line-clamp-2 text-[11.5px] leading-relaxed text-ink-2">
+                {translateDashboardCopy(notification.body, t)}
+              </span>
+              {/* Days-ago leads, the calendar date follows. Each case runs on
                 its own clock here, so absolute dates across cases are not
                 comparable and used to order the feed misleadingly. */}
-            <span className="mt-1 block text-[11px] text-muted">
-              {relativeAge(notification.age)} · {formatDate(notification.date)}
-            </span>
-          </Link>
-        </li>
-      ))}
+              <span className="mt-1 block text-[11px] text-muted">
+                {translateRelativeAge(notification.age, t)} ·{" "}
+                {formatDate(notification.date, locale)}
+              </span>
+            </Link>
+          </li>
+        ))}
       </ul>
 
       <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-line-2 pt-3">
         {DOT_LEGEND.map((item) => (
           <li key={item.tone} className="flex items-center gap-1.5">
-            <span aria-hidden className={`h-2 w-2 rounded-full ${DOT[item.tone]}`} />
-            <span className="text-[11px] text-ink-2">{item.label}</span>
+            <span
+              aria-hidden
+              className={`h-2 w-2 rounded-full ${DOT[item.tone]}`}
+            />
+            <span className="text-[11px] text-ink-2">{t(item.label)}</span>
           </li>
         ))}
       </ul>
@@ -276,17 +292,18 @@ function SectionHead({
   href?: string;
   cta?: string;
 }) {
+  const { t } = useLocale();
   return (
     <div className="mb-3 flex items-baseline justify-between gap-3">
       <h2 id={id} className="text-lg font-bold tracking-tight text-navy-900">
-        {title}
+        {t(title, title)}
       </h2>
       {href && cta ? (
         <Link
           href={href}
           className="shrink-0 text-[13px] font-semibold text-navy-700 hover:underline"
         >
-          {cta} →
+          {t(cta, cta)} →
         </Link>
       ) : null}
     </div>

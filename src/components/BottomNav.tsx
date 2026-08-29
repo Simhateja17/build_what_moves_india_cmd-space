@@ -37,7 +37,7 @@ export function BottomNav({ alerts = 0 }: { alerts?: number }) {
                 : pathname.startsWith(item.href);
           const Icon = item.icon;
           return (
-            <li key={t.href} className="flex-1">
+            <li key={item.href} className="flex-1">
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}

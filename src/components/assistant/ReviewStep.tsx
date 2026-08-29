@@ -13,6 +13,7 @@ import { AssistantShell } from "./AssistantShell";
 import { BottomSheet } from "./BottomSheet";
 import { GovLevelBadge } from "./GovLevelBadge";
 import { StateFilingSheet } from "./StateFilingSheet";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * Every match walks into the form, and the handoff carries the level
@@ -33,6 +34,7 @@ export function ReviewStep({
   assistant: Assistant;
   result: AuthorityResult;
 }) {
+  const { t } = useLocale();
   const { state, dispatch, goBack } = assistant;
   const { citizenName } = useStore();
   const router = useRouter();
@@ -100,21 +102,21 @@ export function ReviewStep({
   return (
     <AssistantShell
       step="review"
-      title="Review before submission"
+      title={t("Review before submission")}
       onBack={goBack}
       primaryLabel="Continue to the form"
       primaryTone="navy"
       onPrimary={continueToForm}
     >
       <div className="gov-card divide-y divide-line-2">
-        <Row label="Addressed to" onEdit={() => dispatch({ type: "go", step: "authority" })}>
+        <Row label={t("Addressed to")} onEdit={() => dispatch({ type: "go", step: "authority" })}>
           <span className="block">{fillPlaces(authority.name, place)}</span>
           <span className="block text-[13px] text-muted">
             {fillPlaces(authority.wing, place)}
           </span>
           <GovLevelBadge level={authority.level} className="mt-2" />
         </Row>
-        <Row label="Information sought" onEdit={() => dispatch({ type: "go", step: "asks" })}>
+        <Row label={t("Information sought")} onEdit={() => dispatch({ type: "go", step: "asks" })}>
           <span className="block">
             {asks.length} thing{asks.length === 1 ? "" : "s"}
           </span>
@@ -124,7 +126,7 @@ export function ReviewStep({
             ))}
           </ol>
         </Row>
-        <Row label="Period covered" onEdit={() => dispatch({ type: "go", step: "asks" })}>
+        <Row label={t("Period covered")} onEdit={() => dispatch({ type: "go", step: "asks" })}>
           {period}
         </Row>
       </div>
@@ -141,7 +143,7 @@ export function ReviewStep({
             central ? "text-govgreen-700/80" : "text-saffron-600/90"
           }`}
         >
-          Filing route
+          {t("Filing route")}
         </p>
         <p
           className={`mt-1.5 text-sm leading-relaxed ${
@@ -190,14 +192,14 @@ export function ReviewStep({
             }}
             className="btn-secondary flex-1 text-sm"
           >
-            ⧉ Copy the request
+            {t("⧉ Copy the request")}
           </button>
           <button
             type="button"
             onClick={download}
             className="btn-secondary flex-1 text-sm"
           >
-            ⤓ Save as a file
+            {t("⤓ Save as a file")}
           </button>
         </div>
       ) : null}
@@ -235,6 +237,7 @@ function Row({
   children: React.ReactNode;
   onEdit: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <div className="flex items-start justify-between gap-4 px-4 py-3.5">
       <div className="min-w-0">
@@ -248,7 +251,7 @@ function Row({
         onClick={onEdit}
         className="shrink-0 text-[13px] font-medium text-navy-700 hover:underline"
       >
-        Edit
+        {t("Edit")}
       </button>
     </div>
   );

@@ -3,6 +3,7 @@
 import { fillPlaces } from "@/lib/assistant/authorities";
 import { filingFor } from "@/lib/assistant/places";
 import { AuthorityMatch } from "@/lib/assistant/types";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The other half of a warning. Telling a citizen "this belongs to your
@@ -18,6 +19,7 @@ export function StateFilingSheet({
   stateName: string;
   city: string;
 }) {
+  const { t } = useLocale();
   const filing = filingFor(stateName);
   const place = { city, state: stateName };
 
@@ -25,7 +27,7 @@ export function StateFilingSheet({
     <div className="space-y-4">
       <div>
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-          Address it to
+          {t("Address it to")}
         </p>
         <p className="mt-1 text-sm font-semibold text-ink">
           {authority.pioTitle}
@@ -49,16 +51,14 @@ export function StateFilingSheet({
 
       <div>
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-          Filing method
+          {t("Filing method")}
         </p>
         <p className="mt-1.5 text-sm leading-relaxed text-ink-2">{filing.how}</p>
       </div>
 
       <div className="rounded-xl border border-line bg-canvas px-4 py-3">
         <p className="text-[13px] leading-relaxed text-ink-2">
-          <span className="font-semibold text-ink">Keep the receipt.</span> The
-          thirty-day clock starts from the date the office received your
-          application, and the receipt is what proves that date.
+          <span className="font-semibold text-ink">{t("Keep the receipt.")}</span> {t("The thirty-day clock starts from the date the office received your application, and the receipt is what proves that date.")}
         </p>
       </div>
     </div>

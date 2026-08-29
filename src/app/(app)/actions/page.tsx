@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useDashboard } from "@/lib/use-dashboard";
 import { ActionGrid } from "@/components/ActionCard";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * Every open task, in one place.
@@ -16,6 +17,7 @@ import { ActionGrid } from "@/components/ActionCard";
  */
 export default function ActionsPage() {
   const { actions } = useDashboard();
+  const { t } = useLocale();
 
   return (
     <div>
@@ -23,18 +25,21 @@ export default function ActionsPage() {
         href="/dashboard"
         className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700 hover:underline"
       >
-        <span aria-hidden>←</span> Home
+        <span aria-hidden>←</span> {t("Home")}
       </Link>
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">
-            Requires your attention
+            {t("Requires your attention")}
           </h1>
           <p className="mt-1 text-[15px] text-ink-2">
             {actions.length === 0
-              ? "Nothing is waiting on you."
-              : `${actions.length} ${actions.length === 1 ? "task" : "tasks"}, most urgent first.`}
+              ? t("Nothing is waiting on you.")
+              : t("{count} {unit}, most urgent first.", undefined, {
+                  count: actions.length,
+                  unit: t(actions.length === 1 ? "task" : "tasks"),
+                })}
           </p>
         </div>
       </div>
@@ -48,7 +53,7 @@ export default function ActionsPage() {
             ✓
           </span>
           <p className="text-sm font-bold text-ink">
-            There are no pending actions on your requests.
+            {t("There are no pending actions on your requests.")}
           </p>
         </div>
       ) : (

@@ -115,7 +115,7 @@ export function CaseList({
                   <span className="flex items-center gap-2">
                     {unread ? (
                       <span
-                        aria-label="Unread reply"
+                        aria-label={t("Unread reply")}
                         className="h-2 w-2 shrink-0 rounded-full bg-navy-700"
                       />
                     ) : null}
@@ -178,7 +178,7 @@ export function CaseList({
                 <span className="flex items-center gap-2">
                   {unread ? (
                     <span
-                      aria-label="Unread reply"
+                      aria-label={t("Unread reply")}
                       className="h-2 w-2 shrink-0 rounded-full bg-navy-700"
                     />
                   ) : null}

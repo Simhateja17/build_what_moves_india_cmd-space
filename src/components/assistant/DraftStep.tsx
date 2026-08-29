@@ -19,6 +19,7 @@ import { BottomSheet } from "./BottomSheet";
 import { ClarifierCard } from "./ClarifierCard";
 import { ExampleList } from "./ExampleDraftSheet";
 import { JurisdictionBanner } from "./JurisdictionNotice";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The draft arrives written, and the citizen's unanswered questions
@@ -33,6 +34,7 @@ export function DraftStep({
   assistant: Assistant;
   result: AuthorityResult;
 }) {
+  const { t } = useLocale();
   const { state, dispatch, goNext, goBack } = assistant;
   const { citizenName } = useStore();
   const [editing, setEditing] = useState(false);
@@ -78,8 +80,8 @@ export function DraftStep({
   return (
     <AssistantShell
       step="draft"
-      title="Your request is ready"
-      subtitle="This text may be edited freely."
+      title={t("Your request is ready")}
+      subtitle={t("This text may be edited freely.")}
       banner={
         <JurisdictionBanner
           level={result.primary.level}
@@ -114,15 +116,13 @@ export function DraftStep({
         ))}
       </div>
       <p className="-mt-1 text-[13px] leading-relaxed text-muted">
-        The portal has its own boxes for the address and your name, so it only
-        needs the middle part.
+        {t("The portal has its own boxes for the address and your name, so it only needs the middle part.")}
       </p>
 
       {pendingFormat ? (
         <div className="rounded-xl border border-saffron-400/50 bg-saffron-50 px-4 py-3">
           <p className="text-sm leading-relaxed text-saffron-600">
-            You have changed this request yourself. Switching format will
-            rewrite it and undo your edits.
+            {t("You have changed this request yourself. Switching format will rewrite it and undo your edits.")}
           </p>
           <div className="mt-2.5 flex gap-2">
             <button
@@ -134,14 +134,14 @@ export function DraftStep({
               }}
               className="rounded-lg bg-saffron-600 px-3.5 py-2 text-[13px] font-semibold text-white"
             >
-              Switch and rewrite
+              {t("Switch and rewrite")}
             </button>
             <button
               type="button"
               onClick={() => setPendingFormat(null)}
               className="rounded-lg border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
             >
-              Keep current version
+              {t("Keep current version")}
             </button>
           </div>
         </div>
@@ -179,7 +179,7 @@ export function DraftStep({
             }}
             className="mt-2 rounded-lg bg-govred-700 px-3.5 py-2 text-[13px] font-semibold text-white"
           >
-            Fix automatically
+            {t("Fix automatically")}
           </button>
         </div>
       ) : null}
@@ -219,7 +219,7 @@ export function DraftStep({
           }}
           className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
         >
-          Listen to the draft
+          {t("Listen to the draft")}
         </button>
         <button
           type="button"
@@ -240,14 +240,14 @@ export function DraftStep({
           }}
           className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
         >
-          ⧉ Copy
+          {t("⧉ Copy")}
         </button>
         <button
           type="button"
           onClick={() => setSheet("examples")}
           className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-2"
         >
-          📄 See an example
+          {t("📄 See an example")}
         </button>
         {state.editedDraft ? (
           <button
@@ -255,7 +255,7 @@ export function DraftStep({
             onClick={() => dispatch({ type: "restoreDraft" })}
             className="text-[13px] font-medium text-navy-700 underline underline-offset-2"
           >
-            Restore the written version
+            {t("Restore the written version")}
           </button>
         ) : null}
       </div>
@@ -276,7 +276,7 @@ export function DraftStep({
 
       <BottomSheet
         open={sheet === "examples"}
-        title="Example requests"
+        title={t("Example requests")}
         onClose={() => setSheet(null)}
       >
         <ExampleList
@@ -290,7 +290,7 @@ export function DraftStep({
 
       <BottomSheet
         open={sheet === "blank"}
-        title="Complete this field"
+        title={t("Complete this field")}
         onClose={() => setSheet(null)}
       >
         {blankClarifier ? (
@@ -306,8 +306,7 @@ export function DraftStep({
           />
         ) : (
           <p className="text-sm text-ink-2">
-            Use <span className="font-semibold">✎ Edit</span> to complete
-            this part directly.
+            Use <span className="font-semibold">{t("✎ Edit")}</span> {t("to complete this part directly.")}
           </p>
         )}
         <button
@@ -315,7 +314,7 @@ export function DraftStep({
           onClick={() => setSheet(null)}
           className="btn-primary mt-4 w-full text-sm"
         >
-          Done
+          {t("Done")}
         </button>
       </BottomSheet>
 

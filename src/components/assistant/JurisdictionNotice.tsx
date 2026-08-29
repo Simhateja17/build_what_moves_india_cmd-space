@@ -1,6 +1,7 @@
 "use client";
 
 import { GovLevel } from "@/lib/assistant/types";
+import { useLocale } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------
    The warning that has to arrive before the form, not after it.
@@ -22,13 +23,14 @@ export function JurisdictionNotice({
   authorityName: string;
   stateName: string;
 }) {
+  const { t } = useLocale();
   const state = stateName || "your state";
 
   if (level === "central") {
     return (
       <div className="rounded-xl border border-govgreen-600/30 bg-govgreen-50 px-4 py-3.5">
         <p className="text-[11px] font-bold uppercase tracking-wider text-govgreen-700/80">
-          This portal accepts this application
+          {t("This portal accepts this application")}
         </p>
         <p className="mt-1.5 text-sm leading-relaxed text-govgreen-700">
           {authorityName} is a Central Government public authority, so this
@@ -41,7 +43,7 @@ export function JurisdictionNotice({
   return (
     <div className="rounded-xl border border-saffron-400/50 bg-saffron-50 px-4 py-3.5">
       <p className="text-[11px] font-bold uppercase tracking-wider text-saffron-600/90">
-        ⚠ Important notice
+        {t("⚠ Important notice")}
       </p>
       <p className="mt-1.5 text-sm font-semibold text-saffron-600">
         {level === "state"
@@ -73,6 +75,7 @@ export function JurisdictionBanner({
   stateName: string;
   onWhy: () => void;
 }) {
+  const { t } = useLocale();
   if (level === "central") return null;
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-saffron-400/40 bg-saffron-50 px-3 py-2 text-[13px] text-saffron-600">
@@ -84,7 +87,7 @@ export function JurisdictionBanner({
         onClick={onWhy}
         className="font-semibold underline underline-offset-2"
       >
-        Why?
+        {t("Why?")}
       </button>
     </div>
   );

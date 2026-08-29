@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { useDashboard } from "@/lib/use-dashboard";
 import { SEED_APPLICANT } from "@/lib/mock-data";
+import { useLocale } from "@/lib/i18n";
 
 export default function ProfilePage() {
   const { citizenName, logout, prefs, setPref } = useStore();
   const { overview } = useDashboard();
+  const { t } = useLocale();
   const router = useRouter();
 
   const initials = citizenName
@@ -25,7 +27,7 @@ export default function ProfilePage() {
     // under the stats and two cards on the right that never lined up.
     <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">
-        Profile
+        {t("Profile")}
       </h1>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] lg:items-start">
@@ -42,7 +44,7 @@ export default function ProfilePage() {
                 {SEED_APPLICANT.email}
               </p>
               <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">
-                Citizen account
+                {t("Citizen account")}
               </p>
             </div>
           </div>
@@ -59,7 +61,7 @@ export default function ProfilePage() {
                   {s.value}
                 </p>
                 <p className="mt-1.5 text-[12px] leading-tight text-ink-2">
-                  {s.label}
+                  {t(s.label)}
                 </p>
               </div>
             ))}
@@ -76,42 +78,43 @@ export default function ProfilePage() {
             }}
             className="w-full rounded-xl border border-govred-600/30 bg-surface px-5 py-3 text-sm font-semibold text-govred-700 transition hover:bg-govred-50"
           >
-            Sign out
+            {t("Sign out")}
           </button>
 
           <p className="px-1 pt-1 text-[12px] leading-relaxed text-muted">
-            This is a redesign concept. Nothing here reaches a real
-            government system, and no data leaves your browser.
+            {t(
+              "This is a redesign concept. Nothing here reaches a real government system, and no data leaves your browser.",
+            )}
           </p>
         </aside>
 
         <div className="space-y-6">
           <section>
             <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-muted">
-              Your account
+              {t("Your account")}
             </h2>
             <div className="gov-card divide-y divide-line-2">
               <Row
                 href="/check-payment"
-                label="Payments"
-                hint="Fees paid and their status"
+                label={t("Payments")}
+                hint={t("Fees paid and their status")}
               />
               <Row
                 href="/my-rtis?filter=answered"
-                label="Saved responses"
-                hint="Every answer you have received"
+                label={t("Saved responses")}
+                hint={t("Every answer you have received")}
               />
               <Row
                 href="/faq"
-                label="How this works"
-                hint="What the law gives you, in plain words"
+                label={t("How this works")}
+                hint={t("What the law gives you, in plain words")}
               />
             </div>
           </section>
 
           <section>
             <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-muted">
-              Preferences
+              {t("Preferences")}
             </h2>
             <div className="gov-card divide-y divide-line-2">
               {/* The only preference that changes what the app does, so it
@@ -119,26 +122,26 @@ export default function ProfilePage() {
                   backend cannot send — they are remembered, and say so,
                   rather than presenting a switch that quietly does nothing. */}
               <Toggle
-                label="Show official terms"
-                hint="Department wording under every status"
+                label={t("Show official terms")}
+                hint={t("Department wording under every status")}
                 on={prefs.showOfficialTerms}
                 onChange={(v) => setPref("showOfficialTerms", v)}
               />
               <Toggle
-                label="Email updates"
-                hint={`${SEED_APPLICANT.email} · not sent in this demo`}
+                label={t("Email updates")}
+                hint={`${SEED_APPLICANT.email} · ${t("not sent in this demo")}`}
                 on={prefs.emailUpdates}
                 onChange={(v) => setPref("emailUpdates", v)}
               />
               <Toggle
-                label="SMS deadline reminders"
-                hint="Three days before each deadline · not sent in this demo"
+                label={t("SMS deadline reminders")}
+                hint={`${t("Three days before each deadline")} · ${t("not sent in this demo")}`}
                 on={prefs.smsReminders}
                 onChange={(v) => setPref("smsReminders", v)}
               />
             </div>
             <p className="mt-2 px-1 text-[12px] leading-relaxed text-muted">
-              Preferences are saved on this device.
+              {t("Preferences are saved on this device.")}
             </p>
           </section>
         </div>
@@ -156,14 +159,16 @@ function Row({
   label: string;
   hint: string;
 }) {
+  const { t } = useLocale();
+
   return (
     <Link
       href={href}
       className="flex items-center gap-3 px-4 py-3.5 transition hover:bg-canvas/50"
     >
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-semibold text-ink">{label}</span>
-        <span className="block text-[13px] text-ink-2">{hint}</span>
+        <span className="block text-[15px] font-semibold text-ink">{t(label)}</span>
+        <span className="block text-[13px] text-ink-2">{t(hint)}</span>
       </span>
       <span aria-hidden className="text-muted">
         →
@@ -189,11 +194,13 @@ function Toggle({
   on: boolean;
   onChange: (value: boolean) => void;
 }) {
+  const { t } = useLocale();
+
   return (
     <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5">
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-semibold text-ink">{label}</span>
-        <span className="block text-[13px] text-ink-2">{hint}</span>
+        <span className="block text-[15px] font-semibold text-ink">{t(label)}</span>
+        <span className="block text-[13px] text-ink-2">{t(hint)}</span>
       </span>
       <input
         type="checkbox"

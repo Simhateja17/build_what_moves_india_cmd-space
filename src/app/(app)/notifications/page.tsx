@@ -11,6 +11,8 @@ import {
   notificationNeedsAction,
 } from "@/lib/dashboard";
 import { formatDate } from "@/lib/dates";
+import { useLocale } from "@/lib/i18n";
+import { translateDashboardCopy } from "@/lib/localize-dashboard";
 
 const ICON: Record<string, string> = {
   response: "📩",
@@ -61,6 +63,7 @@ const EDGE: Record<Tone, string> = {
 export default function NotificationsPage() {
   const { readNotifications, markNotificationsRead } = useStore();
   const { notifications, unreadNotifications } = useDashboard();
+  const { t } = useLocale();
 
   const { attention, rest } = useMemo(() => {
     const attention: Notification[] = [];
@@ -75,35 +78,44 @@ export default function NotificationsPage() {
 
   const subtitle =
     unreadNotifications > 0
-      ? `${unreadNotifications} new`
+      ? t("{count} new", undefined, { count: unreadNotifications })
       : attention.length > 0
-        ? `${attention.length} ${attention.length === 1 ? "item needs" : "items need"} your attention`
-        : "You are up to date";
+        ? t(
+            attention.length === 1
+              ? "{count} item needs your attention"
+              : "{count} items need your attention",
+            undefined,
+            { count: attention.length },
+          )
+        : t("You are up to date");
 
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">
-            Updates
+            {t("Updates")}
           </h1>
           <p className="mt-1 text-[15px] text-ink-2">{subtitle}</p>
         </div>
         {unreadNotifications > 0 ? (
           <button
             type="button"
-            onClick={() => markNotificationsRead(notifications.map((n) => n.id))}
+            onClick={() =>
+              markNotificationsRead(notifications.map((n) => n.id))
+            }
             className="rounded-lg border border-line bg-surface px-4 py-2.5 text-[13px] font-semibold text-navy-800 transition hover:border-navy-600/50"
           >
-            Mark all as read
+            {t("Mark all as read")}
           </button>
         ) : null}
       </div>
 
       {notifications.length === 0 ? (
         <p className="mt-5 gov-card p-8 text-center text-sm text-ink-2">
-          No updates yet. Actions taken by a department on your requests
-          will appear here.
+          {t(
+            "No updates yet. Actions taken by a department on your requests will appear here.",
+          )}
         </p>
       ) : (
         <>
@@ -114,7 +126,7 @@ export default function NotificationsPage() {
                   id="needs-attention"
                   className="text-[11px] font-bold uppercase tracking-wider text-govred-700"
                 >
-                  Needs your attention
+                  {t("Needs your attention")}
                 </h2>
                 <span className="text-[11px] font-bold text-govred-700/70">
                   {attention.length}
@@ -142,7 +154,7 @@ export default function NotificationsPage() {
                 id={g.label}
                 className="text-[11px] font-bold uppercase tracking-wider text-muted"
               >
-                {g.label}
+                {t(g.label, g.label)}
               </h2>
               <ul className="mt-2.5 grid gap-2.5 xl:grid-cols-2">
                 {g.items.map((n) => (
@@ -173,6 +185,8 @@ function Card({
   onOpen: (ids: string[]) => void;
   urgent?: boolean;
 }) {
+  const { t, locale } = useLocale();
+
   return (
     <li>
       <Link
@@ -195,29 +209,31 @@ function Card({
           <span className="flex items-start gap-2">
             <span
               className={`text-[14px] leading-snug ${
-                unread || urgent ? "font-bold text-ink" : "font-semibold text-ink-2"
+                unread || urgent
+                  ? "font-bold text-ink"
+                  : "font-semibold text-ink-2"
               }`}
             >
-              {n.title}
+              {t(n.title, n.title)}
             </span>
             {unread ? (
               <span
-                aria-label="Unread"
+                aria-label={t("Unread")}
                 className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-navy-700"
               />
             ) : null}
           </span>
           <span className="mt-1 block text-[13px] leading-relaxed text-ink-2">
-            {n.body}
+            {translateDashboardCopy(n.body, t)}
           </span>
           <span className="mt-1.5 flex flex-wrap items-center gap-x-2 font-mono text-[10px] uppercase tracking-wider text-muted">
-            <span>{formatDate(n.date)}</span>
+            <span>{formatDate(n.date, locale)}</span>
             {n.ref ? <span>· {n.ref}</span> : null}
             {/* The one place the card says what tapping it does. Without
                 it, an urgent row was a dead end you had to guess at. */}
             {urgent ? (
               <span className="font-sans font-semibold normal-case tracking-normal text-navy-700">
-                · Open →
+                · {t("Open →")}
               </span>
             ) : null}
           </span>

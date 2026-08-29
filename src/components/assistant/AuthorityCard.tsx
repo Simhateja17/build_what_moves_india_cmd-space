@@ -36,12 +36,18 @@ export function AuthorityCard({
       </p>
       <p className="mt-2 text-[13px] text-muted">
         {t("Address it to the")}{" "}
-        <span className="font-semibold text-ink-2">{t(authority.pioTitle)}</span>
+        <span className="font-semibold text-ink-2">
+          {t(authority.pioTitle)}
+        </span>
       </p>
 
       {assumedLabel ? (
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-saffron-400/40 bg-saffron-50 px-3 py-2 text-[13px] text-saffron-600">
-          <span>{t("Assumed: {value}.", undefined, { value: t(assumedLabel).toLowerCase() })}</span>
+          <span>
+            {t("Assumed: {value}.", undefined, {
+              value: t(assumedLabel).toLowerCase(),
+            })}
+          </span>
           {onChangeAssumption ? (
             <button
               type="button"
@@ -55,8 +61,16 @@ export function AuthorityCard({
       ) : null}
 
       <div className="mt-4 space-y-2.5 border-t border-line-2 pt-4">
-        <WhyLine tone="yes" lead={t("This office does the work.")} text={t(authority.why.work)} />
-        <WhyLine tone="yes" lead={t("This office holds the papers.")} text={t(authority.why.records)} />
+        <WhyLine
+          tone="yes"
+          lead={t("This office does the work.")}
+          text={t(authority.why.work)}
+        />
+        <WhyLine
+          tone="yes"
+          lead={t("This office holds the papers.")}
+          text={t(authority.why.records)}
+        />
         <WhyLine tone="no" lead="" text={t(authority.why.notThem)} />
       </div>
     </div>
@@ -72,7 +86,6 @@ function WhyLine({
   lead: string;
   text: string;
 }) {
-  const { t } = useLocale();
   return (
     <p className="flex gap-2.5 text-[13px] leading-relaxed text-ink-2">
       <span
@@ -100,6 +113,7 @@ export function AlternativeAuthorities({
   place: { city: string; state: string };
   onPick: (id: string) => void;
 }) {
+  const { t } = useLocale();
   if (alternatives.length === 0) return null;
   return (
     <div className="gov-card p-5">

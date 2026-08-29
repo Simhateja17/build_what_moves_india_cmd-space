@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "@/lib/i18n";
 import {
   PaymentRecord,
   formatTime,
@@ -13,6 +14,7 @@ import {
  * even when no registration number exists yet.
  */
 export function MoneyTrail({ record }: { record: PaymentRecord }) {
+  const { t } = useLocale();
   const [copied, setCopied] = useState(false);
   const gone = moneyIsGone(record.state);
 
@@ -30,7 +32,7 @@ export function MoneyTrail({ record }: { record: PaymentRecord }) {
     <section className="gov-card overflow-hidden">
       <div className="flex items-center justify-between border-b border-line bg-canvas px-4 py-3">
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-          Your payment record
+          {t("Your payment record")}
         </p>
         <button
           type="button"
@@ -42,49 +44,49 @@ export function MoneyTrail({ record }: { record: PaymentRecord }) {
       </div>
 
       <dl className="divide-y divide-line-2">
-        <Row label="Reference number">
+        <Row label={t("Reference number")}>
           <span className="font-mono text-[15px] font-semibold text-ink">
             {record.ref}
           </span>
           <span className="mt-0.5 block text-xs text-muted">
-            Quote this reference when contacting the department or the bank.
+            {t("Quote this reference when contacting the department or the bank.")}
           </span>
         </Row>
 
-        <Row label="Amount">
+        <Row label={t("Amount")}>
           <span className="tabular-nums">₹{record.amountInr}</span>
           <span className="ml-2 text-sm text-muted">{record.method}</span>
         </Row>
 
-        <Row label="Amount debited">
+        <Row label={t("Amount debited")}>
           {gone ? (
             <span className="text-govgreen-700">
               Yes. {record.settledAt ? formatTime(record.settledAt) : "Confirmed"}
             </span>
           ) : record.state === "failed" ? (
-            <span className="text-govred-700">No. Nothing was charged.</span>
+            <span className="text-govred-700">{t("No. Nothing was charged.")}</span>
           ) : (
-            <span className="text-saffron-600">Confirmation pending with the bank</span>
+            <span className="text-saffron-600">{t("Confirmation pending with the bank")}</span>
           )}
         </Row>
 
         {record.bankRef ? (
-          <Row label="Bank reference">
+          <Row label={t("Bank reference")}>
             <span className="font-mono text-sm">{record.bankRef}</span>
             <span className="mt-0.5 block text-xs text-muted">
-              This number will be recognised by the bank.
+              {t("This number will be recognised by the bank.")}
             </span>
           </Row>
         ) : null}
 
-        <Row label="Started">
+        <Row label={t("Started")}>
           <span className="text-[15px] font-normal text-ink-2">
             {formatTime(record.startedAt)}
           </span>
         </Row>
 
         {record.registrationNumber ? (
-          <Row label="RTI registration number">
+          <Row label={t("RTI registration number")}>
             <span className="font-mono text-[15px] font-semibold text-govgreen-700">
               {record.registrationNumber}
             </span>

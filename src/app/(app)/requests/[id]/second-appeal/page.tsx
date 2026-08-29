@@ -8,6 +8,7 @@ import { deriveCase, formatInr } from "@/lib/derive";
 import { addDays, formatDate } from "@/lib/dates";
 import { APPEAL_DECISION_DAYS, SECOND_APPEAL_FILING_DAYS } from "@/lib/types";
 import { GroundRealityNote } from "@/components/GroundRealityNote";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The grounds a Second Appeal actually runs on. These are not the s.19(1)
@@ -31,6 +32,7 @@ const SECOND_APPEAL_GROUNDS = [
 ];
 
 export default function SecondAppealPage() {
+  const { t } = useLocale();
   const { id } = useParams<{ id: string }>();
   const { getCase, dayOf, appealOf, fileSecondAppeal, citizenName } = useStore();
   const router = useRouter();
@@ -46,12 +48,12 @@ export default function SecondAppealPage() {
   if (!c) {
     return (
       <div className="gov-card p-8 text-center">
-        <p className="font-semibold text-ink">This request could not be found.</p>
+        <p className="font-semibold text-ink">{t("This request could not be found.")}</p>
         <Link
           href="/dashboard"
           className="mt-3 inline-block font-medium text-navy-700 hover:underline"
         >
-          Back to your requests
+          {t("Back to your requests")}
         </Link>
       </div>
     );
@@ -89,11 +91,11 @@ export default function SecondAppealPage() {
           href={`/requests/${c.id}`}
           className="text-sm font-medium text-navy-700 hover:underline"
         >
-          ← Back to this request
+          {t("← Back to this request")}
         </Link>
         <section className="mt-5 rounded-2xl border border-line bg-white p-6 shadow-[var(--shadow-panel)] sm:p-8">
           <h1 className="text-2xl font-bold tracking-tight text-navy-900">
-            A Second Appeal is not open on this request yet
+            {t("A Second Appeal is not open on this request yet")}
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink-2">
             The Central Information Commission hears an appeal only after the
@@ -114,14 +116,14 @@ export default function SecondAppealPage() {
             </p>
           ) : (
             <p className="mt-3 text-sm leading-6 text-ink-2">
-              No First Appeal has been filed on this request yet.
+              {t("No First Appeal has been filed on this request yet.")}
             </p>
           )}
           <Link
             href={`/requests/${c.id}`}
             className="mt-6 inline-flex items-center rounded-lg bg-navy-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-navy-700"
           >
-            Back to this request
+            {t("Back to this request")}
           </Link>
         </section>
       </div>
@@ -135,40 +137,37 @@ export default function SecondAppealPage() {
           href={`/requests/${c.id}`}
           className="text-sm font-medium text-navy-700 hover:underline"
         >
-          ← Back to this request
+          {t("← Back to this request")}
         </Link>
         <section className="mt-5 rounded-2xl border border-saffron-400/35 bg-white p-6 shadow-[var(--shadow-panel)] sm:p-8">
           <span className="inline-flex rounded-md bg-navy-50 px-2.5 py-1 text-xs font-bold text-navy-800">
-            With the Commission
+            {t("With the Commission")}
           </span>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-navy-900">
-            Your Second Appeal has been filed
+            {t("Your Second Appeal has been filed")}
           </h1>
           <dl className="mt-6 divide-y divide-line-2 border-y border-line-2">
             <AppealDetail
-              label="Appeal number"
+              label={t("Appeal number")}
               value={appeal.secondNumber ?? "Being generated"}
             />
             <AppealDetail
-              label="First Appeal"
+              label={t("First Appeal")}
               value={appeal.number ?? "On record"}
             />
-            <AppealDetail label="RTI application" value={c.registrationNumber} />
+            <AppealDetail label={t("RTI application")} value={c.registrationNumber} />
             <AppealDetail
-              label="Ground"
+              label={t("Ground")}
               value={appeal.secondGround ?? "Second Appeal"}
             />
-            <AppealDetail label="Public Authority" value={c.authority.office} />
+            <AppealDetail label={t("Public Authority")} value={c.authority.office} />
             <AppealDetail
-              label="Heard by"
+              label={t("Heard by")}
               value="Central Information Commission, New Delhi"
             />
           </dl>
           <p className="mt-5 text-sm leading-6 text-ink-2">
-            The Commission sits outside the department, and no time limit binds
-            it. Hearings are commonly held by video link from a facility near
-            you, so appearing in Delhi is usually not necessary. You will be
-            sent a notice when your appeal is listed.
+            {t("The Commission sits outside the department, and no time limit binds it. Hearings are commonly held by video link from a facility near you, so appearing in Delhi is usually not necessary. You will be sent a notice when your appeal is listed.")}
           </p>
         </section>
       </div>
@@ -190,24 +189,20 @@ export default function SecondAppealPage() {
         href={`/requests/${c.id}`}
         className="text-sm font-medium text-navy-700 hover:underline"
       >
-        ← Back to this request
+        {t("← Back to this request")}
       </Link>
 
       <h1 className="mt-3 text-3xl font-bold tracking-tight text-navy-900">
-        File a Second Appeal
+        {t("File a Second Appeal")}
       </h1>
       <p className="mt-2 max-w-3xl text-ink-2">
-        This appeal leaves the department. It is addressed to the Central
-        Information Commission, an independent body with the power to order the
-        information released and to fine the officer responsible. It is filed
-        free of cost, and the details below have been carried over from your
-        application and your First Appeal.
+        {t("This appeal leaves the department. It is addressed to the Central Information Commission, an independent body with the power to order the information released and to fine the officer responsible. It is filed free of cost, and the details below have been carried over from your application and your First Appeal.")}
       </p>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.2fr)] lg:gap-8">
         <div className="gov-card p-5 lg:sticky lg:top-32">
           <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-            Appealing against
+            {t("Appealing against")}
           </p>
           <p className="mt-1.5 font-semibold text-ink">{c.plainTitle}</p>
           <p className="mt-1 text-sm text-ink-2">
@@ -236,21 +231,17 @@ export default function SecondAppealPage() {
           ) : null}
 
           <GroundRealityNote>
-            The Commission is the only body in this chain that can actually
-            fine an officer. The current portal keeps the Second Appeal on a
-            separate site with its own login, which is where most citizens give
-            up.
+            {t("The Commission is the only body in this chain that can actually fine an officer. The current portal keeps the Second Appeal on a separate site with its own login, which is where most citizens give up.")}
           </GroundRealityNote>
         </div>
 
         <form id="second-appeal-form" onSubmit={submit}>
           <div className="gov-card p-5">
             <h2 className="text-lg font-bold text-navy-900">
-              Applicant and appeal details
+              {t("Applicant and appeal details")}
             </h2>
             <p className="mt-1 text-sm text-muted">
-              These details are filled from your account, your application and
-              your First Appeal.
+              {t("These details are filled from your account, your application and your First Appeal.")}
             </p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <label className="field-label">
@@ -301,10 +292,9 @@ export default function SecondAppealPage() {
           </div>
 
           <div className="mt-5 gov-card p-5">
-            <p className="field-label">Ground for the Second Appeal</p>
+            <p className="field-label">{t("Ground for the Second Appeal")}</p>
             <p className="mt-1 text-sm text-muted">
-              This appeal is against what the Appellate Authority did, not
-              against the original officer. Select the option that applies.
+              {t("This appeal is against what the Appellate Authority did, not against the original officer. Select the option that applies.")}
             </p>
 
             <div className="mt-4 space-y-2.5">
@@ -334,7 +324,7 @@ export default function SecondAppealPage() {
                         {g.plain}
                         {applies ? (
                           <span className="ml-2 rounded bg-govred-50 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-govred-700">
-                            Applies to you
+                            {t("Applies to you")}
                           </span>
                         ) : null}
                       </span>
@@ -351,19 +341,19 @@ export default function SecondAppealPage() {
           <div className="mt-5 gov-card p-5">
             <label htmlFor="sa-extra" className="field-label">
               Explain your appeal{" "}
-              <span className="font-normal text-muted">(optional)</span>
+              <span className="font-normal text-muted">{t("(optional)")}</span>
             </label>
             <textarea
               id="sa-extra"
               rows={4}
               value={extra}
               onChange={(event) => setExtra(event.target.value)}
-              placeholder="This field may be left blank. Your application, the lack of a reply and the undecided First Appeal are attached and form the basis of this appeal."
+              placeholder={t("This field may be left blank. Your application, the lack of a reply and the undecided First Appeal are attached and form the basis of this appeal.")}
               className="field-input"
             />
 
             <label htmlFor="sa-relief" className="mt-5 field-label">
-              Relief sought from the Commission
+              {t("Relief sought from the Commission")}
             </label>
             <textarea
               id="sa-relief"
@@ -376,7 +366,7 @@ export default function SecondAppealPage() {
 
             <label htmlFor="sa-attachment" className="mt-5 field-label">
               Supporting document{" "}
-              <span className="font-normal text-muted">(optional)</span>
+              <span className="font-normal text-muted">{t("(optional)")}</span>
             </label>
             <input
               id="sa-attachment"
@@ -385,9 +375,7 @@ export default function SecondAppealPage() {
               className="field-input file:mr-3 file:rounded-md file:border-0 file:bg-navy-50 file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-navy-700"
             />
             <p className="mt-1.5 text-xs text-muted">
-              PDF, JPG or PNG. Your original RTI application and your First
-              Appeal are attached automatically — the Commission requires both,
-              and this is the step people are most often sent back for.
+              {t("PDF, JPG or PNG. Your original RTI application and your First Appeal are attached automatically — the Commission requires both, and this is the step people are most often sent back for.")}
             </p>
 
             <label className="mt-5 flex cursor-pointer gap-3 rounded-xl border border-line bg-canvas/40 p-4 text-sm leading-5 text-ink-2">
@@ -399,9 +387,7 @@ export default function SecondAppealPage() {
                 className="mt-0.5 h-4 w-4 shrink-0"
               />
               <span>
-                I confirm that the information given in this appeal is true,
-                that it relates to the RTI application and First Appeal shown
-                above, and that the matter is not pending before any court.
+                {t("I confirm that the information given in this appeal is true, that it relates to the RTI application and First Appeal shown above, and that the matter is not pending before any court.")}
               </span>
             </label>
 
@@ -417,8 +403,7 @@ export default function SecondAppealPage() {
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-5">
         <p className="text-sm text-ink-2">
-          <strong className="text-ink">No fee.</strong> A Second Appeal to the
-          Information Commission is free under the RTI Act.
+          <strong className="text-ink">{t("No fee.")}</strong> {t("A Second Appeal to the Information Commission is free under the RTI Act.")}
         </p>
         <button
           type="submit"
@@ -426,7 +411,7 @@ export default function SecondAppealPage() {
           disabled={!declared}
           className="rounded-lg bg-navy-800 px-6 py-3 font-semibold text-white transition hover:bg-navy-700 disabled:cursor-not-allowed disabled:opacity-45"
         >
-          Review and submit appeal
+          {t("Review and submit appeal")}
         </button>
       </div>
     </div>

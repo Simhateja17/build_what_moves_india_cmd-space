@@ -121,7 +121,7 @@ function MyRequests() {
           <div
             className="mt-4 flex flex-wrap gap-2"
             role="group"
-            aria-label="Filter by status"
+            aria-label={t("Filter by status")}
           >
             {FILTERS.map((item) => {
               const active = filter === item.id;

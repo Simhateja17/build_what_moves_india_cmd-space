@@ -8,6 +8,7 @@ import { DraftStep } from "@/components/assistant/DraftStep";
 import { LocationStep } from "@/components/assistant/LocationStep";
 import { ProblemStep } from "@/components/assistant/ProblemStep";
 import { ReviewStep } from "@/components/assistant/ReviewStep";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * My problem → the right authority → what to ask for → a draft →
@@ -17,6 +18,7 @@ import { ReviewStep } from "@/components/assistant/ReviewStep";
  * three of these and stops; everything below is shared with it.
  */
 export default function AssistantPage() {
+  const { t } = useLocale();
   const assistant = useAssistant();
   const { state, ready, dispatch } = assistant;
 
@@ -33,7 +35,7 @@ export default function AssistantPage() {
   if (!ready) {
     return (
       <div className="mx-auto w-full max-w-xl py-12 text-center text-sm text-muted">
-        Loading…
+        {t("Loading…")}
       </div>
     );
   }

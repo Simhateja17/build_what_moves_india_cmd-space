@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { GROUNDS_FOR_APPEAL } from "@/lib/types";
+import { useLocale } from "@/lib/i18n";
 
 export function CaseAppealPanel({ caseId, day }: { caseId: string; day: number }) {
+  const { t } = useLocale();
   const { fileAppeal } = useStore();
   const [groundIndex, setGroundIndex] = useState(0);
   const [extra, setExtra] = useState("");
@@ -19,10 +21,9 @@ export function CaseAppealPanel({ caseId, day }: { caseId: string; day: number }
   if (confirmed) {
     return (
       <div className="rounded-xl border border-govgreen-600/30 bg-govgreen-50 p-5">
-        <p className="font-bold text-govgreen-700">First Appeal submitted</p>
+        <p className="font-bold text-govgreen-700">{t("First Appeal submitted")}</p>
         <p className="mt-1 text-sm leading-relaxed text-ink-2">
-          It is now part of this RTI case. Its status and decision deadline will
-          appear in the timeline above.
+          {t("It is now part of this RTI case. Its status and decision deadline will appear in the timeline above.")}
         </p>
       </div>
     );
@@ -32,13 +33,13 @@ export function CaseAppealPanel({ caseId, day }: { caseId: string; day: number }
     <div className="gov-card overflow-hidden">
       <div className="border-b border-line-2 p-5">
         <p className="text-[11px] font-bold uppercase tracking-wider text-govred-700">
-          First Appeal
+          {t("First Appeal")}
         </p>
         <h2 className="mt-1.5 text-xl font-bold text-navy-900">
-          What went wrong?
+          {t("What went wrong?")}
         </h2>
         <p className="mt-1 text-sm text-ink-2">
-          Your RTI details and authority are already attached to this appeal.
+          {t("Your RTI details and authority are already attached to this appeal.")}
         </p>
       </div>
 
@@ -71,7 +72,7 @@ export function CaseAppealPanel({ caseId, day }: { caseId: string; day: number }
         ))}
 
         <label className="block pt-2 text-sm font-semibold text-ink">
-          Anything to add? <span className="font-normal text-muted">(optional)</span>
+          Anything to add? <span className="font-normal text-muted">{t("(optional)")}</span>
           <textarea
             rows={3}
             value={extra}
@@ -83,14 +84,14 @@ export function CaseAppealPanel({ caseId, day }: { caseId: string; day: number }
 
       <div className="flex flex-col gap-3 border-t border-line-2 bg-canvas/40 p-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-ink-2">
-          <strong className="text-ink">No fee.</strong> A First Appeal is free.
+          <strong className="text-ink">{t("No fee.")}</strong> {t("A First Appeal is free.")}
         </p>
         <button
           type="button"
           onClick={submit}
           className="rounded-lg bg-navy-800 px-5 py-3 text-sm font-bold text-white transition hover:bg-navy-700"
         >
-          Review and submit appeal
+          {t("Review and submit appeal")}
         </button>
       </div>
     </div>

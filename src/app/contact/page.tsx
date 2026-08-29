@@ -58,7 +58,7 @@ export default function ContactPage() {
       <GovHeader />
       <main id="main" className="flex-1">
         <div className="mx-auto w-full max-w-[1320px] px-4 py-7 sm:px-8 sm:py-9 lg:px-10">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-medium text-ink-2">
+          <nav aria-label={t("Breadcrumb")} className="flex items-center gap-2 text-xs font-medium text-ink-2">
             <Link href="/" className="inline-flex items-center gap-1.5 text-navy-700 hover:underline"><HomeIcon /> {t("Home")}</Link>
             <span aria-hidden className="text-muted">›</span>
             <span>{t("Contact Us")}</span>

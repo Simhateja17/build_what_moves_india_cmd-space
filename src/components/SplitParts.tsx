@@ -4,8 +4,10 @@ import { useState } from "react";
 import { DerivedPart, formatInr } from "@/lib/derive";
 import { badgeForStatus, PENALTY_PER_DAY_INR } from "@/lib/types";
 import { StatusPill } from "./StatusPill";
+import { useLocale } from "@/lib/i18n";
 
 export function SplitParts({ parts }: { parts: DerivedPart[] }) {
+  const { t } = useLocale();
   const [openId, setOpenId] = useState<string | null>(parts[0]?.id ?? null);
 
   const answered = parts.filter((p) => p.status === "replied").length;
@@ -24,13 +26,13 @@ export function SplitParts({ parts }: { parts: DerivedPart[] }) {
         </p>
         <div className="mt-3 flex flex-wrap gap-4 text-sm">
           <span className="text-govgreen-700">
-            <strong>{answered}</strong> answered
+            <strong>{answered}</strong> {t("answered")}
           </span>
           <span className="text-navy-800">
-            <strong>{parts.length - answered - late}</strong> still in time
+            <strong>{parts.length - answered - late}</strong> {t("still in time")}
           </span>
           <span className="text-govred-700">
-            <strong>{late}</strong> overdue
+            <strong>{late}</strong> {t("overdue")}
           </span>
         </div>
       </div>
@@ -65,7 +67,7 @@ export function SplitParts({ parts }: { parts: DerivedPart[] }) {
                   {part.status === "replied" ? (
                     <>
                       <p className="text-[11px] font-semibold uppercase tracking-wider text-govgreen-700">
-                        Their reply
+                        {t("Their reply")}
                       </p>
                       <p className="mt-1 text-sm leading-relaxed text-ink-2">
                         {part.reply}
@@ -91,8 +93,7 @@ export function SplitParts({ parts }: { parts: DerivedPart[] }) {
                     </>
                   ) : (
                     <p className="text-sm text-ink-2">
-                      No reply yet from this office. Still inside its 30-day
-                      window.
+                      {t("No reply yet from this office. Still inside its 30-day window.")}
                     </p>
                   )}
                 </div>

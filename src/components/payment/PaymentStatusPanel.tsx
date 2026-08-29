@@ -7,6 +7,7 @@ import {
   formatDay,
 } from "@/lib/payment";
 import { PaymentProgress } from "./PaymentProgress";
+import { useLocale } from "@/lib/i18n";
 
 const PANEL_TONE: Record<AnswerTone, string> = {
   good: "border-govgreen-600/30 bg-govgreen-50",
@@ -51,6 +52,7 @@ export function PaymentStatusPanel({
   record: PaymentRecord;
   children?: React.ReactNode;
 }) {
+  const { t } = useLocale();
   const copy = PAYMENT_COPY[record.state];
   const settleBy = record.settledAt
     ? formatDay(addWorkingDays(record.settledAt, 3))
@@ -113,7 +115,7 @@ export function PaymentStatusPanel({
         {copy.guarantee ? (
           <div className="mt-4 rounded-[10px] border border-navy-600/15 bg-navy-50 px-4 py-3">
             <p className="text-[10px] font-bold uppercase tracking-wider text-navy-800/70">
-              Payment protection
+              {t("Payment protection")}
             </p>
             <p className="mt-1 text-[13px] leading-relaxed text-navy-800">
               {copy.guarantee}

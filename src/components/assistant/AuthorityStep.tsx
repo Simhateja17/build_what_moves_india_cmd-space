@@ -9,6 +9,7 @@ import { AssistantShell } from "./AssistantShell";
 import { BottomSheet } from "./BottomSheet";
 import { JurisdictionNotice } from "./JurisdictionNotice";
 import { StateFilingSheet } from "./StateFilingSheet";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The gate. It names one office, explains the reasoning, and — when
@@ -29,6 +30,7 @@ export function AuthorityStep({
   mode: "assistant" | "finder";
   onContinue: () => void;
 }) {
+  const { t } = useLocale();
   const { state, dispatch, goBack } = assistant;
   const [sheet, setSheet] = useState(false);
   const place = { city: state.city, state: state.stateName };
@@ -57,7 +59,7 @@ export function AuthorityStep({
             onClick={onContinue}
             className="text-[13px] font-medium text-navy-700 underline underline-offset-2"
           >
-            Continue anyway and prepare the draft
+            {t("Continue anyway and prepare the draft")}
           </button>
         ) : null
       }
@@ -87,7 +89,7 @@ export function AuthorityStep({
           onClick={() => dispatch({ type: "override", id: undefined })}
           className="text-[13px] font-medium text-navy-700 underline underline-offset-2"
         >
-          Go back to the suggested office
+          {t("Go back to the suggested office")}
         </button>
       ) : null}
 

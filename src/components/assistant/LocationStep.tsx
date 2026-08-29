@@ -5,6 +5,7 @@ import { STATES } from "@/lib/assistant/places";
 import { Assistant } from "@/lib/assistant/state";
 import { AssistantShell } from "./AssistantShell";
 import { ClarifierCard } from "./ClarifierCard";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * Location and the one authority-deciding question sit together,
@@ -13,6 +14,7 @@ import { ClarifierCard } from "./ClarifierCard";
  * *which* road — so this has to be settled before any office is named.
  */
 export function LocationStep({ assistant }: { assistant: Assistant }) {
+  const { t } = useLocale();
   const { state, dispatch, goNext, goBack } = assistant;
   const topic = state.topicId ? TOPIC_BY_ID[state.topicId] : undefined;
   const clarifier = topic?.authorityClarifier;
@@ -20,8 +22,8 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
   return (
     <AssistantShell
       step="location"
-      title="Location"
-      subtitle="The same problem is handled by different offices in different places."
+      title={t("Location")}
+      subtitle={t("The same problem is handled by different offices in different places.")}
       onBack={goBack}
       primaryLabel="Find the department"
       onPrimary={goNext}
@@ -30,7 +32,7 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
     >
       <div>
         <label htmlFor="state" className="field-label">
-          State
+          {t("State")}
         </label>
         <select
           id="state"
@@ -40,7 +42,7 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
           }
           className="field-input"
         >
-          <option value="">Select your state</option>
+          <option value="">{t("Select your state")}</option>
           {STATES.map((s) => (
             <option key={s}>{s}</option>
           ))}
@@ -50,13 +52,13 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
       <div>
         <label htmlFor="city" className="field-label">
           City, town or village{" "}
-          <span className="font-normal text-muted">(optional)</span>
+          <span className="font-normal text-muted">{t("(optional)")}</span>
         </label>
         <input
           id="city"
           value={state.city}
           onChange={(e) => dispatch({ type: "location", city: e.target.value })}
-          placeholder="e.g. Hyderabad"
+          placeholder={t("e.g. Hyderabad")}
           className="field-input"
         />
       </div>
@@ -84,7 +86,7 @@ export function LocationStep({ assistant }: { assistant: Assistant }) {
       {clarifier ? (
         <div>
           <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-            Additional detail
+            {t("Additional detail")}
           </p>
           <ClarifierCard
             clarifier={clarifier}

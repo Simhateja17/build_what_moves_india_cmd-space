@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useLocale } from "@/lib/i18n";
 
 // Lockups cut from the same official artwork:
 //   full  — the mark beside its own two-line wordmark, as the logo is drawn
@@ -23,13 +24,14 @@ export function RtiLogo({
   priority?: boolean;
   variant?: keyof typeof VARIANTS;
 }) {
+  const { t } = useLocale();
   const { src, width, height } = VARIANTS[variant];
   return (
     <Image
       src={src}
       width={width}
       height={height}
-      alt="Right to Information"
+      alt={t("Right to Information")}
       className={`object-contain ${className}`}
       priority={priority}
     />

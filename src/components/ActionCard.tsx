@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n";
+import { translateDashboardCopy } from "@/lib/localize-dashboard";
 import { ActionItem, Tone } from "@/lib/dashboard";
 
 /**
@@ -24,6 +28,7 @@ const ACCENT: Record<Tone, { rail: string; icon: string }> = {
 
 export function ActionCard({ item }: { item: ActionItem }) {
   const accent = ACCENT[item.tone];
+  const { t } = useLocale();
   return (
     <div className="gov-card relative flex h-full flex-col gap-3 p-5 pl-6">
       <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${accent.rail}`} />
@@ -35,7 +40,9 @@ export function ActionCard({ item }: { item: ActionItem }) {
           {item.tone === "good" ? "✓" : "!"}
         </span>
         <div className="min-w-0">
-          <p className="text-[14px] font-bold leading-snug text-ink">{item.title}</p>
+          <p className="text-[14px] font-bold leading-snug text-ink">
+            {t(item.title, item.title)}
+          </p>
           {item.ref ? (
             <p className="mt-0.5 truncate font-mono text-[10px] text-muted">
               {item.ref}
@@ -43,12 +50,14 @@ export function ActionCard({ item }: { item: ActionItem }) {
           ) : null}
         </div>
       </div>
-      <p className="text-[12.5px] leading-relaxed text-ink-2">{item.detail}</p>
+      <p className="text-[12.5px] leading-relaxed text-ink-2">
+        {translateDashboardCopy(item.detail, t)}
+      </p>
       <Link
         href={item.href}
         className="mt-auto inline-flex w-fit rounded-lg border border-navy-600/25 bg-white px-3 py-2 text-[12px] font-bold text-navy-700 transition hover:bg-navy-50"
       >
-        {item.cta} →
+        {t(item.cta, item.cta)} →
       </Link>
     </div>
   );

@@ -69,7 +69,7 @@ export default function TrackPage() {
                   setRegistrationNumber(event.target.value);
                   setError("");
                 }}
-                placeholder="e.g. DOFPD/R/E/26/03310"
+                placeholder={t("e.g. DOFPD/R/E/26/03310")}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? "track-error" : undefined}
                 className="mt-2 h-12 w-full rounded-xl border border-line bg-white px-4 font-mono text-sm text-ink outline-none transition placeholder:font-sans placeholder:text-muted focus:border-navy-600 focus:ring-4 focus:ring-navy-50"

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { EXAMPLES } from "@/lib/assistant/examples";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * Worked examples, readable on their own. A blank box is intimidating
@@ -13,6 +14,7 @@ export function ExampleList({
 }: {
   onUse?: (text: string) => void;
 }) {
+  const { t } = useLocale();
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
@@ -52,7 +54,7 @@ export function ExampleList({
                     onClick={() => onUse(e.text)}
                     className="btn-secondary mt-3 w-full text-sm"
                   >
-                    Use this as a starting point
+                    {t("Use this as a starting point")}
                   </button>
                 ) : null}
               </div>

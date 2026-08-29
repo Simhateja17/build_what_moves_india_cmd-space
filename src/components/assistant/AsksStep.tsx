@@ -11,6 +11,7 @@ import { BottomSheet } from "./BottomSheet";
 import { ClarifierCard } from "./ClarifierCard";
 import { JurisdictionBanner, JurisdictionNotice } from "./JurisdictionNotice";
 import { fillPlaces } from "@/lib/assistant/authorities";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The teaching screen. It converts a grievance into a numbered list of
@@ -28,6 +29,7 @@ export function AsksStep({
   assistant: Assistant;
   result: AuthorityResult;
 }) {
+  const { t } = useLocale();
   const { state, dispatch, goNext, goBack } = assistant;
   const [sheet, setSheet] = useState<"difference" | "why" | null>(null);
   const [custom, setCustom] = useState("");
@@ -54,8 +56,8 @@ export function AsksStep({
   return (
     <AssistantShell
       step="asks"
-      title="Select the information sought"
-      subtitle="Select each item to include. Each selection becomes a numbered point in the request."
+      title={t("Select the information sought")}
+      subtitle={t("Select each item to include. Each selection becomes a numbered point in the request.")}
       banner={
         <JurisdictionBanner
           level={result.primary.level}
@@ -120,7 +122,7 @@ export function AsksStep({
               onClick={() => dispatch({ type: "removeCustomAsk", index: i })}
               className="shrink-0 text-[13px] font-medium text-navy-700 underline"
             >
-              Remove
+              {t("Remove")}
             </button>
           </div>
         ))}
@@ -130,7 +132,7 @@ export function AsksStep({
         <input
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
-          placeholder="Add a custom point"
+          placeholder={t("Add a custom point")}
           className="field-input mt-0"
         />
         <button
@@ -142,32 +144,32 @@ export function AsksStep({
           }}
           className="shrink-0 rounded-lg border border-line px-4 text-sm font-semibold text-navy-800 disabled:text-muted"
         >
-          Add
+          {t("Add")}
         </button>
       </div>
 
       <div className="rounded-xl border border-navy-600/20 bg-navy-50 px-4 py-3.5">
         <p className="text-[11px] font-bold uppercase tracking-wider text-navy-800/75">
-          Requests must be for facts and records
+          {t("Requests must be for facts and records")}
         </p>
         <p className="mt-1.5 text-sm leading-relaxed text-navy-800">
           RTI provides records already held by the office. It does not
           require an officer to provide an explanation, so a request should
-          ask for <em>the file notings on</em> a matter, rather than{" "}
-          <em>why</em> it occurred.
+          ask for <em>{t("the file notings on")}</em> a matter, rather than{" "}
+          <em>{t("why")}</em> {t("it occurred.")}
         </p>
         <button
           type="button"
           onClick={() => setSheet("difference")}
           className="mt-2 text-[13px] font-semibold text-navy-800 underline underline-offset-2"
         >
-          Show the difference
+          {t("Show the difference")}
         </button>
       </div>
 
       <BottomSheet
         open={sheet === "difference"}
-        title="How to word it"
+        title={t("How to word it")}
         onClose={() => setSheet(null)}
       >
         <AskVsAskCard />
@@ -175,7 +177,7 @@ export function AsksStep({
 
       <BottomSheet
         open={sheet === "why"}
-        title="Jurisdiction"
+        title={t("Jurisdiction")}
         onClose={() => setSheet(null)}
       >
         <JurisdictionNotice
