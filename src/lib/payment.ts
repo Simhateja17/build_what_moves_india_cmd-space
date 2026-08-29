@@ -331,16 +331,16 @@ export function addWorkingDays(from: number, days: number): Date {
   return d;
 }
 
-export function formatDay(d: Date): string {
-  return d.toLocaleDateString("en-IN", {
+export function formatDay(d: Date, locale: "en" | "hi" = "en"): string {
+  return d.toLocaleDateString(locale === "hi" ? "hi-IN" : "en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
 }
 
-export function formatTime(ms: number): string {
-  return new Date(ms).toLocaleString("en-IN", {
+export function formatTime(ms: number, locale: "en" | "hi" = "en"): string {
+  return new Date(ms).toLocaleString(locale === "hi" ? "hi-IN" : "en-IN", {
     day: "numeric",
     month: "short",
     hour: "numeric",

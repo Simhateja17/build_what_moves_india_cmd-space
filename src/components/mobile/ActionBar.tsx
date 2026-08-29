@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------
    The pinned primary action.
@@ -51,6 +52,7 @@ export function PrimaryButton({
   type?: "button" | "submit";
 }) {
   const [blocked, setBlocked] = useState(false);
+  const { t } = useLocale();
 
   const cls = {
     navy: "m-btn",
@@ -79,7 +81,7 @@ export function PrimaryButton({
         }}
       >
         {busy && <span className="m-btn__spin" aria-hidden />}
-        {busy ? busyLabel ?? "Working\u2026" : children}
+        {busy ? busyLabel ?? t("Working…") : children}
       </button>
       {blocked && disabledReason && (
         <p className="m-error text-center" role="alert">

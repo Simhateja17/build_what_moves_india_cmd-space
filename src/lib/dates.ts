@@ -14,8 +14,8 @@ export function addDays(iso: string, days: number): Date {
 }
 
 /** "12 Aug 2026" */
-export function formatDate(d: Date): string {
-  return d.toLocaleDateString("en-IN", {
+export function formatDate(d: Date, locale: "en" | "hi" = "en"): string {
+  return d.toLocaleDateString(locale === "hi" ? "hi-IN" : "en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -23,15 +23,22 @@ export function formatDate(d: Date): string {
 }
 
 /** "12 Aug" — for dense lists where the year is obvious. */
-export function formatShort(d: Date): string {
-  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+export function formatShort(d: Date, locale: "en" | "hi" = "en"): string {
+  return d.toLocaleDateString(locale === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short" });
 }
 
 /**
  * How a date reads relative to the case's current day: "today",
  * "yesterday", "in 4 days", "12 days ago".
  */
-export function relativeDay(offsetDays: number): string {
+export function relativeDay(offsetDays: number, locale: "en" | "hi" = "en"): string {
+  if (locale === "hi") {
+    if (offsetDays === 0) return "आज";
+    if (offsetDays === 1) return "कल";
+    if (offsetDays === -1) return "कल";
+    if (offsetDays > 0) return `${offsetDays} दिनों में`;
+    return `${Math.abs(offsetDays)} दिन पहले`;
+  }
   if (offsetDays === 0) return "today";
   if (offsetDays === 1) return "tomorrow";
   if (offsetDays === -1) return "yesterday";

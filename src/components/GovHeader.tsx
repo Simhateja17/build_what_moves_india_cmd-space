@@ -73,7 +73,7 @@ export function GovHeader() {
             not the whitespace that used to surround it. */}
         <Link
           href="/"
-          aria-label="Right to Information home"
+          aria-label={t("Right to Information home")}
           className="group -my-1 flex shrink-0 items-center rounded-xl py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-700"
         >
           <RtiLogo
@@ -84,7 +84,7 @@ export function GovHeader() {
         </Link>
 
         <nav
-          aria-label="Main"
+          aria-label={t("Main")}
           className="ml-auto hidden min-w-0 items-center gap-2 md:flex"
         >
           {/* One rail, so the four destinations read as a set rather than four
@@ -120,7 +120,7 @@ export function GovHeader() {
             <>
               <Link
                 href="/notifications"
-                aria-label="Notifications"
+                aria-label={t("Notifications")}
                 className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-2 transition hover:bg-navy-50 hover:text-navy-900"
               >
                 <BellIcon />
@@ -154,7 +154,7 @@ export function GovHeader() {
                   <>
                     <button
                       type="button"
-                      aria-label="Close menu"
+                      aria-label={t("Close menu")}
                       className="fixed inset-0 z-40 cursor-default"
                       onClick={() => setMenuOpen(false)}
                     />
@@ -171,7 +171,7 @@ export function GovHeader() {
                         onClick={() => setMenuOpen(false)}
                         className="block px-4 py-2.5 text-[13px] font-medium text-ink hover:bg-navy-50"
                       >
-                        Profile
+                        {t("Profile")}
                       </Link>
                       <button
                         type="button"
@@ -183,7 +183,7 @@ export function GovHeader() {
                         }}
                         className="block w-full border-t border-line-2 px-4 py-2.5 text-left text-[13px] font-medium text-ink hover:bg-navy-50"
                       >
-                        Sign out
+                        {t("Sign out")}
                       </button>
                     </div>
                   </>
@@ -195,7 +195,7 @@ export function GovHeader() {
               href="/login"
               className="shrink-0 whitespace-nowrap rounded-full bg-navy-900 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-navy-800"
             >
-              Login
+              {t("Login")}
             </Link>
           )}
         </nav>
@@ -207,14 +207,14 @@ export function GovHeader() {
               href="/start-rti"
               className="rounded-xl bg-navy-900 px-3.5 py-2.5 text-sm font-bold text-white shadow-sm"
             >
-              + File RTI
+              {t("+ File RTI")}
             </Link>
           ) : (
             <Link
               href="/login"
               className="rounded-xl bg-navy-900 px-3.5 py-2.5 text-sm font-semibold text-white"
             >
-              Sign in
+              {t("Sign in")}
             </Link>
           )}
         </div>

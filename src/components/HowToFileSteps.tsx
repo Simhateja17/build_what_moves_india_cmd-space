@@ -1,5 +1,8 @@
+"use client";
+
 import { Reveal } from "./Reveal";
 import { STEP_ART } from "./StepIllustrations";
+import { useLocale } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------
    How to file an RTI online, in ten steps.
@@ -57,6 +60,7 @@ const STEPS = [
 ];
 
 export function HowToFileSteps() {
+  const { t } = useLocale();
   return (
     // No panel around this one. The ten step cards are already floating
     // white on the canvas; wrapping them in a second white panel put a
@@ -64,11 +68,10 @@ export function HowToFileSteps() {
     <Reveal className="py-2">
       <div className="text-center">
         <h2 className="text-3xl font-bold tracking-tight text-navy-900">
-          How to file an RTI online
+          {t("How to file an RTI online")}
         </h2>
         <p className="mx-auto mt-2.5 max-w-2xl text-ink-2">
-          Every screen is shown here in the order it will appear, so the
-          process is known in advance.
+          {t("Every screen is shown here in the order it will appear, so the process is known in advance.")}
         </p>
       </div>
 
@@ -88,7 +91,7 @@ export function HowToFileSteps() {
                     {i + 1}
                   </span>
                   <p className="pt-1 text-[15px] font-bold leading-tight tracking-tight text-navy-900">
-                    {title}
+                    {t(title)}
                   </p>
                 </div>
 
@@ -96,7 +99,7 @@ export function HowToFileSteps() {
                   <Art className="h-auto w-full" />
                 </div>
 
-                <p className="text-[13px] leading-relaxed text-ink-2">{body}</p>
+                <p className="text-[13px] leading-relaxed text-ink-2">{t(body)}</p>
               </Reveal>
 
               {/* The thread between steps. Hidden at the end of each row

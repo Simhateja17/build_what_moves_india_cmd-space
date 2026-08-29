@@ -1,6 +1,7 @@
 "use client";
 
 import { AssistantStep, STEP_LABEL, STEP_ORDER } from "@/lib/assistant/types";
+import { useLocale } from "@/lib/i18n";
 
 /** A quiet, centred frame for every step of the guided filing flow. */
 export function AssistantShell({
@@ -33,6 +34,7 @@ export function AssistantShell({
   totalSteps?: number;
 }) {
   const index = STEP_ORDER.indexOf(step);
+  const { t } = useLocale();
 
   return (
     <div className="mx-auto w-full max-w-[980px] pb-8">
@@ -41,11 +43,11 @@ export function AssistantShell({
       <div className="mb-7 rounded-2xl border border-line bg-surface px-4 py-4 shadow-[var(--shadow-panel)] sm:px-5">
         <div className="flex items-center justify-between gap-4">
           <p className="text-xs font-bold uppercase tracking-[0.11em] text-navy-800">
-            Step {index + 1} of {totalSteps}
+            {t("Step {step} of {total}", undefined, { step: index + 1, total: totalSteps })}
           </p>
-          <p className="text-xs font-medium text-muted">{STEP_LABEL[step]}</p>
+          <p className="text-xs font-medium text-muted">{t(STEP_LABEL[step])}</p>
         </div>
-        <div className="mt-3 grid grid-cols-6 gap-1.5" aria-label={`Step ${index + 1} of ${totalSteps}`}>
+        <div className="mt-3 grid grid-cols-6 gap-1.5" aria-label={t("Step {step} of {total}", undefined, { step: index + 1, total: totalSteps })}>
           {STEP_ORDER.slice(0, totalSteps).map((item, itemIndex) => (
             <span
               key={item}
@@ -63,7 +65,7 @@ export function AssistantShell({
                 itemIndex === index ? "text-navy-800" : "text-muted"
               }`}
             >
-              {STEP_LABEL[item]}
+              {t(STEP_LABEL[item])}
             </li>
           ))}
         </ol>
@@ -89,7 +91,7 @@ export function AssistantShell({
               <button
                 type="button"
                 onClick={onBack}
-                aria-label="Go back a step"
+                aria-label={t("Go back a step")}
                 className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl border border-line bg-white text-lg font-semibold text-ink-2 transition hover:border-navy-600/40 hover:bg-navy-50"
               >
                 ←

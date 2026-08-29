@@ -1,6 +1,7 @@
 "use client";
 
 import { Clarifier } from "@/lib/assistant/types";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * One question, and always a way past it.
@@ -25,6 +26,7 @@ export function ClarifierCard({
   onSkip: () => void;
   tone?: "plain" | "amber";
 }) {
+  const { t } = useLocale();
   return (
     <div
       className={`rounded-xl border p-4 ${
@@ -33,10 +35,10 @@ export function ClarifierCard({
           : "border-line bg-surface"
       }`}
     >
-      <p className="text-[15px] font-semibold text-ink">{clarifier.question}</p>
+      <p className="text-[15px] font-semibold text-ink">{t(clarifier.question)}</p>
       {clarifier.help ? (
         <p className="mt-1 text-[13px] leading-relaxed text-ink-2">
-          {clarifier.help}
+          {t(clarifier.help)}
         </p>
       ) : null}
 
@@ -44,7 +46,7 @@ export function ClarifierCard({
         <input
           value={value ?? ""}
           onChange={(e) => onAnswer(e.target.value)}
-          placeholder={clarifier.placeholder}
+          placeholder={clarifier.placeholder ? t(clarifier.placeholder) : undefined}
           className="field-input mt-3"
         />
       ) : (
@@ -73,10 +75,10 @@ export function ClarifierCard({
                   ) : null}
                 </span>
                 <span>
-                  {o.label}
+                  {t(o.label)}
                   {o.note ? (
                     <span className="mt-0.5 block text-xs font-normal text-muted">
-                      {o.note}
+                      {t(o.note)}
                     </span>
                   ) : null}
                 </span>
@@ -89,7 +91,7 @@ export function ClarifierCard({
                 value && !["6m", "1y", "3y"].includes(value) ? value : ""
               }
               onChange={(e) => onAnswer(e.target.value)}
-              placeholder="Or type exact dates, e.g. 01/01/2026 to 30/06/2026"
+              placeholder={t("Or type exact dates, e.g. 01/01/2026 to 30/06/2026")}
               className="field-input"
             />
           ) : null}
@@ -103,12 +105,11 @@ export function ClarifierCard({
           skipped ? "text-saffron-600" : "text-navy-700"
         }`}
       >
-        {skipped ? `Skipped: ${clarifier.skipLabel.toLowerCase()}` : clarifier.skipLabel}
+        {skipped ? t("Skipped: {label}", undefined, { label: t(clarifier.skipLabel).toLowerCase() }) : t(clarifier.skipLabel)}
       </button>
       {skipped ? (
         <p className="mt-1 text-[13px] leading-relaxed text-saffron-600">
-          A blank has been left in this request. It may be completed on the
-          draft screen.
+          {t("A blank has been left in this request. It may be completed on the draft screen.")}
         </p>
       ) : null}
     </div>

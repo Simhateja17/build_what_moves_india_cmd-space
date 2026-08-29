@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------
    The banner at the top of the landing page.
@@ -31,12 +32,20 @@ export interface HeroSlide {
   secondary?: { label: string; href: string };
   note?: string;
   art: React.ReactNode;
+  /**
+   * How long this slide holds before the next one. A slide whose artwork
+   * animates sets it to the length of that animation, so the banner never
+   * takes a drawing away halfway through building it.
+   */
+  holdMs?: number;
 }
 
+/** Used only by a slide that has no animation of its own to wait for. */
 const AUTOPLAY_MS = 12000;
 const DRAG_THRESHOLD = 60;
 
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
+  const { t } = useLocale();
   const [index, setIndex] = useState(0);
   const [drag, setDrag] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -76,9 +85,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   useEffect(() => {
     if (paused || reduced || count < 2) return;
-    const t = window.setInterval(() => go(index + 1), AUTOPLAY_MS);
-    return () => window.clearInterval(t);
-  }, [index, paused, reduced, count, go]);
+    // A timeout per slide rather than one interval for all of them: each
+    // slide waits out its own artwork before handing over.
+    const t = window.setTimeout(
+      () => go(index + 1),
+      slides[index]?.holdMs ?? AUTOPLAY_MS,
+    );
+    return () => window.clearTimeout(t);
+  }, [index, paused, reduced, count, go, slides]);
 
   function onPointerDown(e: React.PointerEvent) {
     // Let a link take its own click; only bare panel area starts a drag.
@@ -113,7 +127,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="What RTI Saral does"
+      aria-label={t("What RTI Saral does")}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -149,7 +163,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             }}
             className="w-full shrink-0"
             aria-roledescription="slide"
-            aria-label={`${i + 1} of ${count}`}
+            aria-label={t("Slide {index} of {count}", undefined, {
+              index: i + 1,
+              count,
+            })}
             aria-hidden={i !== index}
             inert={i !== index}
           >
@@ -204,7 +221,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             key={s.id}
             type="button"
             onClick={() => go(i)}
-            aria-label={`Show slide ${i + 1}: ${s.eyebrow}`}
+            aria-label={t("Show slide {index}: {eyebrow}", undefined, {
+              index: i + 1,
+              eyebrow: s.eyebrow,
+            })}
             aria-current={i === index}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               i === index

@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "@/lib/i18n";
 
 // Same words as the desktop header, so the app does not rename its own
 // sections when you turn the phone sideways.
 const TABS = [
-  { href: "/dashboard", label: "Home", icon: HomeIcon },
-  { href: "/my-rtis", label: "Requests", icon: FilesIcon },
-  { href: "/notifications", label: "Alerts", icon: BellIcon },
-  { href: "/profile", label: "Profile", icon: UserIcon },
+  { href: "/dashboard", key: "Home", icon: HomeIcon },
+  { href: "/my-rtis", key: "Requests", icon: FilesIcon },
+  { href: "/notifications", key: "Alerts", icon: BellIcon },
+  { href: "/profile", key: "Profile", icon: UserIcon },
 ];
 
 /**
@@ -19,25 +20,26 @@ const TABS = [
  */
 export function BottomNav({ alerts = 0 }: { alerts?: number }) {
   const pathname = usePathname();
+  const { t } = useLocale();
 
   return (
     <nav
-      aria-label="Main"
+      aria-label={t("Main")}
       className="fixed inset-x-3 bottom-3 z-40 overflow-hidden rounded-2xl border border-line bg-surface/94 shadow-[var(--shadow-panel-lg)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="mx-auto flex max-w-lg">
-        {TABS.map((t) => {
+        {TABS.map((item) => {
           const active =
-            t.href === "/dashboard"
+            item.href === "/dashboard"
               ? pathname === "/dashboard"
-              : t.href === "/my-rtis"
+              : item.href === "/my-rtis"
                 ? pathname.startsWith("/my-rtis") || pathname.startsWith("/requests")
-                : pathname.startsWith(t.href);
-          const Icon = t.icon;
+                : pathname.startsWith(item.href);
+          const Icon = item.icon;
           return (
             <li key={t.href} className="flex-1">
               <Link
-                href={t.href}
+                href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={`relative flex h-[60px] flex-col items-center justify-center gap-0.5 transition ${
                   active ? "text-navy-800" : "text-muted"
@@ -45,14 +47,14 @@ export function BottomNav({ alerts = 0 }: { alerts?: number }) {
               >
                 <span className="relative">
                   <Icon filled={active} />
-                  {t.href === "/notifications" && alerts > 0 ? (
+                  {item.href === "/notifications" && alerts > 0 ? (
                     <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-govred-600 px-1 text-[10px] font-bold text-white">
                       {alerts > 9 ? "9+" : alerts}
                     </span>
                   ) : null}
                 </span>
                 <span className={`text-[11px] ${active ? "font-bold" : "font-medium"}`}>
-                  {t.label}
+                  {t(item.key)}
                 </span>
                 {active ? (
                   <span

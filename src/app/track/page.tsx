@@ -6,6 +6,7 @@ import Link from "next/link";
 import { GovHeader } from "@/components/GovHeader";
 import { GovFooter } from "@/components/GovFooter";
 import { useStore } from "@/lib/store";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * Lookup by registration number, for someone who has no account here —
@@ -20,6 +21,7 @@ import { useStore } from "@/lib/store";
 export default function TrackPage() {
   const router = useRouter();
   const { cases, isAuthenticated } = useStore();
+  const { t } = useLocale();
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [error, setError] = useState("");
 
@@ -35,7 +37,7 @@ export default function TrackPage() {
 
     if (!match) {
       setError(
-        "No request found with that number. This may be verified against the acknowledgement email; the format is DOFPD/R/E/26/03310.",
+        t("No request found with that number. This may be verified against the acknowledgement email; the format is DOFPD/R/E/26/03310."),
       );
       return;
     }
@@ -47,18 +49,17 @@ export default function TrackPage() {
       <GovHeader />
       <main id="main" className="mx-auto w-full max-w-[720px] flex-1 px-4 py-10 sm:px-8">
         <h1 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-[30px]">
-          Track a request
+          {t("Track a request")}
         </h1>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-2">
-          Enter the registration number from your acknowledgement. You do not
-          need an account.
+          {t("Enter the registration number from your acknowledgement. You do not need an account.")}
         </p>
 
         <section className="mt-7 rounded-2xl border border-line bg-white p-5 shadow-[var(--shadow-panel)] sm:p-7">
           <form onSubmit={submit} noValidate>
             <label className="block">
               <span className="text-sm font-semibold text-ink">
-                Registration number
+                {t("Registration number")}
               </span>
               <input
                 required
@@ -94,13 +95,13 @@ export default function TrackPage() {
               type="submit"
               className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-navy-900 px-7 text-sm font-bold text-white shadow-sm transition hover:bg-navy-700 sm:w-auto"
             >
-              Show status
+              {t("Show status")}
             </button>
           </form>
 
           {sampleNumber ? (
             <p className="mt-6 border-t border-line-2 pt-5 text-xs leading-5 text-muted">
-              Demo request:{" "}
+              {t("Demo request:")} {" "}
               <button
                 type="button"
                 onClick={() => {
@@ -118,18 +119,18 @@ export default function TrackPage() {
         <p className="mt-6 text-sm text-ink-2">
           {isAuthenticated ? (
             <>
-              If already signed in, all requests are listed in{" "}
+              {t("If already signed in, all requests are listed in")} {" "}
               <Link href="/my-rtis" className="font-bold text-navy-700 hover:underline">
                 My requests
               </Link>
-              . No registration number is required.
+              . {t("No registration number is required.")}
             </>
           ) : (
             <>
               <Link href="/login" className="font-bold text-navy-700 hover:underline">
-                Sign in
+                {t("Sign in")}
               </Link>{" "}
-              to see every request you have filed, with its response deadline tracked.
+              {t("to see every request you have filed, with its response deadline tracked.")}
             </>
           )}
         </p>

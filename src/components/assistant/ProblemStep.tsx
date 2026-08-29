@@ -9,6 +9,7 @@ import { Assistant } from "@/lib/assistant/state";
 import { AssistantShell } from "./AssistantShell";
 import { BottomSheet } from "./BottomSheet";
 import { ExampleList } from "./ExampleDraftSheet";
+import { useLocale } from "@/lib/i18n";
 
 const TOPIC_HELP: Record<string, string> = {
   "road-damage": "Repairs, tenders, contractors and inspection reports",
@@ -46,6 +47,7 @@ const GROUPS = [
 
 export function ProblemStep({ assistant }: { assistant: Assistant }) {
   const { state, dispatch, goNext } = assistant;
+  const { t } = useLocale();
   const [sheet, setSheet] = useState<"topics" | "examples" | null>(null);
   const [topicQuery, setTopicQuery] = useState("");
 
@@ -64,16 +66,16 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
   return (
     <AssistantShell
       step="problem"
-      title="What do you need information about?"
-      subtitle="Tell us what happened in your own words. We’ll turn it into a request for records and help identify the public authority that is likely to hold them."
-      primaryLabel="Continue to location"
+      title={t("What do you need information about?")}
+      subtitle={t("Tell us what happened in your own words. We’ll turn it into a request for records and help identify the public authority that is likely to hold them.")}
+      primaryLabel={t("Continue to location")}
       onPrimary={goNext}
       primaryDisabled={!topic || (topic.id === "other-records" && !hasDescription)}
       primaryHint={
         !topic
-          ? "Choose the closest topic to continue"
+          ? t("Choose the closest topic to continue")
           : topic.id === "other-records" && !hasDescription
-            ? "Briefly describe the government record you need"
+            ? t("Briefly describe the government record you need")
             : undefined
       }
       secondary={
@@ -81,47 +83,47 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
           href="/file-request"
           className="text-[13px] font-semibold text-navy-700 underline underline-offset-4"
         >
-          I already know the Central Government authority
+          {t("I already know the Central Government authority")}
         </Link>
       }
     >
       <div className="grid gap-3 rounded-2xl border border-navy-600/20 bg-navy-50 p-4 sm:grid-cols-2 sm:p-5">
         <FitNote
           good
-          title="RTI can uncover records"
-          text="Status, file notes, spending, contracts, rules, inspection reports and action taken."
+          title={t("RTI can uncover records")}
+          text={t("Status, file notes, spending, contracts, rules, inspection reports and action taken.")}
         />
         <FitNote
-          title="RTI does not fix the problem directly"
-          text="It cannot order a repair, settle a private dispute or replace an emergency or grievance service."
+          title={t("RTI does not fix the problem directly")}
+          text={t("It cannot order a repair, settle a private dispute or replace an emergency or grievance service.")}
         />
       </div>
 
       <div>
         <div className="flex items-end justify-between gap-4">
           <label htmlFor="problem" className="field-label">
-            Describe the issue
+            {t("Describe the issue")}
           </label>
-          <span className="text-xs text-muted">Any Indian language is okay</span>
+          <span className="text-xs text-muted">{t("Any Indian language is okay")}</span>
         </div>
         <textarea
           id="problem"
           rows={5}
           value={state.rawProblem}
           onChange={(e) => dispatch({ type: "problem", text: e.target.value })}
-          placeholder="Example: My passport police verification has been pending for five months. I want to know when the report was received and why my application is on hold."
+          placeholder={t("Example: My passport police verification has been pending for five months. I want to know when the report was received and why my application is on hold.")}
           className="field-input min-h-36 resize-y px-4 py-3.5 leading-6"
         />
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs leading-relaxed text-muted">
-            Do not include Aadhaar, bank details, passwords or medical records here.
+            {t("Do not include Aadhaar, bank details, passwords or medical records here.")}
           </p>
           <button
             type="button"
             onClick={() => setSheet("examples")}
             className="text-xs font-semibold text-navy-700 underline underline-offset-4"
           >
-            See an example
+            {t("See an example")}
           </button>
         </div>
       </div>
@@ -130,10 +132,10 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted">
-              {hasDescription ? "Closest matches" : "Common topics"}
+              {hasDescription ? t("Closest matches") : t("Common topics")}
             </p>
             <h2 id="topic-heading" className="mt-1 text-lg font-bold text-ink">
-              Choose what best describes your request
+              {t("Choose what best describes your request")}
             </h2>
           </div>
           <button
@@ -141,7 +143,7 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
             onClick={() => setSheet("topics")}
             className="hidden shrink-0 text-[13px] font-semibold text-navy-700 underline underline-offset-4 sm:block"
           >
-            Browse all {TOPICS.length}
+            {t("Browse all {count} topics", undefined, { count: TOPICS.length })}
           </button>
         </div>
 
@@ -161,7 +163,7 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
           onClick={() => setSheet("topics")}
           className="mt-3 w-full rounded-xl border border-line bg-white px-4 py-3 text-sm font-semibold text-navy-700 sm:hidden"
         >
-          Browse all {TOPICS.length} topics
+          {t("Browse all {count} topics", undefined, { count: TOPICS.length })}
         </button>
       </section>
 
@@ -172,7 +174,7 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-govgreen-700/75">
-              Selected topic
+              {t("Selected topic")}
             </p>
             <p className="mt-0.5 font-semibold text-govgreen-700">{topic.label}</p>
             <p className="mt-0.5 text-[13px] leading-relaxed text-govgreen-700/80">
@@ -184,22 +186,22 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
             onClick={() => setSheet("topics")}
             className="shrink-0 text-[13px] font-semibold text-govgreen-700 underline underline-offset-4"
           >
-            Change
+            {t("Change")}
           </button>
         </div>
       ) : null}
 
       <BottomSheet
         open={sheet === "topics"}
-        title="Find your topic"
+        title={t("Find your topic")}
         onClose={() => setSheet(null)}
       >
-        <label htmlFor="topic-search" className="sr-only">Search topics</label>
+        <label htmlFor="topic-search" className="sr-only">{t("Search topics")}</label>
         <input
           id="topic-search"
           value={topicQuery}
           onChange={(e) => setTopicQuery(e.target.value)}
-          placeholder="Search road, pension, police, land…"
+          placeholder={t("Search road, pension, police, land…")}
           className="field-input mt-0"
         />
         <div className="mt-5 space-y-6">
@@ -207,12 +209,12 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
             const items = group.ids
               .map((id) => TOPIC_BY_ID[id])
               .filter((item): item is ProblemTopic => Boolean(item))
-              .filter((item) => topicMatches(item, topicQuery));
+              .filter((item) => topicMatches(item, topicQuery, t));
             if (items.length === 0) return null;
             return (
               <section key={group.title}>
                 <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted">
-                  {group.title}
+                  {t(group.title)}
                 </h3>
                 <div className="mt-2 grid gap-2 sm:grid-cols-2">
                   {items.map((item) => (
@@ -227,11 +229,11 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
               </section>
             );
           })}
-          {topicQuery.trim() && !TOPICS.some((item) => topicMatches(item, topicQuery)) ? (
+          {topicQuery.trim() && !TOPICS.some((item) => topicMatches(item, topicQuery, t)) ? (
             <section className="rounded-2xl border border-line bg-canvas p-4">
-              <h3 className="text-sm font-bold text-ink">No exact topic found</h3>
+              <h3 className="text-sm font-bold text-ink">{t("No exact topic found")}</h3>
               <p className="mt-1 text-[13px] leading-relaxed text-muted">
-                That does not mean RTI cannot help. Start with the general government-record path and tailor the records on the next screens.
+                {t("That does not mean RTI cannot help. Start with the general government-record path and tailor the records on the next screens.")}
               </p>
               <div className="mt-3">
                 <TopicCard
@@ -247,7 +249,7 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
 
       <BottomSheet
         open={sheet === "examples"}
-        title="Example requests"
+        title={t("Example requests")}
         onClose={() => setSheet(null)}
       >
         <ExampleList />
@@ -256,10 +258,14 @@ export function ProblemStep({ assistant }: { assistant: Assistant }) {
   );
 }
 
-function topicMatches(topic: ProblemTopic, query: string): boolean {
+function topicMatches(
+  topic: ProblemTopic,
+  query: string,
+  t: (key: string, fallback?: string) => string,
+): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  return `${topic.label} ${TOPIC_HELP[topic.id]} ${topic.aliases.join(" ")}`
+  return `${topic.label} ${t(topic.label)} ${TOPIC_HELP[topic.id]} ${t(TOPIC_HELP[topic.id])} ${topic.aliases.join(" ")}`
     .toLowerCase()
     .includes(q);
 }
@@ -294,6 +300,7 @@ function TopicCard({
   suggested?: boolean;
   onChoose: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <button
       type="button"
@@ -311,15 +318,15 @@ function TopicCard({
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
           <span className={`text-sm font-bold ${selected ? "text-navy-800" : "text-ink"}`}>
-            {topic.label}
+            {t(topic.label)}
           </span>
           {suggested ? (
             <span className="rounded-full bg-navy-800 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
-              Suggested
+              {t("Suggested")}
             </span>
           ) : null}
         </span>
-        <span className="mt-1 block text-xs leading-[1.45] text-muted">{TOPIC_HELP[topic.id]}</span>
+        <span className="mt-1 block text-xs leading-[1.45] text-muted">{t(TOPIC_HELP[topic.id])}</span>
       </span>
       <span
         aria-hidden

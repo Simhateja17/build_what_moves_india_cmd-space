@@ -785,8 +785,8 @@ function RightsSection({
         may be refused for want of a form or a stamp.
       </p>
 
-      <ol className="mt-6 space-y-6">
-        <li className="border-l-2 border-navy-600/30 pl-5">
+      <ol className="mt-6 flex flex-col gap-6 border-l-2 border-navy-600/30 pl-5">
+        <li>
           <h3 className="text-sm font-bold text-ink">
             First Appeal — section 19(1)
           </h3>
@@ -804,7 +804,7 @@ function RightsSection({
           <OfficerCard officer={appellateAuthority} className="mt-3 max-w-md" />
         </li>
 
-        <li className="border-l-2 border-navy-600/30 pl-5">
+        <li>
           <h3 className="text-sm font-bold text-ink">
             Second Appeal — section 19(3)
           </h3>
@@ -825,7 +825,7 @@ function RightsSection({
           </Link>
         </li>
 
-        <li className="border-l-2 border-navy-600/30 pl-5">
+        <li>
           <h3 className="text-sm font-bold text-ink">
             Complaint — section 18
           </h3>

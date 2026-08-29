@@ -16,28 +16,40 @@ import { useStore } from "@/lib/store";
  * cannot be reached without passing through its own layout, so this holds
  * wherever the citizen came from.
  *
- * Acceptance is stored, so it asks once and never again.
+ * `always` is used by the direct filing form: opening a new request should
+ * always show the official guidance immediately before the form, even when a
+ * previous request has already been acknowledged.
  */
-export function GuidelinesGate({ children }: { children: React.ReactNode }) {
+export function GuidelinesGate({
+  children,
+  always = false,
+}: {
+  children: React.ReactNode;
+  always?: boolean;
+}) {
   const { ready, prefs } = useStore();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
 
   const accepted = prefs.acceptedGuidelines;
+  const returnedFromGuidelines = params.get("guidelines") === "accepted";
   // Carry the query along, so a link that arrives with state on it comes
   // back to the same place rather than to a bare route.
-  const query = params.toString();
+  const destinationParams = new URLSearchParams(params.toString());
+  destinationParams.delete("guidelines");
+  const query = destinationParams.toString();
   const back = query ? `${pathname}?${query}` : pathname;
+  const needsGuidelines = !returnedFromGuidelines && (always || !accepted);
 
   useEffect(() => {
-    if (ready && !accepted) {
+    if (ready && needsGuidelines) {
       router.replace(`/guidelines?next=${encodeURIComponent(back)}`);
     }
-  }, [ready, accepted, back, router]);
+  }, [ready, needsGuidelines, back, router]);
 
   // Nothing renders behind the redirect: a flash of the form before the
   // guidelines replace it would defeat the point of showing them first.
-  if (!ready || !accepted) return null;
+  if (!ready || needsGuidelines) return null;
   return <>{children}</>;
 }

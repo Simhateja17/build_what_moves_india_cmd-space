@@ -21,7 +21,7 @@ export function AppealTag({ size = "sm" }: { size?: "xs" | "sm" }) {
 
   return (
     <span
-      title="An appeal is live on this request"
+      title={t("An appeal is live on this request")}
       className={`inline-flex shrink-0 items-center whitespace-nowrap rounded font-bold uppercase tracking-wider ring-1 ${
         size === "xs"
           ? "px-1.5 py-0.5 text-[9px]"

@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { t } = useLocale();
   const { ready, isAuthenticated } = useStore();
   const router = useRouter();
 
@@ -15,7 +17,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   if (!ready) {
     return (
       <div className="flex flex-1 items-center justify-center py-24">
-        <p className="text-sm text-muted">Loading your requests…</p>
+        <p className="text-sm text-muted">{t("Loading your requests…")}</p>
       </div>
     );
   }

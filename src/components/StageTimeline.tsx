@@ -2,6 +2,7 @@
 
 import { useStore } from "@/lib/store";
 import { Stage, StageState } from "@/lib/stages";
+import { useLocale } from "@/lib/i18n";
 
 const DOT: Record<StageState, string> = {
   done: "bg-govgreen-600 text-white",
@@ -47,6 +48,7 @@ const RAIL: Record<StageState, string> = {
  */
 export function StageTimeline({ stages }: { stages: Stage[] }) {
   const { prefs } = useStore();
+  const { t } = useLocale();
 
   return (
     <ol className="relative">
@@ -71,15 +73,15 @@ export function StageTimeline({ stages }: { stages: Stage[] }) {
 
             <div className="min-w-0 flex-1 pt-0.5">
               <p className={`text-[15px] font-semibold leading-tight ${LABEL[s.state]}`}>
-                {s.label}
+                {t(s.label)}
                 {s.state === "current" ? (
                   <span className="ml-2 rounded bg-navy-50 px-1.5 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wider text-navy-800">
-                    Now
+                    {t("Now")}
                   </span>
                 ) : null}
               </p>
               <p className="mt-1 text-[13px] leading-relaxed text-ink-2">
-                {s.note}
+                {t(s.note)}
               </p>
               {prefs.showOfficialTerms ? (
                 <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-muted">

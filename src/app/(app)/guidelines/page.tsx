@@ -5,8 +5,17 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GUIDELINES } from "@/lib/guidelines";
 import { useStore } from "@/lib/store";
+import { useLocale } from "@/lib/i18n";
 
 const LETTERS = ["a", "b", "c", "d", "e", "f"];
+
+function withGuidelinesAccepted(path: string) {
+  const hashIndex = path.indexOf("#");
+  const hash = hashIndex >= 0 ? path.slice(hashIndex) : "";
+  const destination = hashIndex >= 0 ? path.slice(0, hashIndex) : path;
+  const separator = destination.includes("?") ? "&" : "?";
+  return `${destination}${separator}guidelines=accepted${hash}`;
+}
 
 /**
  * The guidelines an applicant accepts before filing, as published on the
@@ -22,33 +31,34 @@ export default function GuidelinesPage() {
   const router = useRouter();
   const params = useSearchParams();
   const { prefs, setPref } = useStore();
-  const [checked, setChecked] = useState(false);
+  const { t } = useLocale();
+  const [checked, setChecked] = useState(prefs.acceptedGuidelines);
 
   // Where the citizen was heading when the gate stopped them.
   const rawNext = params.get("next");
   const next = rawNext && rawNext.startsWith("/") ? rawNext : "/start-rti";
 
   const submit = () => {
-    if (!checked) return;
+    if (!checked && !prefs.acceptedGuidelines) return;
     setPref("acceptedGuidelines", true);
-    router.push(next);
+    router.push(withGuidelinesAccepted(next));
   };
+
+  const acknowledged = checked || prefs.acceptedGuidelines;
 
   return (
     <div className="mx-auto w-full max-w-[900px] py-2 sm:py-8">
-      <p className="text-sm font-semibold text-navy-700">Before you file</p>
+      <p className="text-sm font-semibold text-navy-700">{t("Before you file")}</p>
       <h1 className="mt-2 text-3xl font-bold leading-[1.08] tracking-[-0.03em] text-navy-900 sm:text-4xl">
-        Guidelines for use of the RTI Online portal
+        {t("Guidelines for use of the RTI Online portal")}
       </h1>
       <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-2">
-        These are the twenty-one guidelines published on the official portal at
-        rtionline.gov.in, reproduced word for word. Read them once; this page
-        will not ask again.
+        {t("These are the twenty-one guidelines published on the official portal at rtionline.gov.in, reproduced word for word. Read them once; this page will not ask again.")}
       </p>
 
       {prefs.acceptedGuidelines ? (
         <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-govgreen-50 px-3.5 py-1.5 text-[13px] font-semibold text-govgreen-700">
-          <span aria-hidden>✓</span> You accepted these guidelines
+          <span aria-hidden>✓</span> {t("You accepted these guidelines")}
         </p>
       ) : null}
 
@@ -59,7 +69,7 @@ export default function GuidelinesPage() {
               {i + 1}.
             </span>
             <div className="min-w-0">
-              <p className="text-[15px] leading-relaxed text-ink">{g.text}</p>
+              <p className="text-[15px] leading-relaxed text-ink">{t(g.text)}</p>
 
               {/* The original hangs these under the point unnumbered, and
                   several of them are the part that actually bites — the
@@ -70,7 +80,7 @@ export default function GuidelinesPage() {
                   key={note}
                   className="mt-1.5 border-l-2 border-line-2 pl-3 text-[14.5px] leading-relaxed text-ink-2"
                 >
-                  {note}
+                  {t(note)}
                 </p>
               ))}
 
@@ -81,7 +91,7 @@ export default function GuidelinesPage() {
                       <span className="mr-1.5 font-semibold text-navy-700">
                         ({LETTERS[j]})
                       </span>
-                      {opt}
+                      {t(opt)}
                     </li>
                   ))}
                 </ul>
@@ -98,12 +108,12 @@ export default function GuidelinesPage() {
         <label className="flex cursor-pointer items-start gap-3">
           <input
             type="checkbox"
-            checked={checked}
+            checked={acknowledged}
             onChange={(e) => setChecked(e.target.checked)}
             className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--navy-800)]"
           />
           <span className="text-[15px] font-semibold text-ink">
-            I have read and understood the above guidelines.
+            {t("I have read and understood the above guidelines.")}
           </span>
         </label>
 
@@ -111,16 +121,16 @@ export default function GuidelinesPage() {
           <button
             type="button"
             onClick={submit}
-            disabled={!checked}
+            disabled={!acknowledged}
             className="rounded-xl bg-navy-800 px-6 py-3 text-sm font-bold text-white transition hover:bg-navy-900 disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
           >
-            {checked ? "Continue" : "Tick the box to continue"}
+            {acknowledged ? t("Continue") : t("Tick the box to continue")}
           </button>
           <Link
             href="/dashboard"
             className="rounded-xl px-4 py-3 text-sm font-semibold text-ink-2 transition hover:bg-navy-50 hover:text-navy-900"
           >
-            Cancel
+            {t("Cancel")}
           </Link>
         </div>
       </div>

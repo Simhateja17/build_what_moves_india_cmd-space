@@ -3,6 +3,7 @@
 import { fillPlaces } from "@/lib/assistant/authorities";
 import { AuthorityMatch } from "@/lib/assistant/types";
 import { GovLevelBadge } from "./GovLevelBadge";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * One office, and the reasoning behind it.
@@ -23,6 +24,7 @@ export function AuthorityCard({
   assumedLabel?: string;
   onChangeAssumption?: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <div className="gov-card p-5">
       <GovLevelBadge level={authority.level} />
@@ -33,29 +35,29 @@ export function AuthorityCard({
         {fillPlaces(authority.wing, place)}
       </p>
       <p className="mt-2 text-[13px] text-muted">
-        Address it to the{" "}
-        <span className="font-semibold text-ink-2">{authority.pioTitle}</span>
+        {t("Address it to the")}{" "}
+        <span className="font-semibold text-ink-2">{t(authority.pioTitle)}</span>
       </p>
 
       {assumedLabel ? (
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-saffron-400/40 bg-saffron-50 px-3 py-2 text-[13px] text-saffron-600">
-          <span>Assumed: {assumedLabel.toLowerCase()}.</span>
+          <span>{t("Assumed: {value}.", undefined, { value: t(assumedLabel).toLowerCase() })}</span>
           {onChangeAssumption ? (
             <button
               type="button"
               onClick={onChangeAssumption}
               className="font-semibold underline underline-offset-2"
             >
-              Change
+              {t("Change")}
             </button>
           ) : null}
         </div>
       ) : null}
 
       <div className="mt-4 space-y-2.5 border-t border-line-2 pt-4">
-        <WhyLine tone="yes" lead="This office does the work." text={authority.why.work} />
-        <WhyLine tone="yes" lead="This office holds the papers." text={authority.why.records} />
-        <WhyLine tone="no" lead="" text={authority.why.notThem} />
+        <WhyLine tone="yes" lead={t("This office does the work.")} text={t(authority.why.work)} />
+        <WhyLine tone="yes" lead={t("This office holds the papers.")} text={t(authority.why.records)} />
+        <WhyLine tone="no" lead="" text={t(authority.why.notThem)} />
       </div>
     </div>
   );
@@ -70,6 +72,7 @@ function WhyLine({
   lead: string;
   text: string;
 }) {
+  const { t } = useLocale();
   return (
     <p className="flex gap-2.5 text-[13px] leading-relaxed text-ink-2">
       <span
@@ -101,7 +104,7 @@ export function AlternativeAuthorities({
   return (
     <div className="gov-card p-5">
       <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
-        If this is not the correct office
+        {t("If this is not the correct office")}
       </p>
       <div className="mt-3 space-y-3">
         {alternatives.map((a) => (
@@ -113,13 +116,13 @@ export function AlternativeAuthorities({
           >
             <span className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold text-ink">
-                {fillPlaces(a.shortName, place)}
+                {t(fillPlaces(a.shortName, place))}
               </span>
               <GovLevelBadge level={a.level} />
             </span>
             {a.condition ? (
               <span className="mt-1 block text-[13px] text-muted">
-                {a.condition}
+                {t(a.condition)}
               </span>
             ) : null}
           </button>

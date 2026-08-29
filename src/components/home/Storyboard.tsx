@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* ------------------------------------------------------------------
    A short sequence of screens with a caption, for showing how a part
@@ -122,13 +122,35 @@ export function Step({
     <g>
       {n > 1 ? (
         <g>
-          <path d={`M190 ${y - 13} V${y - 4}`} stroke={T.line} strokeWidth="1.3" />
-          <path d={`M186.5 ${y - 5} 190 ${y - 0.5} 193.5 ${y - 5}`} fill={T.line} />
+          <path
+            d={`M190 ${y - 13} V${y - 4}`}
+            stroke={T.line}
+            strokeWidth="1.3"
+          />
+          <path
+            d={`M186.5 ${y - 5} 190 ${y - 0.5} 193.5 ${y - 5}`}
+            fill={T.line}
+          />
         </g>
       ) : null}
-      <rect x="0.6" y={y + 0.6} width="378.8" height={h} rx="6" fill={fill} stroke={border} />
+      <rect
+        x="0.6"
+        y={y + 0.6}
+        width="378.8"
+        height={h}
+        rx="6"
+        fill={fill}
+        stroke={border}
+      />
       <circle cx="17" cy={y + 15} r="7.5" fill={T.blue} />
-      <text x="17" y={y + 17.8} fontSize="8" fontWeight="700" textAnchor="middle" fill="#fff">
+      <text
+        x="17"
+        y={y + 17.8}
+        fontSize="8"
+        fontWeight="700"
+        textAnchor="middle"
+        fill="#fff"
+      >
         {n}
       </text>
       <text x="31" y={y + 18} fontSize="8.5" fontWeight="700" fill={T.navy}>
@@ -167,17 +189,38 @@ export function Screen({
 }) {
   return (
     <g>
-      <rect x="0.6" y={y + 0.6} width="378.8" height={h} rx="7" fill="#fff" stroke={T.line} />
+      <rect
+        x="0.6"
+        y={y + 0.6}
+        width="378.8"
+        height={h}
+        rx="7"
+        fill="#fff"
+        stroke={T.line}
+      />
       <path
         d={`M0.6 ${y + 7.6} a7 7 0 0 1 7-7 h364.8 a7 7 0 0 1 7 7 v13 h-378.8 z`}
         fill={T.pale}
       />
-      <line x1="0.6" y1={y + SCREEN_CHROME - 0.4} x2="379.4" y2={y + SCREEN_CHROME - 0.4} stroke={T.line} />
+      <line
+        x1="0.6"
+        y1={y + SCREEN_CHROME - 0.4}
+        x2="379.4"
+        y2={y + SCREEN_CHROME - 0.4}
+        stroke={T.line}
+      />
       <text x="12" y={y + 14} fontSize="9" fontWeight="700" fill={T.navy}>
         {title}
       </text>
       {right ? (
-        <text x="368" y={y + 14} fontSize="7.5" fontWeight="600" textAnchor="end" fill={T.muted}>
+        <text
+          x="368"
+          y={y + 14}
+          fontSize="7.5"
+          fontWeight="600"
+          textAnchor="end"
+          fill={T.muted}
+        >
           {right}
         </text>
       ) : null}
@@ -206,7 +249,15 @@ export function Pill({
   const w = text.length * size * 0.56 + 12;
   return (
     <g>
-      <rect x={x} y={y} width={w} height={size + 5.5} rx={(size + 5.5) / 2} fill={fill} stroke={stroke} />
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={size + 5.5}
+        rx={(size + 5.5) / 2}
+        fill={fill}
+        stroke={stroke}
+      />
       <text
         x={x + w / 2}
         y={y + size + 0.6}
@@ -262,7 +313,15 @@ export function Button({
 }
 
 /** The green tick used wherever something has been settled. */
-export function Tick({ cx, cy, r = 5 }: { cx: number; cy: number; r?: number }) {
+export function Tick({
+  cx,
+  cy,
+  r = 5,
+}: {
+  cx: number;
+  cy: number;
+  r?: number;
+}) {
   return (
     <g>
       <circle cx={cx} cy={cy} r={r} fill={T.green} />
@@ -301,20 +360,49 @@ export function Mini({
 }) {
   return (
     <g transform={`translate(${x} ${y})`}>
-      <rect x="0.5" y="0.5" width={MINI_W - 1} height={MINI_H - 1} rx="5" fill="#fff" stroke={T.line} />
+      <rect
+        x="0.5"
+        y="0.5"
+        width={MINI_W - 1}
+        height={MINI_H - 1}
+        rx="5"
+        fill="#fff"
+        stroke={T.line}
+      />
       {children}
     </g>
   );
 }
 
 /** The assistant's own header: step count, step name, six segments. */
-export function StepHeader({ n, of, label }: { n: number; of: number; label: string }) {
+export function StepHeader({
+  n,
+  of,
+  label,
+}: {
+  n: number;
+  of: number;
+  label: string;
+}) {
   return (
     <g>
-      <text x="7" y="11" fontSize="5.2" fontWeight="700" fill={T.navy} letterSpacing="0.4">
+      <text
+        x="7"
+        y="11"
+        fontSize="5.2"
+        fontWeight="700"
+        fill={T.navy}
+        letterSpacing="0.4"
+      >
         {`STEP ${n} OF ${of}`}
       </text>
-      <text x={MINI_W - 7} y="11" fontSize="5.2" textAnchor="end" fill={T.muted}>
+      <text
+        x={MINI_W - 7}
+        y="11"
+        fontSize="5.2"
+        textAnchor="end"
+        fill={T.muted}
+      >
         {label}
       </text>
       {Array.from({ length: of }).map((_, i) => {
@@ -353,11 +441,24 @@ export function MiniTitle({ title, sub }: { title: string; sub?: string[] }) {
 }
 
 /** The primary action, bottom-right, where every step of the app puts it. */
-export function MiniButton({ text, y = MINI_H - 16 }: { text: string; y?: number }) {
+export function MiniButton({
+  text,
+  y = MINI_H - 16,
+}: {
+  text: string;
+  y?: number;
+}) {
   const w = text.length * 2.9 + 12;
   return (
     <g>
-      <rect x={MINI_W - 7 - w} y={y} width={w} height="11" rx="3.5" fill={T.blue} />
+      <rect
+        x={MINI_W - 7 - w}
+        y={y}
+        width={w}
+        height="11"
+        rx="3.5"
+        fill={T.blue}
+      />
       <text
         x={MINI_W - 7 - w / 2}
         y={y + 7.4}
@@ -397,10 +498,134 @@ export function MiniField({
           {label.toUpperCase()}
         </text>
       ) : null}
-      <rect x={x} y={y} width={w} height={h} rx="3" fill="#fff" stroke={T.line} />
-      <text x={x + 4} y={y + h / 2 + 1.9} fontSize="5" fill={muted ? T.muted : T.ink}>
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx="3"
+        fill="#fff"
+        stroke={T.line}
+      />
+      <text
+        x={x + 4}
+        y={y + h / 2 + 1.9}
+        fontSize="5"
+        fill={muted ? T.muted : T.ink}
+      >
         {value}
       </text>
     </g>
+  );
+}
+
+/**
+ * One screen at a time, in order, looping.
+ *
+ * The six-up contact sheet showed the shape of the flow but asked the
+ * reader to work out its order for themselves, and at hero size none of
+ * the six was large enough to read. Here a single screen fills the card
+ * and the sequence plays: the order is the animation, and the type is
+ * three times the size.
+ *
+ * It loops — this sits inside a hero slide that itself moves on, so
+ * whichever step a visitor arrives mid-cycle on, waiting brings the rest
+ * of them round. Autoplay stops for good the moment a dot is used, and
+ * never starts for anyone who has asked for reduced motion.
+ */
+export function StepPlayer({
+  steps,
+  width,
+  height,
+  label,
+  stepMs = 1900,
+}: {
+  steps: { id: string; art: React.ReactNode }[];
+  width: number;
+  height: number;
+  label: string;
+  stepMs?: number;
+}) {
+  const [index, setIndex] = useState(0);
+  const [auto, setAuto] = useState(true);
+  const [live, setLive] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+
+  // Every hero slide is mounted at once, side by side on a track that is
+  // shifted left. Without this the players all run from page load and a
+  // slide arrives mid-sequence; watching for the panel actually entering
+  // the viewport restarts it from the first screen each time it is shown.
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setLive(entry.isIntersecting);
+        if (entry.isIntersecting) setIndex(0);
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!auto || !live) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(
+      () => setIndex((i) => (i + 1) % steps.length),
+      stepMs,
+    );
+    return () => clearInterval(t);
+  }, [auto, live, steps.length, stepMs]);
+
+  return (
+    <div ref={box}>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="h-auto w-full"
+        role="img"
+        aria-label={label}
+      >
+        {steps.map((s, i) => (
+          <g
+            key={s.id}
+            opacity={i === index ? 1 : 0}
+            aria-hidden={i !== index}
+            style={{
+              transition: "opacity 420ms ease-out, transform 420ms ease-out",
+              // Outgoing screens leave to the left, incoming ones arrive
+              // from the right: the same direction the assistant moves in.
+              transform:
+                i === index ? "none" : `translateX(${i < index ? -6 : 6}px)`,
+              pointerEvents: i === index ? undefined : "none",
+            }}
+          >
+            {s.art}
+          </g>
+        ))}
+      </svg>
+
+      {/* Dots, so a step can be held on rather than waited out. */}
+      <div className="mt-2 flex items-center justify-center gap-1.5">
+        {steps.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => {
+              setAuto(false);
+              setIndex(i);
+            }}
+            aria-label={`Show step ${i + 1} of ${steps.length}`}
+            aria-current={i === index}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === index
+                ? "w-5 bg-navy-700"
+                : "w-1.5 bg-line hover:bg-navy-600/40"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

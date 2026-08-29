@@ -2,6 +2,7 @@
 
 import { useStore } from "@/lib/store";
 import { CaseEvent, EventKind, REPLY_DEADLINE_DAYS } from "@/lib/types";
+import { useLocale } from "@/lib/i18n";
 
 const DOT: Record<EventKind, string> = {
   filed: "bg-navy-700",
@@ -25,6 +26,7 @@ export function CaseTimeline({
   hasReply: boolean;
 }) {
   const { prefs } = useStore();
+  const { t } = useLocale();
 
   const overdue = !hasReply && day > REPLY_DEADLINE_DAYS;
 
@@ -34,13 +36,13 @@ export function CaseTimeline({
         <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-2 text-sm">
           <span className="font-semibold text-ink">
             {hasReply
-              ? "Answered"
+              ? t("Answered")
               : overdue
-                ? `${day - REPLY_DEADLINE_DAYS} days past the legal deadline`
-                : `${REPLY_DEADLINE_DAYS - day} days left before they must reply`}
+                ? t("{count} days past the legal deadline", undefined, { count: day - REPLY_DEADLINE_DAYS })
+                : t("{count} days left before they must reply", undefined, { count: REPLY_DEADLINE_DAYS - day })}
           </span>
           <span className="text-muted">
-            Day {day} of the {REPLY_DEADLINE_DAYS}-day limit
+            {t("Day {day} of the {limit}-day limit", undefined, { day, limit: REPLY_DEADLINE_DAYS })}
           </span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-line-2">
@@ -81,10 +83,10 @@ export function CaseTimeline({
             </div>
             <div className={i < events.length - 1 ? "pb-5" : ""}>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-                Day {event.day}
+                {t("Day {day}", undefined, { day: event.day })}
               </p>
               <p className="mt-0.5 text-[15px] leading-snug text-ink">
-                {event.plain}
+                {t(event.plain)}
               </p>
               {event.official && prefs.showOfficialTerms ? (
                 <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">

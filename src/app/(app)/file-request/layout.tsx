@@ -4,5 +4,5 @@ import { GuidelinesGate } from "@/components/GuidelinesGate";
 export default function FileRequestLayout({
   children,
 }: LayoutProps<"/file-request">) {
-  return <GuidelinesGate>{children}</GuidelinesGate>;
+  return <GuidelinesGate always>{children}</GuidelinesGate>;
 }

@@ -1,4 +1,5 @@
 import { GovLevel, LEVEL_COPY } from "@/lib/assistant/types";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * The colour system that carries the whole feature: navy for central,
@@ -19,11 +20,12 @@ export function GovLevelBadge({
   level: GovLevel;
   className?: string;
 }) {
+  const { t } = useLocale();
   return (
     <span
       className={`inline-flex items-center rounded px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${TONE[level]} ${className}`}
     >
-      {LEVEL_COPY[level].label}
+      {t(LEVEL_COPY[level].label)}
     </span>
   );
 }

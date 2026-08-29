@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n";
 
 type Category = "General" | "Filing RTI" | "Payment" | "Status & Tracking" | "Appeals" | "Others";
 type Faq = { question: string; answer: string; category: Category };
@@ -35,6 +36,7 @@ function previewOf(answer: string): string {
 }
 
 export default function FaqPage() {
+  const { t } = useLocale();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"All" | Category>("All");
   // The top three open by default. Eleven collapsed rows of near-identical
@@ -54,9 +56,9 @@ export default function FaqPage() {
     const needle = query.trim().toLowerCase();
     if (!needle) return FAQS;
     return FAQS.filter((faq) =>
-      `${faq.question} ${faq.answer}`.toLowerCase().includes(needle),
+      `${faq.question} ${faq.answer} ${t(faq.question)} ${t(faq.answer)}`.toLowerCase().includes(needle),
     );
-  }, [query]);
+  }, [query, t]);
 
   const results = useMemo(
     () => searched.filter((faq) => category === "All" || faq.category === category),
@@ -87,35 +89,35 @@ export default function FaqPage() {
 
   return (
     <div className="mx-auto max-w-[1240px]">
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-medium text-ink-2">
+      <nav aria-label={t("Breadcrumb")} className="flex items-center gap-2 text-xs font-medium text-ink-2">
         <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-navy-700 hover:underline">
           <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-3.5"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z" /></svg>
-          Home
+          {t("Home")}
         </Link>
-        <span aria-hidden>›</span><span>FAQ</span>
+        <span aria-hidden>›</span><span>{t("FAQ")}</span>
       </nav>
 
       {/* The cartoon speech-bubble illustration that sat here was drawn in a
           flat orange/indigo style used nowhere else in the app, and brought
           a third orange with it. Dropped rather than half-adopted. */}
       <header className="mt-9">
-        <h1 className="text-3xl font-bold tracking-tight text-navy-900 sm:text-[40px]">Frequently Asked Questions</h1>
-        <p className="mt-2 max-w-xl text-base text-ink-2">Find answers to the most common questions about RTI.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-navy-900 sm:text-[40px]">{t("Frequently Asked Questions")}</h1>
+        <p className="mt-2 max-w-xl text-base text-ink-2">{t("Find answers to the most common questions about RTI.")}</p>
         <span className="mt-5 block h-0.5 w-24 bg-saffron-500" />
       </header>
 
-      <section aria-label="Search and filter frequently asked questions" className="mt-4">
+      <section aria-label={t("Search and filter frequently asked questions")} className="mt-4">
         <label className="relative block">
-          <span className="sr-only">Search for questions</span>
+          <span className="sr-only">{t("Search for questions")}</span>
           <svg aria-hidden viewBox="0 0 24 24" fill="none" className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-ink-2"><circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2"/><path d="m16 16 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search for questions..." className="h-12 w-full rounded-lg border border-slate-200 bg-white pl-12 pr-4 text-sm text-ink shadow-sm outline-none transition placeholder:text-slate-400 focus:border-navy-600 focus:ring-4 focus:ring-navy-50" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Search for questions...")} className="h-12 w-full rounded-lg border border-slate-200 bg-white pl-12 pr-4 text-sm text-ink shadow-sm outline-none transition placeholder:text-slate-400 focus:border-navy-600 focus:ring-4 focus:ring-navy-50" />
         </label>
 
         {query.trim() ? (
           <p aria-live="polite" className="mt-2.5 text-sm text-ink-2">
             {searched.length === 0
-              ? "No questions match "
-              : `${searched.length} question${searched.length === 1 ? "" : "s"} match${searched.length === 1 ? "es" : ""} `}
+              ? t("No questions match")
+              : t("{count} questions match", undefined, { count: searched.length }) + " "}
             <span className="font-semibold text-ink">&ldquo;{query.trim()}&rdquo;</span>
             {" · "}
             <button
@@ -123,12 +125,12 @@ export default function FaqPage() {
               onClick={() => setQuery("")}
               className="font-semibold text-navy-700 hover:underline"
             >
-              Clear
+              {t("Clear")}
             </button>
           </p>
         ) : null}
 
-        <div className="-mx-4 mt-5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0" role="tablist" aria-label="FAQ categories">
+        <div className="-mx-4 mt-5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0" role="tablist" aria-label={t("FAQ categories")}>
           <div className="flex min-w-max gap-3">
             {CATEGORIES.map((item) => {
               const active = category === item;
@@ -143,7 +145,7 @@ export default function FaqPage() {
                   onClick={() => setCategory(item)}
                   className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${active ? "bg-navy-900 text-white shadow-sm" : "bg-navy-50 text-navy-900 hover:bg-blue-100"}`}
                 >
-                  {item}{" "}
+                  {item === "All" ? t("All") : t(item)}{" "}
                   <span className={active ? "text-white/60" : "text-navy-700/55"}>
                     {count}
                   </span>
@@ -164,14 +166,14 @@ export default function FaqPage() {
                 <button type="button" aria-expanded={isOpen} onClick={() => toggle(faq.question)} className="flex w-full items-start justify-between gap-4 px-5 py-4 text-left transition hover:bg-slate-50 sm:px-7">
                   <span className="min-w-0">
                     <span className="block text-[15px] font-bold text-ink">
-                      <Highlight text={faq.question} term={query} />
+                      <Highlight text={t(faq.question)} term={query} />
                     </span>
                     {/* A one-line preview, so a closed row still says
                         something. Eleven identical title bars gave a reader
                         no way to choose which one to open. */}
                     {!isOpen ? (
                       <span className="mt-1 block line-clamp-1 text-[13px] leading-6 text-ink-2">
-                        {previewOf(faq.answer)}
+                        {previewOf(t(faq.answer))}
                       </span>
                     ) : null}
                   </span>
@@ -181,27 +183,27 @@ export default function FaqPage() {
               {isOpen ? (
                 <div className="border-t border-slate-100 px-5 pb-5 pt-4 sm:px-7">
                   <p className="text-sm leading-6 text-ink-2">
-                    <Highlight text={faq.answer} term={query} />
+                    <Highlight text={t(faq.answer)} term={query} />
                   </p>
                   <a
                     href={`#${slug}`}
                     className="mt-3 inline-block text-xs font-semibold text-navy-700 hover:underline"
                   >
-                    Link to this answer
+                    {t("Link to this answer")}
                   </a>
                 </div>
               ) : null}
             </article>
           );
         }) : (
-          <div className="rounded-xl border border-slate-200 bg-white px-5 py-14 text-center"><p className="font-semibold text-ink">No matching questions</p><p className="mt-1 text-sm text-ink-2">Try another search term or category.</p><button type="button" onClick={() => { setQuery(""); setCategory("All"); }} className="mt-4 text-sm font-semibold text-navy-700 hover:underline">Clear search and filters</button></div>
+          <div className="rounded-xl border border-slate-200 bg-white px-5 py-14 text-center"><p className="font-semibold text-ink">{t("No matching questions")}</p><p className="mt-1 text-sm text-ink-2">{t("Try another search term or category.")}</p><button type="button" onClick={() => { setQuery(""); setCategory("All"); }} className="mt-4 text-sm font-semibold text-navy-700 hover:underline">{t("Clear search and filters")}</button></div>
         )}
       </section>
 
       <aside className="mt-7 flex flex-wrap items-center gap-4 overflow-hidden rounded-xl border border-navy-600/15 bg-navy-50 p-4 sm:px-6">
         <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white text-navy-800 ring-1 ring-navy-600/10"><SupportIcon /></div>
-        <div className="mr-auto"><p className="font-bold text-navy-900">Additional assistance</p><p className="mt-0.5 text-sm text-ink-2">Contact support for further assistance.</p></div>
-        <Link href="/contact" className="inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-lg bg-navy-900 px-7 text-sm font-semibold text-white transition hover:bg-navy-800 sm:w-auto">Contact Us <span aria-hidden className="text-saffron-400">→</span></Link>
+        <div className="mr-auto"><p className="font-bold text-navy-900">{t("Additional assistance")}</p><p className="mt-0.5 text-sm text-ink-2">{t("Contact support for further assistance.")}</p></div>
+        <Link href="/contact" className="inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-lg bg-navy-900 px-7 text-sm font-semibold text-white transition hover:bg-navy-800 sm:w-auto">{t("Contact Us")} <span aria-hidden className="text-saffron-400">→</span></Link>
       </aside>
     </div>
   );

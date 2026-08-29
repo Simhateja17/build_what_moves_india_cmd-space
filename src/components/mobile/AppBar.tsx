@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BackIcon } from "./icons";
+import { useLocale } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------
    Three top-bar patterns and nothing else.
@@ -25,11 +26,12 @@ function Bar({ children }: { children: React.ReactNode }) {
 }
 
 export function RootBar({ title }: { title: string }) {
+  const { locale } = useLocale();
   return (
     <Bar>
       <h1 className="truncate text-[17px] font-bold tracking-tight">{title}</h1>
       <span className="ml-auto text-[13px] font-medium text-white/70">
-        EN / हिं
+        {locale === "hi" ? "हिन्दी" : "EN"}
       </span>
     </Bar>
   );
@@ -73,6 +75,7 @@ export function TaskBar({
   exitLabel?: string;
 }) {
   const router = useRouter();
+  const { t } = useLocale();
   return (
     <>
       <Bar>
@@ -80,12 +83,12 @@ export function TaskBar({
           type="button"
           onClick={() => (onBack ? onBack() : router.back())}
           className="m-tap -ml-3 justify-start"
-          aria-label="Go back one step"
+          aria-label={t("Go back one step")}
         >
           <BackIcon className="h-5 w-5" />
         </button>
         <p className="text-[15px] font-semibold" aria-live="polite">
-          Step {step} of {total}
+          {t("Step {step} of {total}", undefined, { step, total })}
         </p>
         <Link
           href={exitHref}
@@ -102,7 +105,7 @@ export function TaskBar({
         aria-valuemin={1}
         aria-valuemax={total}
         aria-valuenow={step}
-        aria-valuetext={`Step ${step} of ${total}`}
+        aria-valuetext={t("Step {step} of {total}", undefined, { step, total })}
       >
         <i style={{ width: `${(step / total) * 100}%` }} />
       </div>

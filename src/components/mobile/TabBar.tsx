@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { deriveCase } from "@/lib/derive";
 import { FileIcon, HelpIcon, HomeIcon } from "./icons";
+import { useLocale } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------
    Three tabs, fixed to the bottom, never hidden on a tab destination.
@@ -13,14 +14,15 @@ import { FileIcon, HelpIcon, HomeIcon } from "./icons";
 ------------------------------------------------------------------- */
 
 const TABS = [
-  { href: "/dashboard", label: "My RTIs", Icon: FileIcon },
-  { href: "/", label: "Home", Icon: HomeIcon },
-  { href: "/faq", label: "Help", Icon: HelpIcon },
+  { href: "/dashboard", key: "My RTIs", Icon: FileIcon },
+  { href: "/", key: "Home", Icon: HomeIcon },
+  { href: "/faq", key: "Help", Icon: HelpIcon },
 ] as const;
 
 export function TabBar() {
   const pathname = usePathname();
   const { cases, dayOf, appealOf } = useStore();
+  const { t } = useLocale();
 
   // The badge counts things the citizen must *do*, not things they have
   // not read. It clears when the action is done, not when the screen is
@@ -31,10 +33,10 @@ export function TabBar() {
   }).length;
 
   return (
-    <nav className="m-tabbar" aria-label="Main">
+    <nav className="m-tabbar" aria-label={t("Main")}>
       {/* Home sits in the middle because the two tabs a returning citizen
           actually uses are their RTIs and help — not the front page. */}
-      {[TABS[1], TABS[0], TABS[2]].map(({ href, label, Icon }) => {
+      {[TABS[1], TABS[0], TABS[2]].map(({ href, key, Icon }) => {
         const active =
           href === "/" ? pathname === "/" : pathname.startsWith(href);
         const badge = href === "/dashboard" ? needsYou : 0;
@@ -56,7 +58,7 @@ export function TabBar() {
                 </span>
               )}
             </span>
-            {label}
+            {t(key)}
             {badge > 0 && (
               <span className="sr-only">, {badge} need your attention</span>
             )}

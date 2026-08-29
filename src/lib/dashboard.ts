@@ -394,7 +394,9 @@ export function actionsFor(
           ? `${c.authority.office} replied, but withheld what you asked for. A refusal is a decision you are entitled to challenge, and filing an appeal is free of cost. ${deadline}`
           : `The Public Authority is ${d.daysLate} days past the legal deadline. Under the Act, this silence is deemed a refusal, and filing an appeal is free of cost. ${deadline}`,
         cta: "File First Appeal",
-        href: `/requests/${c.id}#appeal`,
+        // The appeal form, not an anchor back to the card this button sits
+        // in — on the request page that anchor made the button look dead.
+        href: `/requests/${c.id}/appeal`,
         ref: c.registrationNumber,
       });
     }

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/Reveal";
+import { useLocale } from "@/lib/i18n";
 
 const AUTO_ADVANCE_MS = 4000;
 
@@ -37,6 +38,7 @@ const TOPICS = [
 
 export function GeneralInformation() {
   const [selected, setSelected] = useState(0);
+  const { t } = useLocale();
   const topic = TOPICS[selected];
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function GeneralInformation() {
     <Reveal className="grid gap-7 py-5 md:grid-cols-[minmax(220px,0.72fr)_minmax(0,2fr)] md:gap-12 lg:gap-16">
       <div className="flex min-h-[320px] flex-col sm:min-h-[380px] md:py-3 lg:min-h-[420px]">
         <h2 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">
-          General Information
+          {t("General Information")}
         </h2>
         <div className="mt-4 h-px w-full bg-line" />
         <ul className="flex flex-1 flex-col divide-y divide-line">
@@ -67,7 +69,7 @@ export function GeneralInformation() {
                     : "text-ink-2 hover:text-navy-700"
                 }`}
               >
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
                 <span
                   aria-hidden
                   className={`transition ${
@@ -89,17 +91,15 @@ export function GeneralInformation() {
         aria-live="polite"
       >
         <div key={selected} className="animate-slide">
-          <p className="text-lg font-bold text-saffron-500">
-            {topic.title}
-          </p>
+          <p className="text-lg font-bold text-saffron-500">{t(topic.title)}</p>
           <p className="mt-5 max-w-2xl text-[15px] leading-7 text-ink-2">
-            {topic.body}
+            {t(topic.body)}
           </p>
           <Link
             href="/faq"
             className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-navy-700 transition hover:text-navy-900 hover:underline"
           >
-            Know more <span aria-hidden>›</span>
+            {t("Know more")} <span aria-hidden>›</span>
           </Link>
         </div>
 

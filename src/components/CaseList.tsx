@@ -28,10 +28,12 @@ const CLOCK_BAR: Record<Tone, string> = {
 
 /** How long the department has left, as a number and a thin track. */
 function Clock({ clock, width = "w-24" }: { clock: RowClock; width?: string }) {
+  const { t } = useLocale();
+  const label = localizeClockLabel(clock.label, t);
   return (
     <span className="block">
       <span className={`block text-xs font-bold tabular-nums ${CLOCK_TEXT[clock.tone]}`}>
-        {clock.label}
+        {label}
       </span>
       {clock.pct !== null ? (
         <span
@@ -68,7 +70,7 @@ export function CaseList({
   density?: "compact" | "full";
 }) {
   const compact = density === "compact";
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   return (
     <>
@@ -126,7 +128,7 @@ export function CaseList({
                     {badge.inAppeal ? <AppealTag size="xs" /> : null}
                   </span>
                   <span className="mt-1 block text-[11px] text-muted">
-                    {t("list.filed")} {formatDate(view.submittedOn)}
+                    {t("list.filed")} {formatDate(view.submittedOn, locale)}
                   </span>
                 </td>
                 <td
@@ -142,7 +144,7 @@ export function CaseList({
                 </td>
                 {!compact ? (
                   <td className="whitespace-nowrap border-b border-line-2 px-4 py-3.5 text-ink-2">
-                    {formatDate(lastUpdated)}
+                    {formatDate(lastUpdated, locale)}
                   </td>
                 ) : null}
                 <td className="border-b border-line-2 px-4 py-3.5 text-right">
@@ -205,4 +207,23 @@ export function CaseList({
       </ul>
     </>
   );
+}
+
+function localizeClockLabel(
+  label: string,
+  t: (key: string, fallback?: string, values?: Record<string, string | number>) => string,
+): string {
+  const overdue = label.match(/^(\d+) day(s)? overdue$/);
+  if (overdue) {
+    return t(overdue[2] ? "{count} days overdue" : "{count} day overdue", undefined, {
+      count: overdue[1],
+    });
+  }
+  const left = label.match(/^(\d+) day(s)? left$/);
+  if (left) {
+    return t(left[2] ? "{count} days left" : "{count} day left", undefined, {
+      count: left[1],
+    });
+  }
+  return t(label);
 }
