@@ -1,3 +1,6 @@
+"use client";
+
+import { useStore } from "@/lib/store";
 import { CaseEvent, EventKind, REPLY_DEADLINE_DAYS } from "@/lib/types";
 
 const DOT: Record<EventKind, string> = {
@@ -21,6 +24,8 @@ export function CaseTimeline({
   day: number;
   hasReply: boolean;
 }) {
+  const { prefs } = useStore();
+
   const overdue = !hasReply && day > REPLY_DEADLINE_DAYS;
 
   return (
@@ -81,7 +86,7 @@ export function CaseTimeline({
               <p className="mt-0.5 text-[15px] leading-snug text-ink">
                 {event.plain}
               </p>
-              {event.official ? (
+              {event.official && prefs.showOfficialTerms ? (
                 <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">
                   {event.official}
                 </p>

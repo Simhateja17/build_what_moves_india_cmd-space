@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/Reveal";
@@ -84,7 +85,7 @@ export function GeneralInformation() {
       </div>
 
       <article
-        className="gov-card grid min-h-[320px] items-center gap-6 p-6 sm:min-h-[380px] sm:p-8 lg:min-h-[420px] lg:grid-cols-[minmax(0,1.45fr)_minmax(220px,0.75fr)] lg:gap-10"
+        className="gov-card relative grid min-h-[320px] items-center gap-6 p-6 sm:min-h-[380px] sm:p-8 lg:min-h-[420px] lg:grid-cols-[minmax(0,1.45fr)_minmax(220px,0.75fr)] lg:gap-10"
         aria-live="polite"
       >
         <div key={selected} className="animate-slide">
@@ -95,43 +96,38 @@ export function GeneralInformation() {
             {topic.body}
           </p>
           <Link
-            href="/about"
+            href="/faq"
             className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-navy-700 transition hover:text-navy-900 hover:underline"
           >
             Know more <span aria-hidden>›</span>
           </Link>
         </div>
 
-        <div className="mx-auto w-full max-w-[280px]" aria-hidden="true">
-          <InformationIllustration />
+        {/* Run into the card's bottom-right corner rather than floated in the
+            middle of it. The artwork is cut off at its own bottom edge, so
+            centred it ended on a hard horizontal line; bled off the corner
+            the cut falls outside the card and reads as intended. The card
+            clips to its own radius, so the overhang is trimmed for free.
+
+            One element, two behaviours: in flow underneath the text while the
+            card is a single column, absolute in the corner once the second
+            column exists to keep the text clear of it.
+
+            Decorative, so it carries an empty alt — the heading and body
+            already say everything the picture stands in for. */}
+        <div
+          className="mx-auto w-full max-w-[280px] lg:absolute lg:-bottom-2 lg:right-0 lg:mx-0 lg:w-[38%] lg:max-w-[360px]"
+          aria-hidden="true"
+        >
+          <Image
+            src="/rti-stamp-gavel.png"
+            alt=""
+            width={550}
+            height={420}
+            className="h-auto w-full"
+          />
         </div>
       </article>
     </Reveal>
-  );
-}
-
-function InformationIllustration() {
-  return (
-    <svg viewBox="0 0 330 230" role="presentation">
-      <path d="M28 202h274" stroke="#cbd6e8" strokeLinecap="round" strokeWidth="4" />
-      <path d="M42 195c-15-31-9-70 24-92 23 25 26 61 6 92" fill="#98c6b0" />
-      <path d="M57 183 52 121m6 31 20-20m-22 38-17-15" fill="none" stroke="#edf7f2" strokeLinecap="round" strokeWidth="4" />
-      <path d="M272 196c21-29 18-64-11-86-27 22-31 60-13 86" fill="#a7c8b0" />
-      <path d="m258 185 7-53m-5 24-19-14m17 30 17-17" fill="none" stroke="#edf7f2" strokeLinecap="round" strokeWidth="4" />
-
-      <path d="M91 63h65v58H91c-16 0-28-13-28-29s12-29 28-29Z" fill="#75b9a7" />
-      <path d="M156 63h62v58h-21c2 5 2 10 0 15-5 12-21 15-30 6-6-6-7-14-4-21h-27V63Z" fill="#315e9f" />
-      <path d="M91 121h65v24c-5-2-10-2-15 0-12 5-15 21-6 30 6 6 14 7 21 4v17H91v-21c-4 2-9 2-14 0-12-5-15-21-6-30 6-6 13-7 20-4v-20Z" fill="#e47758" />
-      <path d="M156 142c5 2 10 2 15 0 12-5 15-21 6-30-6-6-14-7-21-4V63h21c-2-5-2-10 0-15 5-12 21-15 30-6 6 6 7 14 4 21h7v58h22c-2 5-2 10 0 15 5 12 21 15 30 6 6-6 7-14 4-21h8v75h-64v-21c5 2 10 2 15 0 12-5 15-21 6-30-6-6-14-7-21-4v55h-62v-54Z" fill="#f2c85c" />
-
-      <circle cx="112" cy="44" r="12" fill="#e5a06f" />
-      <path d="M94 66c2-16 8-24 18-24s17 8 19 24" fill="#315e9f" />
-      <circle cx="241" cy="92" r="12" fill="#d99162" />
-      <path d="M223 122c1-19 7-29 18-29s18 10 20 29" fill="#e47758" />
-      <circle cx="187" cy="184" r="11" fill="#d99162" />
-      <path d="M169 204c3-14 9-21 18-21s15 7 18 21" fill="#315e9f" />
-      <circle cx="78" cy="139" r="10" fill="#e5a06f" />
-      <path d="M62 165c2-18 7-27 16-27s15 9 17 27" fill="#f2c85c" />
-    </svg>
   );
 }

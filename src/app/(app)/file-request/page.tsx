@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { MINISTRIES, OFFICES } from "@/lib/mock-data";
-import { AssistantHandoff, HANDOFF_KEY } from "@/lib/assistant/types";
+import { AssistantHandoff, GovLevel, HANDOFF_KEY } from "@/lib/assistant/types";
 import { caseFromDraft, makeRegistrationNumber } from "@/lib/payment";
 import { GroundRealityNote } from "@/components/GroundRealityNote";
 import { DraftStatus } from "@/components/DraftStatus";
@@ -39,6 +39,35 @@ interface Draft {
   email: string;
   mobile: string;
   isBpl: boolean;
+  /**
+   * Which government this is addressed to. Kept in the saved draft
+   * because a state authority is not in the central dropdowns — without
+   * it, a reload would repaint the two selects empty and lose an office
+   * the citizen already settled.
+   */
+  level?: GovLevel;
+  pioTitle?: string;
+}
+
+/**
+ * The assistant's handoff, read during state setup for the same reason
+ * the draft is: the fields have to be filled on the first paint.
+ *
+ * This deliberately does not consume the key — an effect does that once
+ * the values are safely in state. Reading and deleting in the same pass
+ * is what broke it before: StrictMode mounts twice, the first pass
+ * deleted the key, and the second found nothing to fill from.
+ */
+function loadHandoff(): AssistantHandoff | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(HANDOFF_KEY);
+    if (!raw) return null;
+    const h = JSON.parse(raw) as AssistantHandoff;
+    return h.question ? h : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -62,49 +91,48 @@ export default function FileRequestPage() {
   const { addCase, startPayment } = useStore();
   const router = useRouter();
 
+  // Someone arriving from the assistant has already settled the three
+  // things a first-time filer cannot settle alone — which office, which
+  // department, and what to actually ask. Carrying those over and
+  // opening on "Applicant details" is the whole point of the handoff;
+  // asking them again would undo the work.
+  const [handoff] = useState(loadHandoff);
   const [draft] = useState(loadDraft);
-  const [step, setStep] = useState(draft?.step ?? 0);
-  const [ministry, setMinistry] = useState(draft?.ministry ?? "");
-  const [office, setOffice] = useState(draft?.office ?? "");
-  const [question, setQuestion] = useState(draft?.question ?? "");
+  const [step, setStep] = useState(
+    handoff ? (handoff.ministry && handoff.office ? 2 : 0) : (draft?.step ?? 0),
+  );
+  const [ministry, setMinistry] = useState(handoff?.ministry ?? draft?.ministry ?? "");
+  const [office, setOffice] = useState(handoff?.office ?? draft?.office ?? "");
+  const [question, setQuestion] = useState(handoff?.question ?? draft?.question ?? "");
   const [name, setName] = useState(draft?.name ?? "Ananya Sharma");
   const [email, setEmail] = useState(draft?.email ?? "ananya.sharma@example.in");
   const [mobile, setMobile] = useState(draft?.mobile ?? "");
   const [isBpl, setIsBpl] = useState(draft?.isBpl ?? false);
-  const [handoff, setHandoff] = useState<AssistantHandoff | null>(null);
+  const [level] = useState<GovLevel | undefined>(handoff?.level ?? draft?.level);
+  const [pioTitle] = useState<string | undefined>(
+    handoff?.pioTitle ?? draft?.pioTitle,
+  );
 
-  // Someone arriving from the assistant has already settled the three
-  // things a first-time filer cannot settle alone — which office, which
-  // department, and what to actually ask. Carrying those over and
-  // opening on "About you" is the whole point of the handoff; asking
-  // them again would undo the work.
+  // A state or local authority has no row in the central lists, so the
+  // two dropdowns cannot represent it. The step names the office the
+  // assistant settled on instead, and stays editable by going back.
+  const stateRoute = level !== undefined && level !== "central";
+
+  // The handoff is a one-shot: consumed once its values are in state,
+  // so a later reload of this page reads the saved draft instead.
   useEffect(() => {
-    let timer: number | undefined;
+    if (!handoff) return;
     try {
-      const raw = window.sessionStorage.getItem(HANDOFF_KEY);
-      if (!raw) return;
       window.sessionStorage.removeItem(HANDOFF_KEY);
-      const h: AssistantHandoff = JSON.parse(raw);
-      if (!h.question) return;
-      timer = window.setTimeout(() => {
-        setHandoff(h);
-        setMinistry(h.ministry);
-        setOffice(h.office);
-        setQuestion(h.question);
-        setStep(h.ministry && h.office ? 2 : 0);
-      }, 0);
     } catch {
-      /* private mode — the form simply opens empty */
+      /* private mode — there was nothing stored to consume */
     }
-    return () => {
-      if (timer !== undefined) window.clearTimeout(timer);
-    };
-  }, []);
+  }, [handoff]);
 
   // Serialised in render, so the effect has a single primitive dependency
   // and needs no setState of its own to report that it saved.
   const draftBody = JSON.stringify({
-    step, ministry, office, question, name, email, mobile, isBpl,
+    step, ministry, office, question, name, email, mobile, isBpl, level, pioTitle,
   } satisfies Draft);
 
   // Persist on every change. A citizen on a shared phone or a patchy
@@ -264,11 +292,12 @@ export default function FileRequestPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-bold text-ink">
-                  Select the authority
+                  {stateRoute ? "The authority" : "Select the authority"}
                 </h2>
                 <p className="mt-1 text-sm text-ink-2">
-                  If you are unsure, select your best estimate. This
-                  selection will not affect your application.
+                  {stateRoute
+                    ? "This application is addressed to the office below. To change it, go back to the assistant."
+                    : "If you are unsure, select your best estimate. This selection will not affect your application."}
                 </p>
               </div>
 
@@ -276,8 +305,10 @@ export default function FileRequestPage() {
                 <div className="rounded-lg border border-govgreen-600/30 bg-govgreen-50 px-4 py-3">
                   <p className="text-sm leading-relaxed text-govgreen-700">
                     <strong>Selected by the assistant:</strong>{" "}
-                    {handoff.authorityName}. This may be changed below if
-                    incorrect.
+                    {handoff.authorityName}.
+                    {stateRoute
+                      ? " Your draft has been carried over — review the applicant details and send it."
+                      : " This may be changed below if incorrect."}
                   </p>
                 </div>
               ) : (
@@ -289,66 +320,106 @@ export default function FileRequestPage() {
                 </Link>
               )}
 
-              <div>
-                <label htmlFor="ministry" className="field-label">
-                  Ministry or department
-                </label>
-                <select
-                  id="ministry"
-                  value={ministry}
-                  onChange={(e) => {
-                    setMinistry(e.target.value);
-                    setOffice("");
-                    touch("ministry");
-                  }}
-                  className="field-input"
-                >
-                  <option value="">Select a ministry or department</option>
-                  {MINISTRIES.map((m) => (
-                    <option key={m}>{m}</option>
-                  ))}
-                </select>
-                {showError("ministry") ? (
-                  <p className="mt-1.5 text-sm text-govred-700">{errors.ministry}</p>
-                ) : null}
-                <GroundRealityNote>
-                  This decides which Nodal Officer receives your request. If you
-                  pick the wrong one, Section 6(3) of the RTI Act requires them
-                  to forward it to the correct authority within 5 days — they
-                  cannot simply reject it.
-                </GroundRealityNote>
-              </div>
+              {stateRoute ? (
+                <div className="rounded-lg border border-line bg-canvas px-4 py-3.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
+                    Addressed to
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-ink">
+                    {pioTitle ?? "Public Information Officer"}
+                  </p>
+                  {/* The PIO title usually already names the office —
+                      printing it twice reads like a mistake. */}
+                  {pioTitle?.includes(office) ? null : (
+                    <p className="text-sm text-ink-2">{office}</p>
+                  )}
+                  <p className="text-sm text-ink-2">{ministry}</p>
+                  <GroundRealityNote>
+                    A state office is not listed in the central
+                    ministry dropdowns, so this application names it
+                    directly. Section 6(3) still applies: if it reaches the
+                    wrong officer, they must forward it within 5 days rather
+                    than reject it.
+                  </GroundRealityNote>
+                </div>
+              ) : (
+                <>
+                <div>
+                  <label htmlFor="ministry" className="field-label">
+                    Ministry or department
+                  </label>
+                  <select
+                    id="ministry"
+                    value={ministry}
+                    onChange={(e) => {
+                      setMinistry(e.target.value);
+                      setOffice("");
+                      touch("ministry");
+                    }}
+                    className="field-input"
+                  >
+                    <option value="">Select a ministry or department</option>
+                    {MINISTRIES.map((m) => (
+                      <option key={m}>{m}</option>
+                    ))}
+                  </select>
+                  {showError("ministry") ? (
+                    <p className="mt-1.5 text-sm text-govred-700">{errors.ministry}</p>
+                  ) : null}
+                  <GroundRealityNote>
+                    This decides which Nodal Officer receives your request. If you
+                    pick the wrong one, Section 6(3) of the RTI Act requires them
+                    to forward it to the correct authority within 5 days — they
+                    cannot simply reject it.
+                  </GroundRealityNote>
+                </div>
 
-              <div>
-                <label htmlFor="office" className="field-label">
-                  Office within the ministry or department
-                </label>
-                <select
-                  id="office"
-                  value={office}
-                  onChange={(e) => { setOffice(e.target.value); touch("office"); }}
-                  disabled={!ministry}
-                  className="field-input disabled:cursor-not-allowed disabled:bg-canvas"
-                >
-                  <option value="">
-                    {ministry ? "Select an office" : "Choose a ministry first"}
-                  </option>
-                  {offices.map((o) => (
-                    <option key={o}>{o}</option>
-                  ))}
-                </select>
-                {showError("office") ? (
-                  <p className="mt-1.5 text-sm text-govred-700">{errors.office}</p>
-                ) : null}
-              </div>
+                <div>
+                  <label htmlFor="office" className="field-label">
+                    Office within the ministry or department
+                  </label>
+                  <select
+                    id="office"
+                    value={office}
+                    onChange={(e) => { setOffice(e.target.value); touch("office"); }}
+                    disabled={!ministry}
+                    className="field-input disabled:cursor-not-allowed disabled:bg-canvas"
+                  >
+                    <option value="">
+                      {ministry ? "Select an office" : "Choose a ministry first"}
+                    </option>
+                    {offices.map((o) => (
+                      <option key={o}>{o}</option>
+                    ))}
+                  </select>
+                  {showError("office") ? (
+                    <p className="mt-1.5 text-sm text-govred-700">{errors.office}</p>
+                  ) : null}
+                </div>
+                </>
+              )}
 
               <div className="rounded-lg border border-saffron-400/40 bg-saffron-50 px-4 py-3">
                 <p className="text-sm leading-relaxed text-saffron-600">
-                  <strong>Note:</strong> this portal covers central
-                  government bodies only. A request intended for a state
-                  government will be returned without a refund. If your
-                  question concerns a state office, file it on that
-                  state&apos;s RTI portal.
+                  {stateRoute ? (
+                    <>
+                      <strong>Note:</strong> this is a state matter, so it
+                      goes to the officer named above rather than to a
+                      central ministry. {handoff?.stateName ?? "Your state"}{" "}
+                      may also accept the same application at its own
+                      counter or on its own RTI portal — keep the receipt
+                      either way, because the 30-day clock runs from the
+                      date of receipt.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Note:</strong> this portal covers central
+                      government bodies only. A request intended for a state
+                      government will be returned without a refund. If your
+                      question concerns a state office, file it on that
+                      state&apos;s RTI portal.
+                    </>
+                  )}
                 </p>
               </div>
             </div>

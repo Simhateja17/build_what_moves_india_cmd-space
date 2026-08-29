@@ -33,7 +33,7 @@ export interface HeroSlide {
   art: React.ReactNode;
 }
 
-const AUTOPLAY_MS = 7000;
+const AUTOPLAY_MS = 12000;
 const DRAG_THRESHOLD = 60;
 
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {

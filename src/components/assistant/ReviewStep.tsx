@@ -15,13 +15,16 @@ import { GovLevelBadge } from "./GovLevelBadge";
 import { StateFilingSheet } from "./StateFilingSheet";
 
 /**
- * The handoff splits by level, and that split is the point.
+ * Every match walks into the form, and the handoff carries the level
+ * with it.
  *
- * A central match walks into the existing form with the three fields a
- * first-time filer cannot fill on their own already chosen. A state or
- * local match gets no route into that form at all — sending it there
- * would produce exactly the returned application this whole feature
- * exists to prevent.
+ * The three things a first-time filer cannot settle alone — which
+ * office, which department, and what to actually ask — are settled by
+ * the time this screen renders, so the form opens on "Applicant
+ * details" with them already filled. A state or local match takes the
+ * same route; what changes is that the form addresses it to the PIO of
+ * the named office rather than to a central ministry, and says so.
+ * Where the state runs its own portal, the sheet is still one tap away.
  */
 export function ReviewStep({
   assistant,
@@ -64,11 +67,17 @@ export function ReviewStep({
     : "Not specified";
 
   function continueToForm() {
+    // A central match has its two dropdown values. A state or local one
+    // has no entry in those lists, so it hands over the authority and
+    // its wing instead — the form renders them as named text.
     const handoff: AssistantHandoff = {
-      ministry: authority.ministry ?? "",
-      office: authority.office ?? "",
+      ministry: authority.ministry ?? fillPlaces(authority.name, place),
+      office: authority.office ?? fillPlaces(authority.wing, place),
       question: portalText,
       authorityName: fillPlaces(authority.name, place),
+      level: authority.level,
+      pioTitle: authority.pioTitle,
+      stateName: state.stateName,
     };
     try {
       window.sessionStorage.setItem(HANDOFF_KEY, JSON.stringify(handoff));
@@ -93,13 +102,9 @@ export function ReviewStep({
       step="review"
       title="Review before submission"
       onBack={goBack}
-      primaryLabel={
-        central
-          ? "Continue to the form"
-          : `How to file this in ${state.stateName || "your state"}`
-      }
-      primaryTone={central ? "navy" : "amber"}
-      onPrimary={central ? continueToForm : () => setSheet(true)}
+      primaryLabel="Continue to the form"
+      primaryTone="navy"
+      onPrimary={continueToForm}
     >
       <div className="gov-card divide-y divide-line-2">
         <Row label="Addressed to" onEdit={() => dispatch({ type: "go", step: "authority" })}>
@@ -152,10 +157,13 @@ export function ReviewStep({
             </>
           ) : (
             <>
-              This is a {state.stateName || "state"} matter and is not filed
-              through this portal. The draft is ready for use and may be
-              submitted to the {authority.pioTitle}, or filed on the
-              state&apos;s RTI portal.
+              This is a {state.stateName || "state"} matter, so it is
+              addressed to the {authority.pioTitle} rather than to a
+              central ministry. The draft carries into the form; only the
+              remaining details need to be added.{" "}
+              {state.stateName || "Your state"} may
+              also accept it on its own RTI portal or over the counter — the
+              link below sets out both.
             </>
           )}
         </p>
@@ -163,6 +171,13 @@ export function ReviewStep({
 
       {!central ? (
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setSheet(true)}
+            className="btn-secondary basis-full text-sm"
+          >
+            How to file this in {state.stateName || "your state"}
+          </button>
           <button
             type="button"
             onClick={async () => {

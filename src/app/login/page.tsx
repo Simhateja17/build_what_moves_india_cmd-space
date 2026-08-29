@@ -170,7 +170,7 @@ export default function LoginPage() {
 
             <p className="mt-4 text-center text-sm text-muted">
               New here?{" "}
-              <Link href="/about" className="font-medium text-navy-700 hover:underline">
+              <Link href="/faq" className="font-medium text-navy-700 hover:underline">
                 See how this works first
               </Link>
             </p>

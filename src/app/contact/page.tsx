@@ -130,7 +130,7 @@ export default function ContactPage() {
               <p className="text-sm font-bold text-navy-900">Before submitting a query, the FAQ section may be checked.</p>
               <p className="mt-1 text-sm text-ink-2">You may find answers to common questions there.</p>
             </div>
-            <Link href="/about" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-bold text-navy-700 shadow-sm hover:bg-navy-50">View FAQ <span aria-hidden>→</span></Link>
+            <Link href="/faq" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-bold text-navy-700 shadow-sm hover:bg-navy-50">View FAQ <span aria-hidden>→</span></Link>
           </aside>
         </div>
       </main>

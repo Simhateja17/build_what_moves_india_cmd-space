@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { useDashboard } from "@/lib/use-dashboard";
+import { SEED_APPLICANT } from "@/lib/mock-data";
 
 export default function ProfilePage() {
-  const { citizenName, logout } = useStore();
+  const { citizenName, logout, prefs, setPref } = useStore();
   const { overview } = useDashboard();
   const router = useRouter();
 
@@ -17,83 +18,131 @@ export default function ProfilePage() {
     .join("");
 
   return (
+    // A summary rail beside the settings, rather than three columns of
+    // unequal height. The old layout nested a grid inside a grid, so the
+    // identity card, the stats and the two settings cards each ended
+    // where their own content ran out — leaving a block of dead space
+    // under the stats and two cards on the right that never lined up.
     <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">
         Profile
       </h1>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.2fr)]">
-        <div className="space-y-6">
-      <div className="gov-card flex items-center gap-4 p-5">
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-navy-800 text-lg font-bold text-white">
-          {initials}
-        </span>
-        <div className="min-w-0">
-          <p className="text-lg font-bold text-ink">{citizenName}</p>
-          <p className="truncate text-sm text-ink-2">ananya.sharma@example.in</p>
-          <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">
-            Citizen account
-          </p>
-        </div>
-      </div>
-
-      {/* Their record at a glance — the same numbers as Home, not new ones */}
-      <div className="grid grid-cols-3 gap-2.5">
-        {[
-          { label: "RTIs filed", value: overview.total },
-          { label: "Answered", value: overview.answered },
-          { label: "Appeals", value: overview.appeals },
-        ].map((s) => (
-          <div key={s.label} className="gov-card px-4 py-3.5 text-center">
-            <p className="text-2xl font-bold tabular-nums leading-none text-navy-900">
-              {s.value}
-            </p>
-            <p className="mt-1.5 text-[12px] leading-tight text-ink-2">{s.label}</p>
+      <div className="grid gap-6 lg:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] lg:items-start">
+        {/* Who you are, and the shape of your record. Sticky, so the rail
+            keeps pace on a long screen instead of stranding whitespace. */}
+        <aside className="space-y-3 lg:sticky lg:top-24">
+          <div className="gov-card flex items-center gap-4 p-5">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-navy-800 text-lg font-bold text-white">
+              {initials}
+            </span>
+            <div className="min-w-0">
+              <p className="text-lg font-bold text-ink">{citizenName}</p>
+              <p className="truncate text-sm text-ink-2">
+                {SEED_APPLICANT.email}
+              </p>
+              <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">
+                Citizen account
+              </p>
+            </div>
           </div>
-        ))}
+
+          {/* Their record at a glance — the same numbers as Home, not new ones */}
+          <div className="grid grid-cols-3 gap-2.5">
+            {[
+              { label: "RTIs filed", value: overview.total },
+              { label: "Answered", value: overview.answered },
+              { label: "Appeals", value: overview.appeals },
+            ].map((s) => (
+              <div key={s.label} className="gov-card px-3 py-3.5 text-center">
+                <p className="text-2xl font-bold tabular-nums leading-none text-navy-900">
+                  {s.value}
+                </p>
+                <p className="mt-1.5 text-[12px] leading-tight text-ink-2">
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Sized to the rail. It was the widest element on the page —
+              a destructive action drawn larger than anything it sits
+              under. */}
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              router.push("/");
+            }}
+            className="w-full rounded-xl border border-govred-600/30 bg-surface px-5 py-3 text-sm font-semibold text-govred-700 transition hover:bg-govred-50"
+          >
+            Sign out
+          </button>
+
+          <p className="px-1 pt-1 text-[12px] leading-relaxed text-muted">
+            This is a redesign concept. Nothing here reaches a real
+            government system, and no data leaves your browser.
+          </p>
+        </aside>
+
+        <div className="space-y-6">
+          <section>
+            <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-muted">
+              Your account
+            </h2>
+            <div className="gov-card divide-y divide-line-2">
+              <Row
+                href="/check-payment"
+                label="Payments"
+                hint="Fees paid and their status"
+              />
+              <Row
+                href="/my-rtis?filter=answered"
+                label="Saved responses"
+                hint="Every answer you have received"
+              />
+              <Row
+                href="/faq"
+                label="How this works"
+                hint="What the law gives you, in plain words"
+              />
+            </div>
+          </section>
+
+          <section>
+            <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-muted">
+              Preferences
+            </h2>
+            <div className="gov-card divide-y divide-line-2">
+              {/* The only preference that changes what the app does, so it
+                  leads. The two below describe messages a prototype with no
+                  backend cannot send — they are remembered, and say so,
+                  rather than presenting a switch that quietly does nothing. */}
+              <Toggle
+                label="Show official terms"
+                hint="Department wording under every status"
+                on={prefs.showOfficialTerms}
+                onChange={(v) => setPref("showOfficialTerms", v)}
+              />
+              <Toggle
+                label="Email updates"
+                hint={`${SEED_APPLICANT.email} · not sent in this demo`}
+                on={prefs.emailUpdates}
+                onChange={(v) => setPref("emailUpdates", v)}
+              />
+              <Toggle
+                label="SMS deadline reminders"
+                hint="Three days before each deadline · not sent in this demo"
+                on={prefs.smsReminders}
+                onChange={(v) => setPref("smsReminders", v)}
+              />
+            </div>
+            <p className="mt-2 px-1 text-[12px] leading-relaxed text-muted">
+              Preferences are saved on this device.
+            </p>
+          </section>
+        </div>
       </div>
-        </div>
-
-        <div className="grid gap-6 xl:grid-cols-2">
-      <section>
-        <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-muted">
-          Your account
-        </h2>
-        <div className="gov-card divide-y divide-line-2">
-          <Row href="/check-payment" label="Payments" hint="Fees paid and their status" />
-          <Row href="/my-rtis?filter=answered" label="Saved responses" hint="Every answer you have received" />
-          <Row href="/about" label="How this works" hint="What the law gives you, in plain words" />
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-muted">
-          Preferences
-        </h2>
-        <div className="gov-card divide-y divide-line-2">
-          <Toggle label="Email updates" hint="ananya.sharma@example.in" on />
-          <Toggle label="SMS deadline reminders" hint="Three days before each deadline" on />
-          <Toggle label="Show official terms" hint="Department wording under every status" on />
-        </div>
-      </section>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => {
-          logout();
-          router.push("/");
-        }}
-        className="w-full rounded-xl border border-govred-600/30 bg-surface px-5 py-3.5 text-[15px] font-semibold text-govred-700 transition hover:bg-govred-50"
-      >
-        Sign out
-      </button>
-
-      <p className="pb-2 text-center text-xs leading-relaxed text-muted">
-        This is a redesign concept. Nothing here reaches a real government
-        system, and no data leaves your browser.
-      </p>
     </div>
   );
 }
@@ -123,15 +172,22 @@ function Row({
   );
 }
 
-/** Presentational only — the prototype has no backend to persist to. */
+/**
+ * Controlled, and persisted through the store. It used to be
+ * `defaultChecked` with no handler — the switch moved, nothing changed,
+ * and a reload put it back. A control that cannot be obeyed should not
+ * be drawn.
+ */
 function Toggle({
   label,
   hint,
   on,
+  onChange,
 }: {
   label: string;
   hint: string;
-  on?: boolean;
+  on: boolean;
+  onChange: (value: boolean) => void;
 }) {
   return (
     <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5">
@@ -139,7 +195,12 @@ function Toggle({
         <span className="block text-[15px] font-semibold text-ink">{label}</span>
         <span className="block text-[13px] text-ink-2">{hint}</span>
       </span>
-      <input type="checkbox" defaultChecked={on} className="peer sr-only" />
+      <input
+        type="checkbox"
+        checked={on}
+        onChange={(e) => onChange(e.target.checked)}
+        className="peer sr-only"
+      />
       <span
         aria-hidden
         className="relative h-6 w-11 shrink-0 rounded-full bg-line transition peer-checked:bg-govgreen-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-saffron-400 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5"

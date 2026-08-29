@@ -149,12 +149,24 @@ export interface AssistantState {
 
 export type DraftFormat = "letter" | "portal";
 
-/** What the assistant hands to the existing file-request form. */
+/**
+ * What the assistant hands to the existing file-request form.
+ *
+ * Every match comes through here now, central or not. `ministry` and
+ * `office` carry the two dropdown values for a central match; for a
+ * state or local one they carry the authority and its wing verbatim,
+ * because those offices are not in the central lists and never will be.
+ * `level` is what tells the form which of the two it is holding.
+ */
 export interface AssistantHandoff {
   ministry: string;
   office: string;
   question: string;
   authorityName: string;
+  level: GovLevel;
+  /** Who the application is addressed to. State and local matches only. */
+  pioTitle?: string;
+  stateName?: string;
 }
 
 export const HANDOFF_KEY = "rti_saral_assistant_handoff";

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useStore } from "@/lib/store";
 
 /**
  * Step 0 of filing: which door you come in by.
@@ -6,8 +9,18 @@ import Link from "next/link";
  * Both doors lead to the same review and submission, so this is one flow
  * with a fork at the top — not the two separate nav destinations it used
  * to be advertised as.
+ *
+ * Both doors also pass through the portal's guidelines the first time, as on
+ * the official site. Once accepted the detour disappears, so it costs a
+ * returning applicant nothing.
  */
 export default function StartRtiPage() {
+  const { prefs } = useStore();
+  const gate = (href: string) =>
+    prefs.acceptedGuidelines
+      ? href
+      : `/guidelines?next=${encodeURIComponent(href)}`;
+
   return (
     // Capped and centred. Two cards on a 2560px canvas left ~700px of empty
     // height below them and read as an unfinished page.
@@ -30,7 +43,7 @@ export default function StartRtiPage() {
 
       <div className="mt-9 grid items-stretch gap-5 sm:grid-cols-2">
         <Link
-          href="/assistant"
+          href={gate("/assistant")}
           className="lift gov-card group flex min-h-72 flex-col p-7 transition hover:border-navy-600/40"
         >
           <span className="inline-flex w-fit rounded-full bg-navy-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-navy-700">
@@ -60,7 +73,7 @@ export default function StartRtiPage() {
         </Link>
 
         <Link
-          href="/file-request"
+          href={gate("/file-request")}
           className="lift gov-card group flex min-h-72 flex-col p-7 transition hover:border-navy-600/40"
         >
           <span className="inline-flex w-fit rounded-full bg-canvas px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-muted">
@@ -94,7 +107,11 @@ export default function StartRtiPage() {
       </div>
 
       <p className="mt-6 text-sm text-ink-2">
-        To view a request already in progress, see{" "}
+        Read the{" "}
+        <Link href="/guidelines" className="font-bold text-navy-700 hover:underline">
+          portal guidelines
+        </Link>
+        . To view a request already in progress, see{" "}
         <Link href="/my-rtis" className="font-bold text-navy-700 hover:underline">
           My requests
         </Link>

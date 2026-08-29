@@ -641,6 +641,70 @@ export function relativeAge(age: number): string {
   return `${age} days ago`;
 }
 
+/**
+ * Which updates are a to-do, and which are a bulletin.
+ *
+ * The feed used to render both at the same weight, so "₹10 debited and
+ * not yet registered" sat in the same grey card as "a reply arrived" —
+ * and the one thing the citizen had to act on was the hardest to find.
+ * Tone alone cannot decide this: a hearing is amber but optional, while
+ * a document request is amber and blocking.
+ */
+export function notificationNeedsAction(n: Notification): boolean {
+  switch (n.kind) {
+    // Money is out and nothing has been registered against it.
+    case "payment":
+    // A right that expires if it is not used.
+    case "first_appeal":
+    case "appeal_deadline":
+    // The office is waiting on the citizen before it will answer.
+    case "document":
+      return true;
+    // "Now available" is a to-do; "registered" is a receipt. The two
+    // share a kind and are told apart by tone.
+    case "second_appeal":
+      return n.tone === "danger";
+    default:
+      return false;
+  }
+}
+
+/**
+ * Age buckets for the feed, newest first. Measured in days on the case's
+ * own clock — see the note on the sort in `notificationsFor`, which is
+ * why this cannot be a calendar comparison.
+ *
+ * Deliberately not "Today" and "Yesterday". Each case runs its own
+ * clock, so an item nought days old on its case still prints whatever
+ * absolute date that case has reached — and a heading claiming "Today"
+ * over a card dated three weeks ago reads as a bug. These labels say
+ * how recent, which is what the ordering actually means.
+ */
+const AGE_BUCKETS: Array<{ label: string; upTo: number }> = [
+  { label: "Latest", upTo: 1 },
+  { label: "Past week", upTo: 6 },
+  { label: "Past month", upTo: 30 },
+  { label: "Older", upTo: Infinity },
+];
+
+export interface NotificationGroup {
+  label: string;
+  items: Notification[];
+}
+
+/** Groups an already-sorted feed, dropping any bucket that stays empty. */
+export function groupNotifications(list: Notification[]): NotificationGroup[] {
+  const groups = AGE_BUCKETS.map((b) => ({
+    label: b.label,
+    items: [] as Notification[],
+  }));
+  for (const n of list) {
+    const i = AGE_BUCKETS.findIndex((b) => n.age <= b.upTo);
+    groups[i === -1 ? groups.length - 1 : i].items.push(n);
+  }
+  return groups.filter((g) => g.items.length > 0);
+}
+
 /* ---------------- Search and filters ---------------- */
 
 /**

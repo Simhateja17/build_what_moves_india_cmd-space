@@ -70,6 +70,15 @@ interface StoreState {
   addUpload: (caseId: string, file: { name: string; size: number }) => void;
   removeUpload: (caseId: string, name: string, uploadedAt: number) => void;
 
+  /**
+   * Settings the citizen controls. Only `showOfficialTerms` changes what
+   * the app does — the other two describe messages a prototype with no
+   * backend cannot send, so they are remembered and labelled as such
+   * rather than pretending to be wired up.
+   */
+  prefs: Prefs;
+  setPref: (key: keyof Prefs, value: boolean) => void;
+
   payments: PaymentRecord[];
   getPayment: (ref: string) => PaymentRecord | undefined;
   /** Begin a payment attempt and return its reference. */
@@ -81,9 +90,26 @@ interface StoreState {
   completeRegistration: (ref: string) => string | undefined;
 }
 
+export interface Prefs {
+  /** The statutory wording under every plain-language status. */
+  showOfficialTerms: boolean;
+  emailUpdates: boolean;
+  smsReminders: boolean;
+  /** The portal's filing guidelines, accepted once and then not asked again. */
+  acceptedGuidelines: boolean;
+}
+
+const DEFAULT_PREFS: Prefs = {
+  showOfficialTerms: true,
+  emailUpdates: true,
+  smsReminders: true,
+  acceptedGuidelines: false,
+};
+
 const StoreContext = createContext<StoreState | null>(null);
 
 const AUTH_KEY = "rti_saral_auth";
+const PREFS_KEY = "rti_saral_prefs";
 const NAME_KEY = "rti_saral_name";
 // A citizen whose payment is stuck will close the tab and come back hours
 // later to check on it. If the record did not survive that, the whole
@@ -121,6 +147,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [readResponses, setReadResponses] = useState<string[]>(SEED_READ_RESPONSES);
   const [readNotifications, setReadNotifications] = useState<string[]>([]);
   const [uploads, setUploads] = useState<Record<string, UploadedDoc[]>>({});
+  const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
 
   // localStorage is only read after mount so the server and first client
   // render agree — otherwise every guarded page flashes.
@@ -144,6 +171,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
       const savedUploads = window.localStorage.getItem(UPLOADS_KEY);
       if (savedUploads) setUploads(JSON.parse(savedUploads));
+
+      const savedPrefs = window.localStorage.getItem(PREFS_KEY);
+      // Spread over the defaults so a preference added later is not
+      // undefined for someone carrying an older saved object.
+      if (savedPrefs) setPrefs({ ...DEFAULT_PREFS, ...JSON.parse(savedPrefs) });
 
       const savedDays = window.localStorage.getItem(DAYS_KEY);
       if (savedDays) setDays((prev) => ({ ...prev, ...JSON.parse(savedDays) }));
@@ -183,6 +215,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       window.localStorage.setItem(APPEALS_KEY, JSON.stringify(appeals));
       window.localStorage.setItem(DAYS_KEY, JSON.stringify(days));
       window.localStorage.setItem(UPLOADS_KEY, JSON.stringify(uploads));
+      window.localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
     } catch {
       /* storage full or blocked — the session still works in memory */
     }
@@ -195,6 +228,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     appeals,
     days,
     uploads,
+    prefs,
   ]);
 
   const login = useCallback((name?: string) => {
@@ -344,6 +378,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return ref;
   }, []);
 
+  const setPref = useCallback((key: keyof Prefs, value: boolean) => {
+    setPrefs((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
   const setPaymentMethod = useCallback((ref: string, method: string) => {
     setPayments((prev) =>
       prev.map((p) => (p.ref === ref ? { ...p, method } : p)),
@@ -416,6 +454,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       uploadsFor,
       addUpload,
       removeUpload,
+      prefs,
+      setPref,
+
       payments,
       getPayment,
       startPayment,
@@ -446,6 +487,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       uploadsFor,
       addUpload,
       removeUpload,
+      prefs,
+      setPref,
+
       payments,
       getPayment,
       startPayment,

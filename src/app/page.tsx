@@ -2,8 +2,10 @@ import { GovHeader } from "@/components/GovHeader";
 import { GovFooter } from "@/components/GovFooter";
 import { HowToFileSteps } from "@/components/HowToFileSteps";
 import { HeroCarousel, HeroSlide } from "@/components/home/HeroCarousel";
-import { AssistantArt, RoutingArt } from "@/components/home/HeroArt";
 import { GeneralInformation } from "@/components/home/GeneralInformation";
+import { FlowPreview } from "@/components/home/FlowPreview";
+import { AssistantPreview } from "@/components/home/AssistantPreview";
+import { RequestPreview } from "@/components/home/RequestPreview";
 
 /**
  * Three things a visitor could be here for: the argument for the
@@ -24,9 +26,9 @@ const HERO_SLIDES: HeroSlide[] = [
     ),
     body: "Any citizen of India may request records held by a public authority, and the law requires a reply within 30 days. RTI Saral is built to make that right straightforward to exercise.",
     primary: { label: "Try the demo", href: "/login" },
-    secondary: { label: "How it works", href: "/about" },
+    secondary: { label: "How it works", href: "/faq" },
     note: "No signup is required. A demonstration account is provided.",
-    art: <PenaltyPreview />,
+    art: <FlowPreview />,
   },
   {
     id: "assistant",
@@ -42,7 +44,7 @@ const HERO_SLIDES: HeroSlide[] = [
     primary: { label: "Get assistance", href: "/assistant" },
     secondary: { label: "See an example", href: "/assistant" },
     note: "Nothing is submitted without explicit confirmation.",
-    art: <AssistantArt />,
+    art: <AssistantPreview />,
   },
   {
     id: "department",
@@ -56,9 +58,9 @@ const HERO_SLIDES: HeroSlide[] = [
     ),
     body: "A request sent to the wrong office is returned, fee included. Describe the issue, and the responsible office will be identified, along with the reason for that determination.",
     primary: { label: "Find the right department", href: "/find-department" },
-    secondary: { label: "How it works", href: "/about" },
+    secondary: { label: "How it works", href: "/faq" },
     note: "Road, sewage, water, school, hospital and nine more.",
-    art: <RoutingArt />,
+    art: <RequestPreview />,
   },
 ];
 
@@ -85,41 +87,5 @@ export default function HomePage() {
 
       <GovFooter />
     </>
-  );
-}
-
-/** The accountability idea in one card: a real penalty, already running. */
-function PenaltyPreview() {
-  return (
-    <div className="overflow-hidden rounded-[10px] border border-line bg-surface">
-      <div className="border-b border-line bg-navy-50/50 px-5 py-3">
-        <p className="text-[11px] uppercase tracking-wider text-muted">
-          MORTH/R/E/26/01193
-        </p>
-        <p className="mt-0.5 font-semibold text-ink">
-          How ₹4.2 crore of road repair money was spent in my ward
-        </p>
-      </div>
-      <div className="bg-govred-50 px-5 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-govred-700/80">
-          Penalty accruing against the officer
-        </p>
-        <p className="mt-1 text-4xl font-bold tabular-nums text-govred-700">
-          ₹1,000
-        </p>
-        <p className="mt-1 text-sm text-govred-700">
-          4 days late · ₹250/day · RTI Act s.20
-        </p>
-      </div>
-      <div className="px-5 py-4">
-        <p className="text-sm leading-relaxed text-ink-2">
-          The legal deadline was missed on this request. A free appeal to a
-          senior officer may be filed.
-        </p>
-        <span className="mt-3 inline-block rounded-lg bg-saffron-500 px-4 py-2 text-sm font-semibold text-white">
-          File a First Appeal
-        </span>
-      </div>
-    </div>
   );
 }

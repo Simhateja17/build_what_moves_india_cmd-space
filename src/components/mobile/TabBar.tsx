@@ -15,7 +15,7 @@ import { FileIcon, HelpIcon, HomeIcon } from "./icons";
 const TABS = [
   { href: "/dashboard", label: "My RTIs", Icon: FileIcon },
   { href: "/", label: "Home", Icon: HomeIcon },
-  { href: "/about", label: "Help", Icon: HelpIcon },
+  { href: "/faq", label: "Help", Icon: HelpIcon },
 ] as const;
 
 export function TabBar() {

@@ -106,25 +106,41 @@ body {
   border-radius: 2px;
 }
 
-/* Sits directly under the navy masthead, so the middle band is white
-   rather than the off-grey that suited a white header. */
-/* The middle band is white on a white masthead, so without a top edge the
-   rule reads as a broken progress bar rather than the tiranga. The header's
-   own border-b closes it from below. */
+/* The tiranga under the masthead. A pure white middle band on a white
+   header read as two disconnected coloured stubs with a gap between them,
+   so the middle is the page's own line colour: still the lightest of the
+   three, but continuous. The bands fade into each other over a few pixels
+   rather than butting up, which stops the joins looking like seams. */
 .tricolour-rule {
   height: 3px;
-  border-top: 1px solid rgba(45, 87, 143, 0.12);
   background: linear-gradient(
     to right,
-    var(--saffron-400) 0 33.33%,
-    #ffffff 33.33% 66.66%,
-    var(--green-600) 66.66% 100%
+    var(--saffron-400) 0 31%,
+    var(--line) 36% 64%,
+    var(--green-600) 69% 100%
   );
 }
 
+/* The utility strip above the masthead. Deep navy so the white masthead
+   below it reads as the page proper, not as another band of chrome. */
+.gov-utility-bar {
+  background: linear-gradient(180deg, #22456f 0%, var(--navy-900) 100%);
+}
+
+/* Flat while the page is at rest; the shadow arrives only once something is
+   scrolling underneath, so the masthead is part of the page rather than a
+   bar parked on top of it. */
 .gov-header-surface {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid transparent;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.gov-header-surface[data-lifted] {
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 12px 38px rgba(71, 120, 189, 0.1);
+  border-bottom-color: var(--line-2);
+  box-shadow: 0 10px 30px rgba(71, 120, 189, 0.1);
 }
 
 /* The theme's basic unit: a white panel floating on the grey canvas.

@@ -1,3 +1,6 @@
+"use client";
+
+import { useStore } from "@/lib/store";
 import { Stage, StageState } from "@/lib/stages";
 
 const DOT: Record<StageState, string> = {
@@ -43,6 +46,8 @@ const RAIL: Record<StageState, string> = {
  * and each stage keeps room for a sentence explaining itself.
  */
 export function StageTimeline({ stages }: { stages: Stage[] }) {
+  const { prefs } = useStore();
+
   return (
     <ol className="relative">
       {stages.map((s, i) => {
@@ -76,9 +81,11 @@ export function StageTimeline({ stages }: { stages: Stage[] }) {
               <p className="mt-1 text-[13px] leading-relaxed text-ink-2">
                 {s.note}
               </p>
-              <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-muted">
-                {s.official}
-              </p>
+              {prefs.showOfficialTerms ? (
+                <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-muted">
+                  {s.official}
+                </p>
+              ) : null}
             </div>
           </li>
         );

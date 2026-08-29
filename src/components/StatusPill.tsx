@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "@/lib/i18n";
+import { useStore } from "@/lib/store";
 import { toneChip } from "@/lib/tone";
 import { StatusBadge } from "@/lib/types";
 
@@ -9,7 +10,9 @@ import { StatusBadge } from "@/lib/types";
  *
  * Plain language leads, the statutory term sits underneath — never the
  * reverse, and never the statutory term alone. `compact` drops the second
- * line for dense tables, where the official wording would be noise.
+ * line for dense tables, where the official wording would be noise — as
+ * does the "Show official terms" preference, for a citizen who does not
+ * want the statute quoted at them at all.
  *
  * One pill, one status, and nothing else in the slot. The "In appeal"
  * flag used to render here too, so a case in appeal showed two tags side
@@ -29,6 +32,7 @@ export function StatusPill({
   // place. The statutory term underneath stays in its own language — it is
   // a citation, and changing it would make it uncheckable.
   const { t } = useLocale();
+  const { prefs } = useStore();
 
   return (
     // Keyed on the stage so the pill re-enters whenever the case changes
@@ -44,7 +48,7 @@ export function StatusPill({
       >
         {t(`stage.${badge.stage}`, badge.plain)}
       </span>
-      {!compact ? (
+      {!compact && prefs.showOfficialTerms ? (
         <span className="mt-1 text-[10px] font-medium uppercase leading-none tracking-wider opacity-65">
           {badge.official}
         </span>
